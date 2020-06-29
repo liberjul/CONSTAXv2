@@ -1,0 +1,17 @@
+#!/bin/bash --login
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=4:00:00             # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --ntasks=1                 # number of tasks - how many tasks (nodes) that you require (same as -n)
+#SBATCH --cpus-per-task=16          # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem=128G                   # memory required per node - amount of memory (in bytes)
+#SBATCH --job-name constax_sil_bact          # you can give your job a name for easier identification (same as -J)
+#SBATCH --output=%x-%j.SLURMout
+
+########## Command Lines to Run ##########
+
+cd ${SLURM_SUBMIT_DIR}
+
+./constax_silva.sh -c 0.8 -b -i otus_R1_bact_short.fasta -n $SLURM_CPUS_PER_TASK -d tf_sil_bact/SILVA_138_SSURef_tax_silva_bact.fasta -f tf_sil_bact --mem $SLURM_MEM_PER_NODE -m 20
+
+scontrol show job $SLURM_JOB_ID     ### write job information to output file

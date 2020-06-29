@@ -107,13 +107,13 @@ Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX
 -x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments
 -t, --train                                         Complete training if specified
 -b, --blast                                         Use BLAST instead of UTAX if specified
+--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC
 --mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA.
 --sintax_path                                       Path to USEARCH executable for SINTAX classification
 --utax_path                                         Path to USEARCH executable for UTAX classification
 --rdp_path                                          Path to RDP classifier.jar file
 --constax_path                                      Path to CONSTAX scripts
 -h, --help                                          Display this help and exit
-
 ```
 
 In the directory with your OTU/zOTU/ASV/ESV FASTA file:

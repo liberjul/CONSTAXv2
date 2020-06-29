@@ -1,0 +1,22 @@
+#!/bin/bash --login
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=4:00:00             # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --ntasks=1                 # number of tasks - how many tasks (nodes) that you require (same as -n)
+#SBATCH --cpus-per-task=16          # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem=128G                   # memory required per node - amount of memory (in bytes)
+#SBATCH --job-name constax_local          # you can give your job a name for easier identification (same as -J)
+#SBATCH --output=%x-%j.SLURMout
+
+########## Command Lines to Run ##########
+
+cd ${SLURM_SUBMIT_DIR}
+
+/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/constax.sh -c 0.8 -b -i zotus.fasta \
+ -n $SLURM_CPUS_PER_TASK -d sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta \
+ -f tf_local -o outputs_local -x taxonomy_assignments_local --mem $SLURM_MEM_PER_NODE -m 20 \
+ --rdp_path /mnt/home/liberjul/bin/RDPTools/classifier.jar \
+ --sintax_path /mnt/home/liberjul/bin/usearch11.0.667_i86linux32 \
+ --constax_path /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
+
+scontrol show job $SLURM_JOB_ID     ### write job information to output file
