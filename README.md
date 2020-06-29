@@ -115,6 +115,7 @@ Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX
 --constax_path                                      Path to CONSTAX scripts
 -h, --help                                          Display this help and exit
 ```
+If using a database for the first time, you will need to use the `-t` or `--train` flag to train the classifiers on the dataset.
 
 In the directory with your OTU/zOTU/ASV/ESV FASTA file:
 

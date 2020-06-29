@@ -12,6 +12,6 @@
 
 cd ${SLURM_SUBMIT_DIR}
 
-./constax_silva.sh -c 0.8 -b -i otus_R1_bact_short.fasta -n $SLURM_CPUS_PER_TASK -d tf_sil_bact/SILVA_138_SSURef_tax_silva_bact.fasta -f tf_sil_bact --mem $SLURM_MEM_PER_NODE -m 20
+./constax_silva.sh -c 0.8 -b -i otus_R1.fasta -n $SLURM_CPUS_PER_TASK -d SILVA_138_SSURef_tax_silva_bact.fasta -f tf_sil_bact --mem $SLURM_MEM_PER_NODE -m 20
 
 scontrol show job $SLURM_JOB_ID     ### write job information to output file
