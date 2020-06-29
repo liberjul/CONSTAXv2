@@ -568,7 +568,7 @@ else:
 	filename = args.db
 	filename_base = args.tf + "/" + ".".join(os.path.basename(filename).split(".")[:-1])
 
-	header_line = open(filename_base + "__RDP_taxonomy.txt", "r").readline()
+	header_line = open(filename_base + "__RDP_taxonomy.txt", "r").readline() # Extract first line of taxonomy file to get ranks
 	ranks = header_line.strip().split("\t")[1:]
 	for classifier in three_classifiers:
 		file_name = F"{args.tax}otu_taxonomy."+classifier
