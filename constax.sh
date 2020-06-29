@@ -72,6 +72,7 @@ MEM=32000
 while true; do
   case "$1" in
     -c | --conf ) CONF="$2"; shift 2 ;;
+    -p | --p_iden) P_IDEN="$2"; shift 2 ;;
     -n | --num_threads ) NTHREADS="$2"; shift 2 ;;
     -m | --max_hits ) MAX_HITS="$2"; shift 2 ;;
     -e | --evalue ) EVALUE="$2"; shift 2 ;;
@@ -120,6 +121,23 @@ if $HELP
     echo "--constax_path                                      Path to CONSTAX scripts"
     echo "-h, --help                                          Display this help and exit"
 		exit 1
+fi
+if [ $MAX_HITS -eq 0 ]
+then
+  echo "Set -m/--max_hits to an integer greater than zero."
+  exit 1
+elif [[ $CONF =~ '^[+-]?[0-9]+([.][0-9]+)?$' ]] || (( $(echo "$CONF > 1.0" | bc -l) )) || (( $(echo "$CONF < 0.0" | bc -l) ))
+then
+  echo "Set -c/--conf to a float between 0 and 1"
+  exit 1
+elif [ $NTHREADS -lt 1 2> /dev/null ] || [ $? == 2 ]
+then
+  echo "Set -n/--nthreads to an integer greater than 0"
+  exit 1
+elif [[ $P_IDEN =~ '^[+-]?[0-9]+([.][0-9]+)?$' ]] || (( $(echo "$P_IDEN > 1.0" | bc -l) )) || (( $(echo "$P_IDEN < 0.0" | bc -l) ))
+then
+  echo "Set -p/--p_iden to a float between 0 and 1"
+  exit 1
 fi
 
 if ! [ -f "$INPUT" ]
