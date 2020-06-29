@@ -44,8 +44,7 @@ apt install ant
 ```
 - If on MacOS
     - install [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html) and [apache ant 1.10](https://ant.apache.org/bindownload.cgi)
-2. Clone the repository from [here](https://github.com/rdpstaff/RDPTools).
-3. Run the following commands:
+2. Run the following commands:
 ```
 git clone https://github.com/rdpstaff/RDPTools.git
 cd RDPTools
