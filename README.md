@@ -58,7 +58,7 @@ ant jar
 cp dist/classifier.jar ../
 ```
 #### BLAST installation
-1. Download the BLAST executables from [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/). The ncbi-blast-<version>+-x64-<system>64.tar.gz file works fine.
+1. Download the BLAST executables from [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/). The ncbi-blast-\<version\>+-x64-\<system\>64.tar.gz file works fine.
 2. Unzip with `tar -xzvf ncbi-blast-<version>+-x64-<system>64.tar.gz` (replace version and system).
 3. Add the `blastn` and `makeblastdb` executables to your path. You can do this by moving them to your `bin` directory.
 
