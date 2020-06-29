@@ -280,7 +280,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 	uniq = pd.unique(blast_res["query"]) # List of all otus
 	for q in uniq:
 		q_list = [q, "0.0"] # OTU and placeholder confidence
-		q_sub = blast_res[(blast_res["query"] == q) & (blast_res["e_value"] < ethresh) & (blast_res["percent_identity"] >= p_iden_thresh)] # Subset by OTU and e_values
+		q_sub = blast_res[(blast_res["query"] == q) & (blast_res["e_value"] <= ethresh) & (blast_res["percent_identity"] >= p_iden_thresh)] # Subset by OTU and e_values
 		if len(q_sub) == 0:
 			q_list.extend([""]*len(ranks)*2)
 		else:

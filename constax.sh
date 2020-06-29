@@ -53,6 +53,7 @@ eval set -- "$TEMP"
 TRAIN=false
 BLAST=false
 HELP=false
+MSU_HPCC=false
 CONF=0.8
 NTHREADS=1
 MAX_HITS=10
@@ -87,6 +88,7 @@ while true; do
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
+    --msu_hpcc ) MSU_HPCC=true; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
