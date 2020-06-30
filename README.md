@@ -77,7 +77,7 @@ For [Fungi](https://plutof.ut.ee/#/doi/10.15156/BIO/786368) or all [Eukaryotes](
 
 For Bacteria and Archaea, we recommend the [SILVA database](https://www.arb-silva.de/no_cache/download/archive/current/Exports/). The SILVA_XXX_SSURef_tax_silva.fasta.gz file can be `gunzip`-ped and used.
 
-Note: SILVA taxonomy is not assigned by Linnean ranks (Kingdom, Phylum, etc.), so instead placeholder ranks 1-n are used. Also, the size of the SILVA database means that a server/cluster is required to train the classifier.
+Note: SILVA taxonomy is not assigned by Linnean ranks (Kingdom, Phylum, etc.), so instead placeholder ranks 1-n are used. Also, the size of the SILVA database means that a server/cluster is required to train the classifier (128GB RAM for RDP). If you have a computer with 32GB of RAM, you may be able to train using the UNITE database. If you cannot train locally for UNITE, the RDP files can be downloaded from [here](https://github.com/liberjul/CONSTAXv2_data/tree/master/sh_general_release_fungi_35077_RepS_04.02.2020). The `genus_wordConditionalProbList.txt.gz` file should be `gunzip`-ped after downloading.
 
 We have included a script for filtering the databases, which can create a Bacteria-only database, for example. The -k or --keyword argument is a substring of the record header.
 
