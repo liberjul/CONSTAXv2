@@ -209,10 +209,10 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/opt/software/CONSTAX/2/
-elif $BLAST  && -f $SINTAXPATH && -f $RDPPATH && -d $CONSTAXPATH
+elif $BLAST  && [ -f $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
 then
   echo "All needed executables exist."
-elif ! $BLAST  && -f $SINTAXPATH && -f $UTAXPATH && -f $RDPPATH && -d $CONSTAXPATH
+elif ! $BLAST  && [ -f $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ] && [ -f $UTAXPATH ]
 then
   echo "All needed executables exist."
 else
@@ -245,7 +245,7 @@ then
 
   echo "__________________________________________________________________________"
 	echo "Training SINTAX Classifier"
-  if [ $(echo $SINTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -le 11 ]
+  if [ $(echo $SINTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 ]
   then
   	$SINTAXPATH -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
   else
@@ -255,8 +255,10 @@ then
   then
     echo "__________________________________________________________________________"
   	echo "Training BLAST Classifier"
-
-    module load BLAST
+    if $MSU_HPCC
+    then
+      module load BLAST
+    fi
 
     makeblastdb -in "${TFILES}/${base}"__RDP_trained.fasta -dbtype nucl -out "${TFILES}/${base}"__BLAST
   else
@@ -275,7 +277,7 @@ then
 
   java -Xmx"$MEM"m -jar $RDPPATH train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
 
-  cp ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
+  cp ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
 
   echo "Classifier training complete using BLAST: $BLAST" > "${TFILES}"/training_check.txt
 
@@ -289,6 +291,12 @@ echo "Assigning taxonomy to OTU's representative sequences"
 $SINTAXPATH -sintax "$INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if $BLAST
 then
+
+  if $MSU_HPCC && ! $TRAIN
+  then
+    module load BLAST
+  fi
+
   blastn -query "$INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES
   python $CONSTAXPATH/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT
@@ -312,8 +320,11 @@ else
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
   python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
 fi
-module load GCC/8.3.0  OpenMPI/3.1.4
-module load R
+if $MSU_HPCC
+then
+  module load GCC/8.3.0  OpenMPI/3.1.4
+  module load R
+fi
 
 # plot R
 # Rscript /mnt/research/common-data/Bio/UserDownloads/CONSTAX/R/ComparisonBars.R -o "$OUTPUT/"

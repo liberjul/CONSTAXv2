@@ -79,7 +79,7 @@ def reformat_RDP(rdp_file, output_dir, confidence, ranks):
 
 ################################################################################
 def reformat_UTAX(utax_file, output_dir, confidence, ranks):
-	input = open(utax_file, "U")
+	input = open(utax_file)
 	all_lines = input.readlines()
 	input.close()
 
@@ -153,7 +153,7 @@ def reformat_UTAX(utax_file, output_dir, confidence, ranks):
 
 ################################################################################
 def reformat_SINTAX(sintax_file, output_dir, confidence, ranks):
-	input = open (sintax_file, "U")
+	input = open (sintax_file)
 	all_lines = input.readlines()
 	input.close()
 
