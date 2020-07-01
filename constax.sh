@@ -208,7 +208,7 @@ then
   SINTAXPATH=/mnt/research/rdp/public/thirdParty/usearch10.0.240_i86linux64
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
-  CONSTAXPATH=/opt/software/CONSTAX/2/
+  CONSTAXPATH=/opt/software/CONSTAX/2
 elif $BLAST  && [ -f $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
 then
   echo "All needed executables exist."
