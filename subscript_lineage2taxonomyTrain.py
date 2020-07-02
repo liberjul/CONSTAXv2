@@ -7,6 +7,7 @@ def lin2tax(file_base, format):
 	print("\n\tTraining Taxonomy")
 	with open(file_base+"__RDP_taxonomy.txt", 'r') as f:
 		line = f.readline()
+
 	# f = open(file_base+"__RDP_taxonomy.txt", 'r').readlines()
 	# header = f[0]
 		# cols = header.strip().split('\t')[1:]
@@ -90,8 +91,10 @@ def lin2tax(file_base, format):
 					line = f.readline()
 				with open(file_base+"__RDP_taxonomy_headers.txt", "a+") as taxon_headers:
 					taxon_headers.write(th_buf)
+					print("Headers exported")
 				with open(file_base+"__RDP_taxonomy_trained.txt", "a+") as output_file:
 					output_file.write(output_buf)
+					print("Trained taxonomy exported")
 			# while line != "":
 			# 	rec_count = 0
 			# 	output_buf = ""
@@ -194,7 +197,9 @@ def lin2tax(file_base, format):
 					line = f.readline()
 				with open(file_base+"__RDP_taxonomy_headers.txt", "a+") as taxon_headers:
 					taxon_headers.write(th_buf)
+					print("Headers exported")
 				with open(file_base+"__RDP_taxonomy_trained.txt", "a+") as output_file:
 					output_file.write(output_buf)
+					print("Trained taxonomy exported")
 				# taxon_headers.close()
 	# output_file.close()

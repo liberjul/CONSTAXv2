@@ -37,7 +37,9 @@ parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-p", "--path", type=str, help="path to subscript imports")
 args = parser.parse_args()
 
-sys.path.append(args.path)
+sys.path.append(args.path + "/")
+
+print(F"Importing subscripts from {args.path}")
 
 import subscript_lineage2taxonomyTrain, subscript_fasta_addFullLineage
 
@@ -112,12 +114,15 @@ if args.format == "UNITE":
 						species+= "_"+str(num)
 						num += 1
 
-					taxonomy = name+"\t"+"\t".join(to_genus)+"\t"+species+"\n"
-					fasta.write(">"+name+"\n")
-					taxon.write(taxonomy)
-					seq = next(database)
-					fastatax.write(seq)
-					fasta.write(seq)
+				taxonomy = name+"\t"+"\t".join(to_genus)+"\t"+species+"\n"
+				fasta.write(">"+name+"\n")
+				taxon.write(taxonomy)
+				seq = next(database)
+				fastatax.write(seq)
+				fasta.write(seq)
+	fasta.close()
+	taxon.close()
+
 else:
 	max_rank = 1
 	with open(filename, "r") as database:
