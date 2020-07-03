@@ -288,7 +288,9 @@ fi
 echo "__________________________________________________________________________"
 echo "Assigning taxonomy to OTU's representative sequences"
 
-$SINTAXPATH -sintax "$INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
+python $CONSTAXPATH/check_input_names.py -i "$INPUT"
+
+$SINTAXPATH -sintax formatted_inputs.fasta -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if $BLAST
 then
 
@@ -297,15 +299,15 @@ then
     module load BLAST
   fi
 
-  blastn -query "$INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
+  blastn -query formatted_inputs.fasta -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES
   python $CONSTAXPATH/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT
 else
-  $UTAXPATH -utax "$INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+  $UTAXPATH -utax formatted_inputs.fasta -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
 
 fi
 
-java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$INPUT"
+java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp formatted_inputs.fasta
 
 
 echo "__________________________________________________________________________"

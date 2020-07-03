@@ -25,7 +25,7 @@ CONSTAX v.2 improves upon v.1 with the following features:
 - [RDP](https://github.com/rdpstaff/RDPTools)
 - [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download) ([FTP site](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/))
 - Python 3.6+, from [python.org](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/products/individual)
-- Python package [Pandas](https://pandas.pydata.org/getting_started.html), included in the Anaconda distribution
+- Python packages [Pandas](https://pandas.pydata.org/getting_started.html) and [Numpy](https://numpy.org/), included in the Anaconda distribution
 - [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
 
 ### Installation
