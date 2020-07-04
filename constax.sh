@@ -238,7 +238,6 @@ then
   exit 1
 fi
 
-# UTAX_VER=
 if $TRAIN
 then
 	python $CONSTAXPATH/FormatRefDB.py -d $DB -t $TFILES -f $FORMAT -p $CONSTAXPATH
@@ -277,8 +276,15 @@ then
 
   java -Xmx"$MEM"m -jar $RDPPATH train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
 
-  cp ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
-
+  # The rRNAClassifier.properties file should be in one of these two places
+  if [ -f ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties ]
+  then
+    cp ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
+  elif [ -f ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties ]
+    cp ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
+  else
+    echo "Cannot locate rRNAClassifier.properties file, please place in RDPTools/classifier/samplefiles"
+  fi
   echo "Classifier training complete using BLAST: $BLAST" > "${TFILES}"/training_check.txt
 
 	# -Xmx set to memory GB you want to use
@@ -288,9 +294,9 @@ fi
 echo "__________________________________________________________________________"
 echo "Assigning taxonomy to OTU's representative sequences"
 
-python $CONSTAXPATH/check_input_names.py -i "$INPUT"
+FRM_INPUT=$(python $CONSTAXPATH/check_input_names.py -i "$INPUT" 2>&1)
 
-$SINTAXPATH -sintax formatted_inputs.fasta -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
+$SINTAXPATH -sintax $FRM_INPUT -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if $BLAST
 then
 
@@ -299,17 +305,17 @@ then
     module load BLAST
   fi
 
-  blastn -query formatted_inputs.fasta -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
+  blastn -query $FRM_INPUT -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES
   python $CONSTAXPATH/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT
 else
-  $UTAXPATH -utax formatted_inputs.fasta -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+  $UTAXPATH -utax $FRM_INPUT -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
 
 fi
 
-java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp formatted_inputs.fasta
+java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp $FRM_INPUT
 
-
+rm $FRM_INPUT
 echo "__________________________________________________________________________"
 echo "Combining Taxonomies"
 
