@@ -281,6 +281,7 @@ then
   then
     cp ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
   elif [ -f ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties ]
+  then
     cp ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
   else
     echo "Cannot locate rRNAClassifier.properties file, please place in RDPTools/classifier/samplefiles"
