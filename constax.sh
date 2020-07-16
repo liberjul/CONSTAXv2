@@ -13,7 +13,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -42,6 +42,7 @@ then
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
   echo "--rdp_path                                          Path to RDP classifier.jar file"
   echo "--constax_path                                      Path to CONSTAX scripts"
+  echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
   echo "-h, --help                                          Display this help and exit"
   exit 1
 fi
@@ -68,6 +69,7 @@ UTAXPATH=false
 RDPPATH=false
 CONSTAXPATH=false
 MEM=32000
+USE_ISOS=False # Used as python bool
 
 while true; do
   case "$1" in
@@ -86,6 +88,7 @@ while true; do
     --sintax_path ) SINTAXPATH="$2"; shift 2 ;;
     --utax_path ) UTAXPATH="$2"; shift 2 ;;
     --constax_path ) CONSTAXPATH="${2%/}"; shift 2 ;;
+    --isolates ) ISOLATES="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
@@ -119,6 +122,7 @@ if $HELP
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
     echo "--rdp_path                                          Path to RDP classifier.jar file"
     echo "--constax_path                                      Path to CONSTAX scripts"
+    echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
     echo "-h, --help                                          Display this help and exit"
 		exit 1
 fi
@@ -321,13 +325,23 @@ echo "__________________________________________________________________________
 echo "Combining Taxonomies"
 
     # python /mnt/research/common-data/Bio/UserDownloads/CONSTAX/scripts/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/"
+if [ -f $ISOLATES ] && [ -s $ISOLATES ]
+then
+  USE_ISOS=True
+  module load BLAST
+
+  makeblastdb -in $ISOLATES -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
+
+  blastn -query $FRM_INPUT -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 > "$TAX"/isolates_blast.out
+fi
+
 if $BLAST
 then
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES
+  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS
 else
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
+  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS
 fi
 if $MSU_HPCC
 then

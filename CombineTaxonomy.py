@@ -303,6 +303,22 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 	return output_file
 
 ################################################################################
+def build_iso_dict(isolate_file):
+	with open(isolate_file, "r") as ifile:
+		line = ifile.readline()
+	    while line != "":
+            if "# Query: " in line: # Checking if hits were found
+                quer = line.strip().split("Query: ")[1]
+                line = ifile.readline()
+                line = ifile.readline()
+                if line == "# 0 hits found\n": # If no hits found
+                    iso_dict[quer] = ""
+            elif line[0] != "#": # BLAST hit lines
+                spl = line.strip().split("\t")
+				iso_dict[spl[0]] = [spl[1], spl[4]]
+            line = ifile.readline()
+	return iso_dict
+################################################################################
 def build_dict(filename):
 	file = open(filename, "r")
 	all_lines = file.readlines()
@@ -434,9 +450,10 @@ parser.add_argument("-b", "--blast", type=bool, nargs='?', const=True, default=F
 parser.add_argument("-e", "--evalue", type=float, default=1, help="Maximum evalue for BLAST hits")
 parser.add_argument("-m", "--mhits", type=int, default=10, help="Maximum number of hits for BLAST")
 parser.add_argument("-p", "--p_iden", type=float, default=0., help="Minimum proportion identity of hits for BLAST")
-parser.add_argument("-f", "--format", type=bool, help="database formatting")
+parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-d", "--db", type=str, default="", help="database file")
 parser.add_argument("-t", "--tf", type=str, default="", help="training files path")
+parser.add_argument("-i", "--isolates", type=bool, help="Use isolates")
 args = parser.parse_args()
 
 # confidence = float(args.conf)
@@ -501,12 +518,18 @@ if args.format == "UNITE":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file)
+		if args.isolates:
+			print("\nReformatting isolate result file\n")
+			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
 
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
-	consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
+	if args.isolates:
+		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id\n")
+	else:
+		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
 
 	if args.blast:
 			combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
@@ -525,7 +548,10 @@ if args.format == "UNITE":
 					if level != "":
 						levels.append(level)
 					combined.write(level)
-				consensus.write("\t".join(levels)+"\n")
+				if args.isolates:
+					consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+				else:
+					consensus.write("\t".join(levels)+"\n")
 				combined.write("\n")
 			print("\tDone\n")
 
@@ -552,7 +578,10 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			consensus.write("\t".join(levels)+"\n")
+			if args.isolates:
+				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+			else:
+				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -619,6 +648,9 @@ else:
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file)
+		if args.isolates:
+			print("\nReformatting isolate result file\n")
+			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
 
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
@@ -633,8 +665,10 @@ else:
 		for r in ranks:
 			combined.write(F"\t{r}_RDP\t{r}_BLAST\t{r}_SINTAX\t{r}_Consensus")
 			consensus.write(F"\t{r}")
+		if args.isolates:
+			consensus.write("\tIsolate\tIsolate_percent_id")
 		combined.write("\n")
-		consensus.write(F"\n")
+		consensus.write("\n")
 
 		for otu in rdp_dict.keys():
 			consensus.write(otu+"\t")
@@ -646,7 +680,10 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			consensus.write("\t".join(levels)+"\n")
+			if args.isolates:
+				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+			else:
+				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -664,9 +701,15 @@ else:
 		header_line = open(filename_base + "__RDP_taxonomy.txt", "r").readline()
 		ranks = header_line.strip().split("\t")[1:]
 		combined.write("OTU_ID")
+		consensus.write("OTU_ID")
+
 		for r in ranks:
 			combined.write(F"\t{r}_RDP\t{r}_SINTAX\t{r}_UTAX\t{r}_Consensus")
+			consensus.write(F"\t{r}")
+		if args.isolates:
+			consensus.write("\tIsolate\tIsolate_percent_id")
 		combined.write("\n")
+		consensus.write("\n")
 
 		for otu in rdp_dict.keys():
 			consensus.write(otu+"\t")
@@ -678,7 +721,10 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			consensus.write("\t".join(levels)+"\n")
+			if args.isolates:
+				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+			else:
+				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")
 		print("\tDone\n")
 
