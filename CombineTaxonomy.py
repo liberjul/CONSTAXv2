@@ -306,17 +306,17 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 def build_iso_dict(isolate_file):
 	with open(isolate_file, "r") as ifile:
 		line = ifile.readline()
-	    while line != "":
-            if "# Query: " in line: # Checking if hits were found
-                quer = line.strip().split("Query: ")[1]
-                line = ifile.readline()
-                line = ifile.readline()
-                if line == "# 0 hits found\n": # If no hits found
-                    iso_dict[quer] = ""
-            elif line[0] != "#": # BLAST hit lines
-                spl = line.strip().split("\t")
+		while line != "":
+			if "# Query: " in line: # Checking if hits were found
+				quer = line.strip().split("Query: ")[1]
+				line = ifile.readline()
+				line = ifile.readline()
+				if line == "# 0 hits found\n": # If no hits found
+					iso_dict[quer] = ""
+			elif line[0] != "#": # BLAST hit lines
+				spl = line.strip().split("\t")
 				iso_dict[spl[0]] = [spl[1], spl[4]]
-            line = ifile.readline()
+			line = ifile.readline()
 	return iso_dict
 ################################################################################
 def build_dict(filename):

@@ -320,7 +320,6 @@ fi
 
 java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp $FRM_INPUT
 
-rm $FRM_INPUT
 echo "__________________________________________________________________________"
 echo "Combining Taxonomies"
 
@@ -334,6 +333,7 @@ then
 
   blastn -query $FRM_INPUT -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 > "$TAX"/isolates_blast.out
 fi
+rm $FRM_INPUT
 
 if $BLAST
 then
