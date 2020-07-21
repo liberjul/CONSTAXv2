@@ -304,6 +304,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 
 ################################################################################
 def build_iso_dict(isolate_file):
+	iso_dict = {}
 	with open(isolate_file, "r") as ifile:
 		line = ifile.readline()
 		while line != "":
@@ -312,12 +313,13 @@ def build_iso_dict(isolate_file):
 				line = ifile.readline()
 				line = ifile.readline()
 				if line == "# 0 hits found\n": # If no hits found
-					iso_dict[quer] = ""
+					iso_dict[quer] = ["", ""]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
 				iso_dict[spl[0]] = [spl[1], spl[4]]
 			line = ifile.readline()
 	return iso_dict
+
 ################################################################################
 def build_dict(filename):
 	file = open(filename, "r")
@@ -341,7 +343,7 @@ def build_dict(filename):
 	return dict
 
 ################################################################################
-def vote(cla1, cla2, cla3):
+def vote(cla1, cla2, cla3, conservative):
 	winner = ""
 	taxa = [cla1[0].replace("NA", ""), cla2[0].replace("NA", ""), cla3[0].replace("NA", "")]
 	scores = [cla1[1], cla2[1], cla3[1]]
@@ -355,7 +357,10 @@ def vote(cla1, cla2, cla3):
 				winner = taxa[j]
 				break
 			elif j in unique_2empty:
-				winner = taxa[j]
+				if conservative:
+					winner = ""
+				else:
+					winner = taxa[j]
 				break
 			elif j in unique:
 				scores = [float(x) if x!="NA" and x!="" else 0 for x in scores]
@@ -454,6 +459,7 @@ parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-d", "--db", type=str, default="", help="database file")
 parser.add_argument("-t", "--tf", type=str, default="", help="training files path")
 parser.add_argument("-i", "--isolates", type=bool, help="Use isolates")
+parser.add_argument("-s", "--conservative", type=bool, help="Use conservative rule (prevents overclassification, looses sensitivity)")
 args = parser.parse_args()
 
 # confidence = float(args.conf)
@@ -490,7 +496,7 @@ if args.format == "UNITE":
 				print("OTU_###	d:Fungi,p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
 				sys.exit()
 		elif classifier == "blast":
-			if temp0[0] != "query,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species\n":
+			if "query,subject,bitscore,e_value,percent_identity,query_coverage" not in temp0[0]:
 				print("Input file not in BLAST format. Please Reformat As Below:")
 				print("query,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species")
 				sys.exit()
@@ -543,13 +549,14 @@ if args.format == "UNITE":
 				combined.write(otu)
 				levels = []
 				for m in range(0,14,2):
-					level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2])
+					level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
 					combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
 					if level != "":
 						levels.append(level)
 					combined.write(level)
 				if args.isolates:
-					consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+					lev_string = '\t'.join(levels)
+					consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 				else:
 					consensus.write("\t".join(levels)+"\n")
 				combined.write("\n")
@@ -573,13 +580,14 @@ if args.format == "UNITE":
 			combined.write(otu)
 			levels = []
 			for m in range(0,14,2):
-				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2])
+				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], arg.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t"+uta_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates:
-				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+				lev_string = '\t'.join(levels)
+				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")
@@ -675,13 +683,14 @@ else:
 			combined.write(otu)
 			levels = []
 			for m in range(0,14,2):
-				level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2])
+				level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates:
-				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+				lev_string = '\t'.join(levels)
+				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")
@@ -716,13 +725,14 @@ else:
 			combined.write(otu)
 			levels = []
 			for m in range(0,14,2):
-				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2])
+				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], args.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t"+uta_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates:
-				consensus.write(F"{'\t'.join(levels)}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
+				lev_string = '\t'.join(levels)
+				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
 			combined.write("\n")

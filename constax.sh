@@ -37,6 +37,7 @@ then
   echo "-t, --train                                         Complete training if specified"
   echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
   echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
+  echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
   echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -55,6 +56,7 @@ TRAIN=false
 BLAST=false
 HELP=false
 MSU_HPCC=false
+CONSERVATIVE=False
 CONF=0.8
 NTHREADS=1
 MAX_HITS=10
@@ -93,6 +95,7 @@ while true; do
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
     --msu_hpcc ) MSU_HPCC=true; shift ;;
+    --conservative ) CONSERVATIVE=True; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -117,6 +120,7 @@ if $HELP
     echo "-t, --train                                         Complete training if specified"
     echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
     echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
+    echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
     echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -338,10 +342,10 @@ rm $FRM_INPUT
 if $BLAST
 then
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS
+  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS -s $CONSERVATIVE
 else
   # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS
+  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS -s $CONSERVATIVE
 fi
 if $MSU_HPCC
 then
