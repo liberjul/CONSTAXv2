@@ -335,7 +335,7 @@ then
 
   makeblastdb -in $ISOLATES -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
 
-  blastn -query $FRM_INPUT -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 > "$TAX"/isolates_blast.out
+  blastn -query $FRM_INPUT -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
 rm $FRM_INPUT
 
