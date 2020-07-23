@@ -316,7 +316,8 @@ def build_iso_dict(isolate_file):
 					iso_dict[quer] = ["", ""]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
-				iso_dict[spl[0]] = [spl[1], spl[4]]
+				if int(spl[5]) > 75:
+					iso_dict[spl[0]] = [spl[1], spl[4]]
 			line = ifile.readline()
 	return iso_dict
 
