@@ -318,6 +318,8 @@ def build_iso_dict(isolate_file):
 				spl = line.strip().split("\t")
 				if int(spl[5]) > 75:
 					iso_dict[spl[0]] = [spl[1], spl[4]]
+				else:
+					iso_dict[spl[0]] = ["", ""]
 			line = ifile.readline()
 	return iso_dict
 
