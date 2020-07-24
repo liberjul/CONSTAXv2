@@ -13,7 +13,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
