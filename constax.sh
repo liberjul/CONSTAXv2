@@ -5,10 +5,9 @@ echo "###############*** This is CONSTAX v.2 ***######################"
 echo "#                                                              #"
 echo "#                     MIT License                              #"
 echo "#                 Copyright (C) 2020                           #"
-echo "#   Julian Liber, Natalie Vandepol, Kristi Gadnetz,            #"
-echo "#     Gian Maria Niccolo' Benucci, Gregory Bonito              #"
+echo "#  Julian Liber, Gian Maria Niccolo' Benucci, Gregory Bonito   #"
 echo "#                                                              #"
-echo "#      https://github.com/Gian77/CONSTAX                       #"
+echo "#           https://github.com/Gian77/CONSTAX                  #"
 echo "################################################################"
 
 
