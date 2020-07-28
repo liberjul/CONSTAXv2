@@ -70,6 +70,7 @@ UTAXPATH=false
 RDPPATH=false
 CONSTAXPATH=false
 MEM=32000
+ISOLATES=null
 USE_ISOS=False # Used as python bool
 
 while true; do
