@@ -279,7 +279,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 	blast_res = blast_res.astype({"e_value" : "float64"})
 	uniq = pd.unique(blast_res["query"]) # List of all otus
 	for q in uniq:
-		q_list = [q, "0.0"] # OTU and placeholder confidence
+		q_list = [q.split(" ")[0], "0.0"] # OTU and placeholder confidence
 		q_sub = blast_res[(blast_res["query"] == q) & (blast_res["e_value"] <= ethresh) & (blast_res["percent_identity"] >= p_iden_thresh)] # Subset by OTU and e_values
 		if len(q_sub) == 0:
 			q_list.extend([""]*len(ranks)*2)
@@ -527,7 +527,7 @@ if args.format == "UNITE":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file)
-		if args.isolates == True:
+		if args.isolates == "True":
 			print("\nReformatting isolate result file\n")
 			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
@@ -535,7 +535,7 @@ if args.format == "UNITE":
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
-	if args.isolates == True:
+	if args.isolates == "True":
 		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id\n")
 	else:
 		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
@@ -557,7 +557,7 @@ if args.format == "UNITE":
 					if level != "":
 						levels.append(level)
 					combined.write(level)
-				if args.isolates == True:
+				if args.isolates == "True":
 					lev_string = '\t'.join(levels)
 					consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 				else:
@@ -588,7 +588,7 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			if args.isolates == True:
+			if args.isolates == "True":
 				lev_string = '\t'.join(levels)
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
@@ -659,7 +659,7 @@ else:
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file)
-		if args.isolates == True:
+		if args.isolates == "True":
 			print("\nReformatting isolate result file\n")
 			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
@@ -676,7 +676,7 @@ else:
 		for r in ranks:
 			combined.write(F"\t{r}_RDP\t{r}_BLAST\t{r}_SINTAX\t{r}_Consensus")
 			consensus.write(F"\t{r}")
-		if args.isolates == True:
+		if args.isolates == "True":
 			consensus.write("\tIsolate\tIsolate_percent_id")
 		combined.write("\n")
 		consensus.write("\n")
@@ -691,7 +691,7 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			if args.isolates == True:
+			if args.isolates == "True":
 				lev_string = '\t'.join(levels)
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
@@ -718,7 +718,7 @@ else:
 		for r in ranks:
 			combined.write(F"\t{r}_RDP\t{r}_SINTAX\t{r}_UTAX\t{r}_Consensus")
 			consensus.write(F"\t{r}")
-		if args.isolates == True:
+		if args.isolates == "True":
 			consensus.write("\tIsolate\tIsolate_percent_id")
 		combined.write("\n")
 		consensus.write("\n")
@@ -733,7 +733,7 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			if args.isolates == True:
+			if args.isolates == "True":
 				lev_string = '\t'.join(levels)
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:

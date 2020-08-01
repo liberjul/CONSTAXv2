@@ -330,6 +330,7 @@ echo "Combining Taxonomies"
     # python /mnt/research/common-data/Bio/UserDownloads/CONSTAX/scripts/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/"
 if [ -f $ISOLATES ] && [ -s $ISOLATES ]
 then
+  echo "Comparing to Isolates"
   USE_ISOS=True
   module load BLAST
 
