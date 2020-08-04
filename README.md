@@ -38,7 +38,7 @@ cd CONSTAXv2
 bash install.sh
 ```
 This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
-### Custom installation, or for Windows OS
+### Custom installation
 
 #### USEARCH installation
 1. Download the desired version from [here](https://www.drive5.com/usearch/download.html).
@@ -46,7 +46,7 @@ This uses conda installations, including vsearch instead of usearch. You can mod
 3. Run `chmod +x usearch<version>` to make the file executable.
 
 #### RDP installation
-1. Requires [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html) and apache ant (version 1.10 worked fine)
+1. Requires [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html) and apache ant (versions 1.9 and 1.10 worked fine)
 - If on Windows Subsystem for Linux or Linux:
 ```
 apt install openjdk-8-jdk-headless
