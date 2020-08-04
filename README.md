@@ -33,6 +33,8 @@ CONSTAX v.2 improves upon v.1 with the following features:
 
 ### One step, for Linux, [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10), or MacOS systems
 ```
+git clone https://github.com/liberjul/CONSTAXv2.git
+cd CONSTAXv2
 bash install.sh
 ```
 This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
