@@ -20,6 +20,8 @@ CONSTAX v.2 improves upon v.1 with the following features:
 - [Gian Maria Niccolò Benucci](https://github.com/Gian77)
 - [Gregory Bonito](https://www.researchgate.net/profile/Gregory_Bonito)
 
+* [Gdanetz K, Benucci GMN, Vande Pol N, Bonito G (2017) CONSTAX: a tool for improved taxonomic resolution of environmental fungal ITS sequences. BMC Bioinformatics 18:538 doi 10.1186/s12859-017-1952-x](https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-017-1952-x)
+
 ### Dependencies
 
 - [USEARCH](https://www.drive5.com/usearch/download.html) (<= 9.X for UTAX, >= 9.X for SINTAX) or [VSEARCH](https://anaconda.org/bioconda/vsearch)
