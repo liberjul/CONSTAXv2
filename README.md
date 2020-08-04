@@ -22,16 +22,16 @@ CONSTAX v.2 improves upon v.1 with the following features:
 
 ### Dependencies
 
-- [USEARCH](https://www.drive5.com/usearch/download.html) (<= 9.X for UTAX, >= 9.X for SINTAX)
+- [USEARCH](https://www.drive5.com/usearch/download.html) (<= 9.X for UTAX, >= 9.X for SINTAX) or [VSEARCH](https://anaconda.org/bioconda/vsearch)
 - [RDP](https://github.com/rdpstaff/RDPTools)
-- [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download) ([FTP site](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/))
+- [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download) ([FTP site](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/), [Bioconda](https://anaconda.org/bioconda/blast))
 - Python 3.6+, from [python.org](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/products/individual)
 - Python packages [Pandas](https://pandas.pydata.org/getting_started.html) and [Numpy](https://numpy.org/), included in the Anaconda distribution
-- [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
+- [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html) or [OpenJDK 8](https://anaconda.org/conda-forge/openjdk)
 
 ## Installation
 
-### One step, for Linux or MacOS systems
+### One step, for Linux, [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10), or MacOS systems
 ```
 bash install.sh
 ```
