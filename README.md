@@ -68,7 +68,7 @@ cd classifier
 ant jar -Dskip_td_download=true
 cp dist/classifier.jar ../
 ```
-#### BLAST installation (you can also use)
+#### BLAST installation
 ##### From Bioconda
 `conda install -c bioconda blast`
 ##### From NCBI
