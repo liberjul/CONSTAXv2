@@ -12,7 +12,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -42,6 +42,7 @@ then
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
   echo "--rdp_path                                          Path to RDP classifier.jar file"
   echo "--constax_path                                      Path to CONSTAX scripts"
+  echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
   echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
   echo "-h, --help                                          Display this help and exit"
   exit 1
@@ -69,6 +70,7 @@ SINTAXPATH=false
 UTAXPATH=false
 RDPPATH=false
 CONSTAXPATH=false
+PATHFILE=pathfile.txt
 MEM=32000
 ISOLATES=null
 USE_ISOS=False # Used as python bool
@@ -90,6 +92,7 @@ while true; do
     --sintax_path ) SINTAXPATH="$2"; shift 2 ;;
     --utax_path ) UTAXPATH="$2"; shift 2 ;;
     --constax_path ) CONSTAXPATH="${2%/}"; shift 2 ;;
+    --pathfile ) PATHFILE="${2%/}"; shift 2 ;;
     --isolates ) ISOLATES="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
@@ -126,6 +129,7 @@ if $HELP
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
     echo "--rdp_path                                          Path to RDP classifier.jar file"
     echo "--constax_path                                      Path to CONSTAX scripts"
+    echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
     echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
     echo "-h, --help                                          Display this help and exit"
 		exit 1
@@ -211,6 +215,11 @@ else # Training not true
 		exit 1
 	fi
 fi
+if [ -f $PATHFILE ]
+then
+  source $PATHFILE
+fi
+
 if $MSU_HPCC
 then
   SINTAXPATH=/mnt/research/rdp/public/thirdParty/usearch10.0.240_i86linux64

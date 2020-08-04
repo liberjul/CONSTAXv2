@@ -8,6 +8,7 @@ CONSTAX v.2 improves upon v.1 with the following features:
 - Streamlined command-line implementation
 - BLAST classification option, due to legacy status of UTAX
 - Parallelization of classification tasks
+- Isolate matching
 
 ### Developed by
 - [Julian Liber](https://github.com/liberjul)
@@ -28,7 +29,14 @@ CONSTAX v.2 improves upon v.1 with the following features:
 - Python packages [Pandas](https://pandas.pydata.org/getting_started.html) and [Numpy](https://numpy.org/), included in the Anaconda distribution
 - [Java 8 JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
 
-### Installation
+## Installation
+
+### One step, for Linux or MacOS systems
+```
+bash install.sh
+```
+This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
+### Custom installation, or for Windows OS
 
 #### USEARCH installation
 1. Download the desired version from [here](https://www.drive5.com/usearch/download.html).
@@ -48,16 +56,20 @@ apt install ant
 ```
 git clone https://github.com/rdpstaff/RDPTools.git
 cd RDPTools
-git submodule init
+git submodule init AlignmentTools ReadSeq classifier TaxonomyTree
 git submodule update
-sed -i 's/1.5/1.6/' AlignmentTools/nbproject/project.properties
-sed -i 's/1.5/1.6/' ReadSeq/nbproject/project.properties
-sed -i 's/1.5/1.6/' classifier/nbproject/project.properties
+sed -i 's/1.5/1.6/' AlignmentTools/nbproject/project.properties ReadSeq/nbproject/project.properties classifier/nbproject/project.properties
+sed -i 's/basedir="."/basedir="." xmlns:unless="ant:unless"/' classifier/build.xml
+sed -i 's/name="download-traindata" unless="offline"/name="download-traindata" unless="skip_td_download"/' classifier/build.xml
+sed -i 's+move file="${dist.dir}/data.tgz"+move unless:set="skip_td_download" file="${dist.dir}/data.tgz"+' classifier/build.xml
 cd classifier
-ant jar
+ant jar -Dskip_td_download=true
 cp dist/classifier.jar ../
 ```
-#### BLAST installation
+#### BLAST installation (you can also use)
+##### From Bioconda
+`conda install -c bioconda blast`
+##### From NCBI
 1. Download the BLAST executables from [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/). The ncbi-blast-\<version\>+-x64-\<system\>64.tar.gz file works fine.
 2. Unzip with `tar -xzvf ncbi-blast-<version>+-x64-<system>64.tar.gz` (replace version and system).
 3. Add the `blastn` and `makeblastdb` executables to your path. You can do this by moving them to your `bin` directory.
@@ -107,11 +119,13 @@ Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX
 -t, --train                                         Complete training if specified
 -b, --blast                                         Use BLAST instead of UTAX if specified
 --msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC
+--conservative                                      If specified, use conservative consensus rule (2 null = null winner)
 --mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA.
 --sintax_path                                       Path to USEARCH executable for SINTAX classification
 --utax_path                                         Path to USEARCH executable for UTAX classification
 --rdp_path                                          Path to RDP classifier.jar file
 --constax_path                                      Path to CONSTAX scripts
+--isolates                                          FASTA formatted file of isolates to use BLAST against
 -h, --help                                          Display this help and exit
 ```
 If using a database for the first time, you will need to use the `-t` or `--train` flag to train the classifiers on the dataset.
