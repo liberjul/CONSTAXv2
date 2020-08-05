@@ -160,7 +160,7 @@ elif ! [ -s "$INPUT" ]
 then
 	echo "Input file $INPUT is empty, exiting..."
 	exit 1
-elif [ ${INPUT: -6} == ".fasta" ]
+elif [ ${INPUT: -6} -ne ".fasta" ]
 then
   echo "Input file $INPUT must end with .fasta, exiting..."
   exit 1
@@ -170,7 +170,7 @@ if ! [ -s "$DB" ]
 then
 	echo "Database file $DB is non-existent or empty, exiting..."
   exit 1
-elif [ ${DB: -6} == ".fasta" ]
+elif [ ${DB: -6} -ne ".fasta" ]
 then
   echo "Database file $DB must end with .fasta, exiting..."
   exit
