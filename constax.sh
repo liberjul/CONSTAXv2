@@ -228,13 +228,12 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST  && if [ $(command -v blastn) ] && [ $(command -v $SINTAXPATH) ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
+elif $BLAST  && [ $(command -v blastn) ] && [ $(command -v $SINTAXPATH) ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
   echo "RDP: $RDPPATH"
   echo "CONSTAX: $CONSTAXPATH"
-fi
 elif ! $BLAST  && [ $(command -v $SINTAXPATH) ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ] && [ $(command -v $UTAXPATH) ]
 then
   echo "All needed executables exist."
