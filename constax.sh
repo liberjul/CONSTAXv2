@@ -92,7 +92,7 @@ while true; do
     --sintax_path ) SINTAXPATH="$2"; shift 2 ;;
     --utax_path ) UTAXPATH="$2"; shift 2 ;;
     --constax_path ) CONSTAXPATH="${2%/}"; shift 2 ;;
-    --pathfile ) PATHFILE="${2%/}"; shift 2 ;;
+    --pathfile ) PATHFILE="$2"; shift 2 ;;
     --isolates ) ISOLATES="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
@@ -218,6 +218,8 @@ fi
 if [ -f $PATHFILE ]
 then
   source $PATHFILE
+else
+  echo "Pathfile input not found at $PATHFILE"
 fi
 
 if $MSU_HPCC
