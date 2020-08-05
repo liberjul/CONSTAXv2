@@ -278,7 +278,7 @@ then
 
   echo "__________________________________________________________________________"
 	echo "Training SINTAX Classifier"
-  if [ $(echo $SINTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 ]
+  if [ $(echo $SINTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
   then
   	$SINTAXPATH -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
   else
@@ -358,7 +358,11 @@ if [ -f $ISOLATES ] && [ -s $ISOLATES ]
 then
   echo "Comparing to Isolates"
   USE_ISOS=True
-  module load BLAST
+
+  if $MSU_HPCC && ! $BLAST
+  then
+    module load BLAST
+  fi
 
   makeblastdb -in $ISOLATES -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
 
