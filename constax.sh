@@ -228,12 +228,19 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST  && [ -f $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
+elif $BLAST  && [ command -v blastn ] && [ command -v $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
 then
   echo "All needed executables exist."
-elif ! $BLAST  && [ -f $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ] && [ -f $UTAXPATH ]
+  echo "SINTAX: $SINTAXPATH"
+  echo "RDP: $RDPPATH"
+  echo "CONSTAX: $CONSTAXPATH"
+elif ! $BLAST  && [ command -v $SINTAXPATH ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ] && [ command -v $UTAXPATH ]
 then
   echo "All needed executables exist."
+  echo "SINTAX: $SINTAXPATH"
+  echo "RDP: $RDPPATH"
+  echo "UTAX: $UTAXPATH"
+  echo "CONSTAX: $CONSTAXPATH"
 else
   echo "Please specify --msu_hpcc if using it, otherwise specify paths for --sintax_path,"
   echo "--rdp_path, --utax_path (if not using BLAST), and --constax_path"
