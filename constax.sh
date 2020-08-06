@@ -12,7 +12,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,make_plot,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -37,6 +37,7 @@ then
   echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
   echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
+  echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
   echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
   echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -70,6 +71,7 @@ SINTAXPATH=false
 UTAXPATH=false
 RDPPATH=false
 CONSTAXPATH=false
+MAKE_PLOT=false
 PATHFILE=pathfile.txt
 MEM=32000
 ISOLATES=null
@@ -99,6 +101,7 @@ while true; do
 		-h | --help ) HELP=true; shift ;;
     --msu_hpcc ) MSU_HPCC=true; shift ;;
     --conservative ) CONSERVATIVE=True; shift ;;
+    --make_plot ) MAKE_PLOT=true; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -124,6 +127,7 @@ if $HELP
     echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
     echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
+    echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
     echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
     echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -390,11 +394,13 @@ fi
 
 # plot R
 # Rscript /mnt/research/common-data/Bio/UserDownloads/CONSTAX/R/ComparisonBars.R -o "$OUTPUT/"
-if $BLAST
+
+if $MAKE_PLOT && $BLAST
 then
   # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" FALSE
   Rscript $CONSTAXPATH/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
-else
+elif $MAKE_PLOT
+then
   # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" TRUE
   Rscript $CONSTAXPATH/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
 fi
