@@ -251,11 +251,11 @@ else # Then try in package directory.
   fi
 fi
 # Check for user input paths
-if [ $(command -v $SINTAXPATH_USER) ]
+if [ $(command -v $SINTAXPATH_USER) ] && [[ $SINTAXPATH_USER != false ]]
 then
   SINTAXPATH=$SINTAXPATH_USER
 fi
-if [ $(command -v $UTAXPATH_USER) ]
+if [ $(command -v $UTAXPATH_USER) ] && [[ $UTAXPATH_USER != false ]]
 then
   UTAXPATH=$UTAXPATH_USER
 fi
