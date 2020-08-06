@@ -236,6 +236,7 @@ else
   PATHFILE=$DIR"/pkgs/constax-2.0.0-0/opt/constax-2.0.0/pathfile.txt"
   if [ -f $PATHFILE ]
   then
+    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-2.0.0-0/opt/constax|g" $PATHFILE
     source $PATHFILE
   else
     echo "Pathfile input not found at $PATHFILE ..."
