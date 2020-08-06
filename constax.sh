@@ -20,7 +20,7 @@ then
   echo "Terminating..." >&2
   echo ""
   echo "Usage: ./constax.sh [OPTION] ..."
-  echo "Classify input OTU sequences by CONSTAX consesus taxonomy algorithm"
+  echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
   echo "Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
   echo ""
   echo "-c, --conf=0.8                                      Classification confidence threshold"
@@ -112,7 +112,7 @@ done
 if $HELP
 	then
     echo "Usage: ./constax.sh [OPTION] ..."
-    echo "Classify input OTU sequences by CONSTAX consesus taxonomy algorithm"
+    echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
     echo "Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
     echo ""
     echo "-c, --conf=0.8                                      Classification confidence threshold"
