@@ -231,7 +231,15 @@ if [ -f $PATHFILE ]
 then
   source $PATHFILE
 else
-  echo "Pathfile input not found at $PATHFILE"
+  echo "Pathfile input not found at $PATHFILE ..."
+  DIR=$(conda list | head -n 1 | rev | cut -d" " -f1 | rev | cut -d: -f1)
+  PATHFILE=$DIR"/pkgs/constax-2.0.0-0/opt/constax-2.0.0/pathfile.txt"
+  if [ -f $PATHFILE ]
+  then
+    source $PATHFILE
+  else
+    echo "Pathfile input not found at $PATHFILE ..."
+  fi
 fi
 
 if $MSU_HPCC
