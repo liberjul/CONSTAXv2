@@ -7,12 +7,12 @@ echo "#                     MIT License                              #"
 echo "#                 Copyright (C) 2020                           #"
 echo "#  Julian Liber, Gian Maria Niccolo' Benucci, Gregory Bonito   #"
 echo "#                                                              #"
-echo "#           https://github.com/Gian77/CONSTAX                  #"
+echo "#         https://github.com/liberjul/CONSTAXv2                #"
 echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,conservative,make_plot,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -35,7 +35,7 @@ then
   echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
   echo "-t, --train                                         Complete training if specified"
   echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
-  echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
+  echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
   echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
@@ -46,16 +46,17 @@ then
   echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
   echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
   echo "-h, --help                                          Display this help and exit"
+  echo "-v, --version                                       Display version and exit"
   exit 1
 fi
 
-# Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
 
-
+VERSION=2.0.0; BUILD=0
 TRAIN=false
 BLAST=false
 HELP=false
+SHOW_VERSION=false
 MSU_HPCC=false
 CONSERVATIVE=False
 CONF=0.8
@@ -67,10 +68,10 @@ DB=/mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fun
 INPUT=otus.fasta
 OUTPUT=./outputs
 TAX=./taxonomy_assignments
-SINTAXPATH=false
-UTAXPATH=false
-RDPPATH=false
-CONSTAXPATH=false
+SINTAXPATH_USER=false
+UTAXPATH_USER=false
+RDPPATH_USER=false
+CONSTAXPATH_USER=false
 MAKE_PLOT=false
 PATHFILE=pathfile.txt
 MEM=32000
@@ -90,15 +91,16 @@ while true; do
 		-x | --tax ) TAX="${2%/}"; shift 2 ;;
     -f | --trainfile ) TFILES="${2%/}"; shift 2 ;;
     --mem ) MEM="$2"; shift 2 ;;
-    --rdp_path ) RDPPATH="$2"; shift 2 ;;
-    --sintax_path ) SINTAXPATH="$2"; shift 2 ;;
-    --utax_path ) UTAXPATH="$2"; shift 2 ;;
-    --constax_path ) CONSTAXPATH="${2%/}"; shift 2 ;;
+    --rdp_path ) RDPPATH_USER="$2"; shift 2 ;;
+    --sintax_path ) SINTAXPATH_USER="$2"; shift 2 ;;
+    --utax_path ) UTAXPATH_USER="$2"; shift 2 ;;
+    --constax_path ) CONSTAXPATH_USER="${2%/}"; shift 2 ;;
     --pathfile ) PATHFILE="$2"; shift 2 ;;
     --isolates ) ISOLATES="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
+    -v | --version) SHOW_VERSION=true; shift ;;
     --msu_hpcc ) MSU_HPCC=true; shift ;;
     --conservative ) CONSERVATIVE=True; shift ;;
     --make_plot ) MAKE_PLOT=true; shift ;;
@@ -125,7 +127,7 @@ if $HELP
     echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
     echo "-t, --train                                         Complete training if specified"
     echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
-    echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC"
+    echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
     echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
@@ -136,7 +138,13 @@ if $HELP
     echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
     echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
     echo "-h, --help                                          Display this help and exit"
+    echo "-v, --version                                       Display version and exit"
 		exit 1
+fi
+if $SHOW_VERSION
+then
+  echo "CONSTAX version $VERSION"
+  exit 1
 fi
 if [ $MAX_HITS -eq 0 ]
 then
@@ -227,20 +235,37 @@ else # Training not true
 		exit 1
 	fi
 fi
-if [ -f $PATHFILE ]
+if [ -f $PATHFILE ] # First try in local directory
 then
   source $PATHFILE
-else
-  echo "Pathfile input not found at $PATHFILE ..."
+else # Then try in package directory.
+  echo "Pathfile input not found in local directory ..."
   DIR=$(conda list | head -n 1 | rev | cut -d" " -f1 | rev | cut -d: -f1)
-  PATHFILE=$DIR"/pkgs/constax-2.0.0-0/opt/constax-2.0.0/pathfile.txt"
+  PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
   if [ -f $PATHFILE ]
   then
-    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-2.0.0-0/opt/constax|g" $PATHFILE
+    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" $PATHFILE
     source $PATHFILE
   else
     echo "Pathfile input not found at $PATHFILE ..."
   fi
+fi
+# Check for user input paths
+if [ $(command -v $SINTAXPATH_USER) ]
+then
+  SINTAXPATH=$SINTAXPATH_USER
+fi
+if [ $(command -v $UTAXPATH_USER) ]
+then
+  UTAXPATH=$UTAXPATH_USER
+fi
+if [ -f $RDPPATH_USER ]
+then
+  RDPPATH=$RDPPATH_USER
+fi
+if [ -d $CONSTAXPATH_USER ]
+then
+  CONSTAXPATH=$CONSTAXPATH_USER
 fi
 
 if $MSU_HPCC
