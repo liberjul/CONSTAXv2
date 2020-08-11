@@ -1,6 +1,7 @@
 # Written by Natalie Vande Pol
 # November 15, 2017
-#
+# Revised by Julian Liber
+# August 11, 2020
 # Command line: python MasterScript2.py
 # Script will locate the taxonomy file from each classifier and validate file
 # Creates a taxonomy file in standardized format for each input file and
@@ -313,18 +314,18 @@ def build_iso_dict(isolate_file):
 				line = ifile.readline()
 				line = ifile.readline()
 				if line == "# 0 hits found\n": # If no hits found
-					iso_dict[quer] = ["", ""]
+					iso_dict[quer] = ["", "0"]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
 				if int(spl[5]) > 75:
 					iso_dict[spl[0]] = [spl[1], spl[4]]
 				else:
-					iso_dict[spl[0]] = ["", ""]
+					iso_dict[spl[0]] = ["", "0"]
 			line = ifile.readline()
 	return iso_dict
 
 ################################################################################
-def build_dict(filename):
+def build_dict(filename, ranks):
 	file = open(filename, "r")
 	all_lines = file.readlines()
 	file.close()
@@ -335,8 +336,8 @@ def build_dict(filename):
 		dict[temp[0]] = []
 		if len(temp)>2:
 			dict[temp[0]]=temp[2:]
-		if len(dict[temp[0]])<14:
-			while len(dict[temp[0]])<14:
+		if len(dict[temp[0]])<len(ranks)*2:
+			while len(dict[temp[0]])<len(ranks)*2:
 				dict[temp[0]].append("")
 		# strip numbers from species identifications
 		species = "".join(
@@ -514,7 +515,7 @@ if args.format == "UNITE":
 		if classifier == "rdp":
 			print("\n____________________________________________________________________\nReformatting "+classifier.upper()+" file\n")
 			rdp_file = reformat_RDP(file_name, args.output_dir, args.conf, ranks)
-			rdp_dict = build_dict(rdp_file)
+			rdp_dict = build_dict(rdp_file, ranks)
 		elif classifier == "utax":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			uta_file = reformat_UTAX(file_name, args.output_dir, args.conf, ranks)
@@ -522,11 +523,11 @@ if args.format == "UNITE":
 		elif classifier == "blast":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			blast_file = reformat_BLAST(file_name, args.output_dir, args.conf, max_hits=args.mhits, ethresh=args.evalue, p_iden_thresh=args.p_iden, ranks=ranks)
-			blast_dict = build_dict(blast_file)
+			blast_dict = build_dict(blast_file, ranks)
 		else:
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
-			sin_dict = build_dict(sin_file)
+			sin_dict = build_dict(sin_file, ranks)
 		if args.isolates == "True":
 			print("\nReformatting isolate result file\n")
 			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
@@ -551,14 +552,14 @@ if args.format == "UNITE":
 				consensus.write(otu+"\t")
 				combined.write(otu)
 				levels = []
-				for m in range(0,14,2):
+				for m in range(0,len(ranks)*2,2):
 					level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
 					combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
 					if level != "":
 						levels.append(level)
 					combined.write(level)
 				if args.isolates == "True":
-					lev_string = '\t'.join(levels)
+					lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
 					consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 				else:
 					consensus.write("\t".join(levels)+"\n")
@@ -582,14 +583,14 @@ if args.format == "UNITE":
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
-			for m in range(0,14,2):
+			for m in range(0,len(ranks)*2,2):
 				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], arg.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t"+uta_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels)
+				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
@@ -646,19 +647,19 @@ else:
 		if classifier == "rdp":
 			print("\n____________________________________________________________________\nReformatting "+classifier.upper()+" file\n")
 			rdp_file = reformat_RDP(file_name, args.output_dir, args.conf, ranks)
-			rdp_dict = build_dict(rdp_file)
+			rdp_dict = build_dict(rdp_file, ranks)
 		elif classifier == "utax":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			uta_file = reformat_UTAX(file_name, args.output_dir, args.conf, ranks)
-			uta_dict = build_dict(uta_file)
+			uta_dict = build_dict(uta_file, ranks)
 		elif classifier == "blast":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			blast_file = reformat_BLAST(file_name, args.output_dir, args.conf, max_hits=args.mhits, ethresh=args.evalue, p_iden_thresh=args.p_iden, ranks=ranks)
-			blast_dict = build_dict(blast_file)
+			blast_dict = build_dict(blast_file, ranks)
 		else:
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
-			sin_dict = build_dict(sin_file)
+			sin_dict = build_dict(sin_file, ranks)
 		if args.isolates == "True":
 			print("\nReformatting isolate result file\n")
 			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
@@ -685,14 +686,14 @@ else:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
-			for m in range(0,14,2):
+			for m in range(0,len(ranks)*2,2):
 				level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels)
+				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
@@ -727,14 +728,14 @@ else:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
-			for m in range(0,14,2):
+			for m in range(0,len(ranks)*2,2):
 				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], args.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t"+uta_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
 				combined.write(level)
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels)
+				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
 				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
 			else:
 				consensus.write("\t".join(levels)+"\n")
