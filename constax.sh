@@ -172,7 +172,7 @@ elif ! [ -s "$INPUT" ]
 then
 	echo "Input file $INPUT is empty, exiting..."
 	exit 1
-elif [[ $INPUT != *.fasta ]]
+elif [[ "$INPUT" != *.fasta ]]
 then
   echo "Input file $INPUT must end with .fasta, exiting..."
   exit 1
@@ -182,7 +182,7 @@ if ! [ -s "$DB" ]
 then
 	echo "Database file $DB is non-existent or empty, exiting..."
   exit 1
-elif [[ $DB != *.fasta ]]
+elif [[ "$DB" != *.fasta ]]
 then
   echo "Database file $DB must end with .fasta, exiting..."
   exit 1
@@ -211,7 +211,7 @@ fi
 
 if $TRAIN && ! [ -d "$TFILES" ] # if training is true and path does not exist
 then
-	mkdir $TFILES
+	mkdir "$TFILES"
 fi
 
 if $TRAIN
@@ -235,37 +235,38 @@ else # Training not true
 		exit 1
 	fi
 fi
-if [ -f $PATHFILE ] # First try in local directory
+if [ -f "$PATHFILE" ] # First try in local directory
 then
-  source $PATHFILE
+  echo "Using local pathfile $PATHFILE"
+  source "$PATHFILE"
 else # Then try in package directory.
   echo "Pathfile input not found in local directory ..."
   DIR=$(conda list | head -n 1 | rev | cut -d" " -f1 | rev | cut -d: -f1)
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
-  if [ -f $PATHFILE ]
+  if [ -f "$PATHFILE" ]
   then
-    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" $PATHFILE
-    source $PATHFILE
+    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE"
+    source "$PATHFILE"
   else
     echo "Pathfile input not found at $PATHFILE ..."
   fi
 fi
 # Check for user input paths
-if [ $(command -v $SINTAXPATH_USER) ] && [[ $SINTAXPATH_USER != false ]]
+if [ $(command -v "$SINTAXPATH_USER") ] && [[ "$SINTAXPATH_USER" != false ]]
 then
-  SINTAXPATH=$SINTAXPATH_USER
+  SINTAXPATH="$SINTAXPATH_USER"
 fi
-if [ $(command -v $UTAXPATH_USER) ] && [[ $UTAXPATH_USER != false ]]
+if [ $(command -v "$UTAXPATH_USER") ] && [[ "$UTAXPATH_USER" != false ]]
 then
-  UTAXPATH=$UTAXPATH_USER
+  UTAXPATH="$UTAXPATH_USER"
 fi
-if [ -f $RDPPATH_USER ]
+if [ -f "$RDPPATH_USER" ]
 then
-  RDPPATH=$RDPPATH_USER
+  RDPPATH="$RDPPATH_USER"
 fi
-if [ -d $CONSTAXPATH_USER ]
+if [ -d "$CONSTAXPATH_USER" ]
 then
-  CONSTAXPATH=$CONSTAXPATH_USER
+  CONSTAXPATH="$CONSTAXPATH_USER"
 fi
 
 if $MSU_HPCC
@@ -274,13 +275,13 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST && [ $(command -v blastn) ] && [ $(command -v $SINTAXPATH) ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ]
+elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ -f "$RDPPATH" ] && [ -d "$CONSTAXPATH" ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
   echo "RDP: $RDPPATH"
   echo "CONSTAX: $CONSTAXPATH"
-elif ! $BLAST && [ $(command -v $SINTAXPATH) ] && [ -f $RDPPATH ] && [ -d $CONSTAXPATH ] && [ $(command -v $UTAXPATH) ]
+elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ -f "$RDPPATH" ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
@@ -292,16 +293,15 @@ else
   echo "--rdp_path, --utax_path (if not using BLAST), and --constax_path"
   exit 1
 fi
-if ! $BLAST  && [ $(echo $UTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
+if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
 then
   echo "USEARCH executable must be version 9.X or lower to use UTAX"
   exit 1
 fi
 
-# Execute the python script, passing as the first argument the value of the variable ref_database declared in sconfig
 base=$(basename -- ${DB%.fasta})
 
-FORMAT=$(python $CONSTAXPATH/detect_format.py -d $DB -t $TFILES 2>&1)
+FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" -t "$TFILES" 2>&1)
 
 echo "Memory size: "$MEM"mb"
 
@@ -312,15 +312,15 @@ fi
 
 if $TRAIN
 then
-	python $CONSTAXPATH/FormatRefDB.py -d $DB -t $TFILES -f $FORMAT -p $CONSTAXPATH
+	python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH"
 
   echo "__________________________________________________________________________"
 	echo "Training SINTAX Classifier"
-  if [ $(echo $SINTAXPATH | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+  if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
   then
-  	$SINTAXPATH -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+  	"$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
   else
-    $SINTAXPATH -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+    "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
   fi
   if $BLAST
   then
@@ -336,17 +336,17 @@ then
     echo "__________________________________________________________________________"
     echo "Training UTAX Classifier"
 
-    $UTAXPATH -utax_train "${TFILES}/${base}"__UTAX.fasta -report ${TFILES}/utax_db_report.txt -taxconfsout ${TFILES}/utax.tc \
+    "$UTAXPATH" -utax_train "${TFILES}/${base}"__UTAX.fasta -report ${TFILES}/utax_db_report.txt -taxconfsout ${TFILES}/utax.tc \
     -utax_splitlevels NVpcofgs -utax_trainlevels kpcofgs -log ${TFILES}/utax_train.log -report ${TFILES}/utax_report.txt
 
-    $UTAXPATH -makeudb_utax "${TFILES}/${base}"__UTAX.fasta -taxconfsin ${TFILES}/utax.tc -output ${TFILES}/utax.db \
+    "$UTAXPATH" -makeudb_utax "${TFILES}/${base}"__UTAX.fasta -taxconfsin ${TFILES}/utax.tc -output ${TFILES}/utax.db \
      -log ${TFILES}/make_udb.log -report ${TFILES}/utax_report.txt
 
   fi
 	echo "__________________________________________________________________________"
   echo "Training RDP Classifier"
 
-  java -Xmx"$MEM"m -jar $RDPPATH train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+  java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
 
   # The rRNAClassifier.properties file should be in one of these two places
   if [ -f ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties ]
@@ -367,10 +367,10 @@ fi
 echo "__________________________________________________________________________"
 echo "Assigning taxonomy to OTU's representative sequences"
 
-FRM_INPUT=$(python $CONSTAXPATH/check_input_names.py -i "$INPUT" 2>&1)
+FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" 2>&1)
 
-$SINTAXPATH -sintax $FRM_INPUT -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
-if [[ $SINTAXPATH == vsearch ]]
+"$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
+if [[ "$SINTAXPATH" == vsearch ]]
 then
   sed -i 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
 fi
@@ -382,21 +382,19 @@ then
     module load BLAST
   fi
 
-  blastn -query $FRM_INPUT -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
-  # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES
-  python $CONSTAXPATH/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT
+  blastn -query "$FRM_INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
+  python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
 else
-  $UTAXPATH -utax $FRM_INPUT -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+  "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
 
 fi
 
-java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp $FRM_INPUT
+java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
 
 echo "__________________________________________________________________________"
 echo "Combining Taxonomies"
 
-    # python /mnt/research/common-data/Bio/UserDownloads/CONSTAX/scripts/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/"
-if [ -f $ISOLATES ] && [ -s $ISOLATES ]
+if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
 then
   echo "Comparing to Isolates"
   USE_ISOS=True
@@ -406,19 +404,17 @@ then
     module load BLAST
   fi
 
-  makeblastdb -in $ISOLATES -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
+  makeblastdb -in "$ISOLATES" -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
 
-  blastn -query $FRM_INPUT -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+  blastn -query "$FRM_INPUT" -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
-rm $FRM_INPUT
+rm "$FRM_INPUT"
 
 if $BLAST
 then
-  # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS -s $CONSERVATIVE
 else
-  # python /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/CombineTaxonomy_silva.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES
-  python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS -s $CONSERVATIVE
 fi
 if $MSU_HPCC
 then
@@ -432,9 +428,9 @@ fi
 if $MAKE_PLOT && $BLAST
 then
   # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" FALSE
-  Rscript $CONSTAXPATH/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
+  Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
 elif $MAKE_PLOT
 then
   # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" TRUE
-  Rscript $CONSTAXPATH/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
+  Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
 fi
