@@ -483,32 +483,23 @@ if args.format == "UNITE":
 		file_name = F"{args.tax}otu_taxonomy."+classifier
 		try:
 			open(file_name,"r")
-		except IOError:
-			print("ERROR: "+classifier.upper()+" file could not be opened.")
-			sys.exit()
+		except FileNotFoundError:
+			raise FileNotFoundError(F"{classifier.upper()} file could not be opened.")
 		input_file = open(file_name,"r")
 		line = input_file.readline()
 		temp0 = line.split("\t")
 		if classifier == "rdp":
 			if len(temp0)<10 or temp0[3]!="rootrank":
-				print("Input file not in RDP format. Please Reformat As Below:")
-				print("OTU_###	_	Root	rootrank	1.0	Fungi	Kingdom	0.98	Zygomycota	Phylum	0.05	Zygomycota_Incertae_sedis	Class	0.05	Mucorales	Order	0.04	Syncephalastraceae	Family	0.01	Fennellomyces	Genus	0.01	Fennellomyces linderi	Species	0.01")
-				sys.exit()
+				raise ValueError("Input file not in RDP format. Please Reformat As Below:\nOTU_###	_	Root	rootrank	1.0	Fungi	Kingdom	0.98	Zygomycota	Phylum	0.05	Zygomycota_Incertae_sedis	Class	0.05	Mucorales	Order	0.04	Syncephalastraceae	Family	0.01	Fennellomyces	Genus	0.01	Fennellomyces linderi	Species	0.01")
 		elif classifier == "utax":
 			if ",s:" not in temp0[1] or not temp0[1].startswith("d:"):
-				print("Input file not in UTAX format. Please Reformat As Below:")
-				print("OTU_###	d:Fungi,p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
-				sys.exit()
+				raise ValueError("Input file not in UTAX format. Please Reformat As Below:\nOTU_###	d:Fungi,p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
 		elif classifier == "blast":
 			if "query,subject,bitscore,e_value,percent_identity,query_coverage" not in temp0[0]:
-				print("Input file not in BLAST format. Please Reformat As Below:")
-				print("query,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species")
-				sys.exit()
+				raise ValueError("Input file not in BLAST format. Please Reformat As Below:\nquery,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species")
 		else:
 			if "),s:" not in temp0[1] or not temp0[1].startswith("d:"):
-				print("Input file not in SINTAX format. Please Reformat As Below:")
-				print("OTU_###	d:Fungi(1.0000),p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
-				sys.exit()
+				raise ValueError("Input file not in SINTAX format. Please Reformat As Below:\nOTU_###	d:Fungi(1.0000),p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
 
 		input_file.close()
 
@@ -615,33 +606,23 @@ else:
 		file_name = F"{args.tax}otu_taxonomy."+classifier
 		try:
 			open(file_name,"r")
-		except IOError:
-			print("ERROR: "+classifier.upper()+" file could not be opened.")
-			sys.exit()
+		except FileNotFoundError:
+			raise FileNotFoundError(F"{classifier.upper()} file could not be opened.")
 		input_file = open(file_name,"r")
 		line = input_file.readline()
 		temp0 = line.split("\t")
 		if classifier == "rdp":
 			if len(temp0)<10 or temp0[3]!="rootrank":
-				print("Input file not in RDP format. Please Reformat As Below:")
-				print("OTU_###	_	Root	rootrank	1.0	Fungi	Kingdom	0.98	Zygomycota	Phylum	0.05	Zygomycota_Incertae_sedis	Class	0.05	Mucorales	Order	0.04	Syncephalastraceae	Family	0.01	Fennellomyces	Genus	0.01	Fennellomyces linderi	Species	0.01")
-				sys.exit()
+				raise ValueError("Input file not in RDP format. Please Reformat As Below:\nOTU_###	Root	rootrank	1.0	Bacteria_1	Rank_1	1.0	Firmicutes_1	Rank_2	1.0	Bacilli_1	Rank_3	1.0	Bacillales_1	Rank_4	0.8	Bacillaceae_1	Rank_5	0.8	Bacillus_1	Rank_6	0.8	Bacillus_pumilus_1	Rank_7	0.8")
 		elif classifier == "utax":
 			if not temp0[1].startswith("R1:"):
-				print("Input file not in UTAX format. Please Reformat As Below:")
-				print("OTU_###	d:Fungi,p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
-				sys.exit()
+				raise ValueError("Input file not in UTAX format. Please Reformat As Below:\nOTU_###	d:Bacteria_1(1.0000),k:Firmicutes_1(1.0000),p:Bacilli_1(0.9600),c:Bacillales_1(0.7200),o:Bacillaceae_1(0.7200),f:Bacillus_1(0.7200),g:Bacillus_pumilus_1(0.7200)	+	d:Bacteria_1,k:Firmicutes_1,p:Bacilli_1")
 		elif classifier == "blast":
 			if "query,subject,bitscore,e_value,percent_identity,query_coverage" not in temp0[0]:
-				print("Input file not in BLAST format. Please Reformat As Below:")
-				print("query,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species")
-				sys.exit()
+				raise ValueError("Input file not in BLAST format. Please Reformat As Below:\nquery,subject,bitscore,e_value,percent_identity,query_coverage,Rank_1,Rank_2,Rank_3,Rank_4,Rank_5,Rank_6,Rank_7")
 		else:
 			if temp0[1].startswith("R1:"):
-				print("Input file not in SINTAX format. Please Reformat As Below:")
-				print("OTU_###	d:Fungi(1.0000),p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
-				sys.exit()
-
+				raise ValueError("Input file not in SINTAX format. Please Reformat As Below:\nOTU_###	d:Bacteria_1(1.0000),k:Firmicutes_1(1.0000),p:Bacilli_1(0.9600),c:Bacillales_1(0.7200),o:Bacillaceae_1(0.7200),f:Bacillus_1(0.7200),g:Bacillus_pumilus_1(0.7200)	+	d:Bacteria_1,k:Firmicutes_1,p:Bacilli_1")
 		input_file.close()
 
 		if classifier == "rdp":

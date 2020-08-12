@@ -291,6 +291,10 @@ then
 else
   echo "Please specify --msu_hpcc if using it, otherwise specify paths for --sintax_path,"
   echo "--rdp_path, --utax_path (if not using BLAST), and --constax_path"
+  echo "SINTAX: $SINTAXPATH"
+  echo "RDP: $RDPPATH"
+  echo "UTAX: $UTAXPATH"
+  echo "CONSTAX: $CONSTAXPATH"
   exit 1
 fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
@@ -349,12 +353,12 @@ then
   java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
 
   # The rRNAClassifier.properties file should be in one of these two places
-  if [ -f ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties ]
+  if [ -f "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties ]
   then
-    cp ${RDPPATH%dist/classifier.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
-  elif [ -f ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties ]
+    cp "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
+  elif [ -f "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties ]
   then
-    cp ${RDPPATH%.jar}/samplefiles/rRNAClassifier.properties "${TFILES}"/
+    cp "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
   else
     echo "Cannot locate rRNAClassifier.properties file, please place in RDPTools/classifier/samplefiles"
   fi
