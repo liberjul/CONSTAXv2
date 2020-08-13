@@ -489,7 +489,9 @@ if args.format == "UNITE":
 		line = input_file.readline()
 		temp0 = line.split("\t")
 		if classifier == "rdp":
-			if len(temp0)<10 or temp0[3]!="rootrank":
+			if len(temp)==0:
+				raise ValueError("RDP file is empty. Did you allot enough memory with --mem?")
+			elif len(temp0)<10 or temp0[3]!="rootrank":
 				raise ValueError("Input file not in RDP format. Please Reformat As Below:\nOTU_###	_	Root	rootrank	1.0	Fungi	Kingdom	0.98	Zygomycota	Phylum	0.05	Zygomycota_Incertae_sedis	Class	0.05	Mucorales	Order	0.04	Syncephalastraceae	Family	0.01	Fennellomyces	Genus	0.01	Fennellomyces linderi	Species	0.01")
 		elif classifier == "utax":
 			if ",s:" not in temp0[1] or not temp0[1].startswith("d:"):
@@ -612,7 +614,9 @@ else:
 		line = input_file.readline()
 		temp0 = line.split("\t")
 		if classifier == "rdp":
-			if len(temp0)<10 or temp0[3]!="rootrank":
+			if len(temp)==0:
+				raise ValueError("RDP file is empty. Did you allot enough memory with --mem?")
+			elif len(temp0)<10 or temp0[3]!="rootrank":
 				raise ValueError("Input file not in RDP format. Please Reformat As Below:\nOTU_###	Root	rootrank	1.0	Bacteria_1	Rank_1	1.0	Firmicutes_1	Rank_2	1.0	Bacilli_1	Rank_3	1.0	Bacillales_1	Rank_4	0.8	Bacillaceae_1	Rank_5	0.8	Bacillus_1	Rank_6	0.8	Bacillus_pumilus_1	Rank_7	0.8")
 		elif classifier == "utax":
 			if not temp0[1].startswith("R1:"):

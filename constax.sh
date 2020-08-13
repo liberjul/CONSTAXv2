@@ -275,13 +275,13 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ -f "$RDPPATH" ] && [ -d "$CONSTAXPATH" ]
+elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ $(command -v java -jar "$RDPPATH") ] && [ -d "$CONSTAXPATH" ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
   echo "RDP: $RDPPATH"
   echo "CONSTAX: $CONSTAXPATH"
-elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ -f "$RDPPATH" ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
+elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ $(command -v java -jar "$RDPPATH") ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
@@ -292,9 +292,14 @@ else
   echo "Please specify --msu_hpcc if using it, otherwise specify paths for --sintax_path,"
   echo "--rdp_path, --utax_path (if not using BLAST), and --constax_path"
   echo "SINTAX: $SINTAXPATH"
+  if ! [ $(command -v "$SINTAXPATH") ] ; then echo "SINTAX not executable" ; fi
   echo "RDP: $RDPPATH"
+  if ! [ $(command -v java -jar "$RDPPATH") ] ; then echo "RDP not executable by java -jar" ; fi
   echo "UTAX: $UTAXPATH"
+  if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable" ; fi
+  if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
+  if [ -d "$CONSTAXPATH" ] ; then echo "COSNTAX directory not found" ; fi
   exit 1
 fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
