@@ -519,11 +519,11 @@ if args.format == "UNITE":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file, ranks)
-		if args.isolates == "True":
-			print("\nReformatting isolate result file\n")
-			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
-
+	if args.isolates == "True":
+		print("\nReformatting isolate result file\n")
+		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
+		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
@@ -641,11 +641,11 @@ else:
 			print("\nReformatting "+classifier.upper()+" file\n")
 			sin_file = reformat_SINTAX(file_name, args.output_dir, args.conf, ranks)
 			sin_dict = build_dict(sin_file, ranks)
-		if args.isolates == "True":
-			print("\nReformatting isolate result file\n")
-			iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
-
+	if args.isolates == "True":
+		print("\nReformatting isolate result file\n")
+		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
+		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
