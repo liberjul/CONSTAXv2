@@ -299,7 +299,7 @@ else
   if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable" ; fi
   if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
-  if [ -d "$CONSTAXPATH" ] ; then echo "COSNTAX directory not found" ; fi
+  if [ -d "$CONSTAXPATH" ] ; then echo "CONSTAX directory not found" ; fi
   exit 1
 fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
