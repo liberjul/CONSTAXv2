@@ -260,7 +260,7 @@ if [ $(command -v "$UTAXPATH_USER") ] && [[ "$UTAXPATH_USER" != false ]]
 then
   UTAXPATH="$UTAXPATH_USER"
 fi
-if [ -f "$RDPPATH_USER" ]
+if [ -f "$RDPPATH_USER" ] [ [ $(command -v "$RPDPATH_USER") ] && [[ "$RDPPATH_USER" != false ]] ]
 then
   RDPPATH="$RDPPATH_USER"
 fi
@@ -275,13 +275,13 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ $(command -v java -jar "$RDPPATH") ] && [ -d "$CONSTAXPATH" ]
+elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ] && [ -d "$CONSTAXPATH" ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
   echo "RDP: $RDPPATH"
   echo "CONSTAX: $CONSTAXPATH"
-elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ $(command -v java -jar "$RDPPATH") ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
+elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
@@ -294,7 +294,7 @@ else
   echo "SINTAX: $SINTAXPATH"
   if ! [ $(command -v "$SINTAXPATH") ] ; then echo "SINTAX not executable" ; fi
   echo "RDP: $RDPPATH"
-  if ! [ $(command -v java -jar "$RDPPATH") ] ; then echo "RDP not executable by java -jar" ; fi
+  if ! [ $(command -v java -jar "$RDPPATH") ] && ! [ $(command -v "$RDPPATH") ] ; then echo "RDP not executable alone or by java -jar" ; fi
   echo "UTAX: $UTAXPATH"
   if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable" ; fi
   if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
@@ -355,17 +355,25 @@ then
 	echo "__________________________________________________________________________"
   echo "Training RDP Classifier"
 
-  java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+  if [ $(command -v "$RDPPATH" > /dev/null 2>&1) ]
+  then
+    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+  else
+    java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+  fi
 
   # The rRNAClassifier.properties file should be in one of these two places
-  if [ -f "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties ]
+  if [ -f "$CONSTAXPATH"/rRNAClassifier.properties ]
+  then
+    cp "$CONSTAXPATH"/rRNAClassifier.properties "${TFILES}"/
+  elif [ -f "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties ]
   then
     cp "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
   elif [ -f "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties ]
   then
     cp "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
   else
-    echo "Cannot locate rRNAClassifier.properties file, please place in RDPTools/classifier/samplefiles"
+    echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
   fi
   echo "Classifier training complete using BLAST: $BLAST" > "${TFILES}"/training_check.txt
 
@@ -398,7 +406,12 @@ else
 
 fi
 
-java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
+if [ $(command -v "$RDPPATH" > /dev/null 2>&1) ]
+then
+  "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
+else
+  java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
+fi
 
 echo "__________________________________________________________________________"
 echo "Combining Taxonomies"
