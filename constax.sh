@@ -260,7 +260,7 @@ if [ $(command -v "$UTAXPATH_USER") ] && [[ "$UTAXPATH_USER" != false ]]
 then
   UTAXPATH="$UTAXPATH_USER"
 fi
-if [ -f "$RDPPATH_USER" ] [ [ $(command -v "$RPDPATH_USER") ] && [[ "$RDPPATH_USER" != false ]] ]
+if [[ "$RDPPATH_USER" != false ]]
 then
   RDPPATH="$RDPPATH_USER"
 fi
