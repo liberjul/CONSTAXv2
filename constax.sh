@@ -12,7 +12,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -21,7 +21,7 @@ then
   echo ""
   echo "Usage: ./constax.sh [OPTION] ..."
   echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
-  echo "Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
+  echo "Example ./constax.sh -t --db ./test_data/silva_test_ref.fasta"
   echo ""
   echo "-c, --conf=0.8                                      Classification confidence threshold"
   echo "-n, --num_threads=1                                 Number of threads to use"
@@ -38,6 +38,7 @@ then
   echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
+  echo "--check                                             If specified, runs checks but stops before training or classifying"
   echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
   echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -64,7 +65,6 @@ NTHREADS=1
 MAX_HITS=10
 EVALUE=1
 P_IDEN=0.8
-DB=/mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 INPUT=otus.fasta
 OUTPUT=./outputs
 TAX=./taxonomy_assignments
@@ -73,8 +73,9 @@ UTAXPATH_USER=false
 RDPPATH_USER=false
 CONSTAXPATH_USER=false
 MAKE_PLOT=false
+CHECK=false
 PATHFILE=pathfile.txt
-MEM=32000
+MEM=false
 ISOLATES=null
 USE_ISOS=False # Used as python bool
 
@@ -104,6 +105,7 @@ while true; do
     --msu_hpcc ) MSU_HPCC=true; shift ;;
     --conservative ) CONSERVATIVE=True; shift ;;
     --make_plot ) MAKE_PLOT=true; shift ;;
+    --check ) CHECK=true; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -130,6 +132,7 @@ if $HELP
     echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
+    echo "--check                                             If specified, runs checks but stops before training or classifying"
     echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
     echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
@@ -245,8 +248,9 @@ else # Then try in package directory.
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
   if [ -f "$PATHFILE" ]
   then
-    sed -i "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE"
-    source "$PATHFILE"
+    sed "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE" > "$PATHFILE".tmp
+    source "$PATHFILE".tmp
+    rm "$PATHFILE".tmp
   else
     echo "Pathfile input not found at $PATHFILE ..."
   fi
@@ -312,11 +316,20 @@ base=$(basename -- ${DB%.fasta})
 
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" -t "$TFILES" 2>&1)
 
-echo "Memory size: "$MEM"mb"
+if [[ "$MEM" != "false" ]]
+then
+  echo "Memory size: "$MEM"mb"
+fi
 
 if [[ "$FORMAT" == "null" ]]
 then
   exit 1
+fi
+
+if $CHECK
+then
+  echo "All checks passed, rerun without --check flag."
+  exit 0
 fi
 
 if $TRAIN
