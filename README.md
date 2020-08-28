@@ -33,11 +33,15 @@ CONSTAX v.2 improves upon v.1 with the following features:
 
 ### One step, for Linux, [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10), or MacOS systems
 ```
+conda install -c bioconda constax
+```
+This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
+### Simple installation for Windows
+```
 git clone https://github.com/liberjul/CONSTAXv2.git
 cd CONSTAXv2
 bash install.sh
 ```
-This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
 ### Custom installation
 
 #### USEARCH installation
@@ -82,6 +86,7 @@ cp dist/classifier.jar ../
 ```
 cd CONSTAXv2
 chmod +x constax.sh
+ln -s constax.sh constax
 ```
 
 ### Datasets
@@ -101,12 +106,12 @@ python fasta_select_by_keyword.py -i SILVA_138_SSURef_tax_silva.fasta \
 ```
 ### Running CONSTAX
 ```
-./constax.sh --help
+constax --help
 ```
 ```
-Usage: ./constax.sh [OPTION] ...
-Classify input OTU sequences by CONSTAX consesus taxonomy algorithm
-Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta
+Usage: constax [OPTION] ...
+Classify input OTU sequences by CONSTAX consensus taxonomy algorithm
+Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 
 -c, --conf=0.8                                      Classification confidence threshold
 -n, --num_threads=1                                 Number of threads to use
@@ -120,22 +125,26 @@ Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX
 -x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments
 -t, --train                                         Complete training if specified
 -b, --blast                                         Use BLAST instead of UTAX if specified
---msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC
+--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments
 --conservative                                      If specified, use conservative consensus rule (2 null = null winner)
+--make_plot                                         If specified, run R script to make plot of classified taxa
+--check                                             If specified, runs checks but stops before training or classifying
 --mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA.
 --sintax_path                                       Path to USEARCH executable for SINTAX classification
 --utax_path                                         Path to USEARCH executable for UTAX classification
 --rdp_path                                          Path to RDP classifier.jar file
 --constax_path                                      Path to CONSTAX scripts
+--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables
 --isolates                                          FASTA formatted file of isolates to use BLAST against
 -h, --help                                          Display this help and exit
+-v, --version                                       Display version and exit
 ```
 If using a database for the first time, you will need to use the `-t` or `--train` flag to train the classifiers on the dataset.
 
 In the directory with your OTU/zOTU/ASV/ESV FASTA file:
 
 ```
-/path/to/CONSTAXv2/constax.sh -i <input file> \
+/path/to/CONSTAXv2/constax -i <input file> \
 -o <output_directory> \
 -f <training_files_directory> \
 -x <taxonomy_assignments_directory> \

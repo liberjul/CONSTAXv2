@@ -19,9 +19,9 @@ if [ $? != 0 ]
 then
   echo "Terminating..." >&2
   echo ""
-  echo "Usage: ./constax.sh [OPTION] ..."
+  echo "Usage: constax [OPTION] ..."
   echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
-  echo "Example ./constax.sh -t --db ./test_data/silva_test_ref.fasta"
+  echo "Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
   echo ""
   echo "-c, --conf=0.8                                      Classification confidence threshold"
   echo "-n, --num_threads=1                                 Number of threads to use"
@@ -113,9 +113,9 @@ done
 
 if $HELP
 	then
-    echo "Usage: ./constax.sh [OPTION] ..."
+    echo "Usage: constax [OPTION] ..."
     echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
-    echo "Example ./constax.sh -t --db /mnt/research/common-data/Bio/UserDownloads/CONSTAX/DB/sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
+    echo "Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
     echo ""
     echo "-c, --conf=0.8                                      Classification confidence threshold"
     echo "-n, --num_threads=1                                 Number of threads to use"

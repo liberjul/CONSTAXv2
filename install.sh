@@ -23,25 +23,24 @@ then
   echo "Apache ant installed ..."
 else
   echo "Installing apache ant ..."
-  conda install -c bioconda ant
+  conda install -c anaconda ant
 fi
 blastn -version > blastcheck.txt
 
-if $(grep -Fq 'ant-1.' env_list.txt) || $(grep -Fq 'blastn: 2.' blastcheck.txt)
+if grep -Fq 'blastn: 2.' blastcheck.txt
 then
-  echo "Blast installed ..."
+  echo "BLAST installed ..."
 else
-  echo "Installing blast ..."
-  conda install -c bioconda blast
+  echo "Need to install BLAST from https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/, and ensure that executable is on the PATH"
+  echo "Rerun install script after installation"
+  exit 1
 fi
 
-if grep -Fq "vsearch" env_list.txt
-then
-  echo "Vsearch installed ..."
-else
-  echo "Installing vsearch ..."
-fi
-echo "export SINTAXPATH=vsearch" > pathfile.txt
+echo "Installing vsearch ..."
+curl -LO $(curl -s https://api.github.com/repos/torognes/vsearch/releases/latest   | grep "browser_download_url.*zip"   | cut -d : -f 2,3 | tr -d \")
+VSEARCH_ZIP=$(basename $(curl -s https://api.github.com/repos/torognes/vsearch/releases/latest   | grep "browser_download_url.*zip"   | cut -d : -f 2,3 | tr -d \"))
+unzip $VSEARCH_ZIP
+echo "export SINTAXPATH=$(realpath ${VSEARCH_ZIP%.zip}/vsearch.exe)" > pathfile.txt
 
 echo "Installing RDP ..."
 git clone https://github.com/rdpstaff/RDPTools.git
@@ -54,11 +53,11 @@ sed -i 's/name="download-traindata" unless="offline"/name="download-traindata" u
 sed -i 's+move file="${dist.dir}/data.tgz"+move unless:set="skip_td_download" file="${dist.dir}/data.tgz"+' classifier/build.xml
 cd classifier
 ant jar -Dskip_td_download=true
-cp dist/classifier.jar ../
-echo "export RDPPATH=""$(pwd)"/classifier.jar >> ../../pathfile.txt
+echo "export RDPPATH=""$(realpath ./dist/classifier.jar)" >> ../../pathfile.txt
 cd ../..
 echo "RDP installed ..."
 
 echo "export CONSTAXPATH=""$(pwd)" >> pathfile.txt
 
 chmod +x constax.sh
+ln -s constax.sh constax
