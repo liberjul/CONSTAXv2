@@ -180,85 +180,91 @@ def reformat_SINTAX(sintax_file, output_dir, confidence, ranks):
 		res = []
 		for x in temp0:
 			t = list(x)
+			if len(t) == 0:
+				break
 			t[-1] = "*"
 			t[-8] = "*"
 			res.append("".join(t))
-		temp0 = ",".join(res).split("*")[:-1]
-		### END NEW STUFF
-		# temp0 = temp[1].split("*")
-		# temp0 =>  'd:Fungi,' '1.0000' ',p:Ascomycota' '1.0000' ',c:Leotiomycetes' '1.0000' ',o:Helotiales' '1.0000' ',s:Helotiales_sp' '1.0000'
-		confid = temp0[1:][::2]
-		# confid =>  '1.0000' '1.0000' '1.0000' '1.0000' '1.0000'
-		temp_line = "".join(temp0[0:-2][::2])
-		# temp_line =>  "d:Fungi,p:Ascomycota,c:Leotiomycetes,o:Helotiales,s:Helotiales_sp"
+		if len(t) != 0:
+			temp0 = ",".join(res).split("*")[:-1]
+			### END NEW STUFF
+			# temp0 = temp[1].split("*")
+			# temp0 =>  'd:Fungi,' '1.0000' ',p:Ascomycota' '1.0000' ',c:Leotiomycetes' '1.0000' ',o:Helotiales' '1.0000' ',s:Helotiales_sp' '1.0000'
+			confid = temp0[1:][::2]
+			# confid =>  '1.0000' '1.0000' '1.0000' '1.0000' '1.0000'
+			temp_line = "".join(temp0[0:-2][::2])
+			# temp_line =>  "d:Fungi,p:Ascomycota,c:Leotiomycetes,o:Helotiales,s:Helotiales_sp"
 
-		# fix missing taxonomic levels
-		temp1 = temp_line.split(",")
-		# temp1 =>  'd:Fungi' 'p:Ascomycota' 'c:Leotiomycetes' 'o:Helotiales' 's:Helotiales_sp'
-		if ranks[0] == "Kingdom":
-			levels = ["d:", "p:", "c:", "o:", "f:", "g:", "s:"]
-			if len(temp1)<len(levels) and len(temp1) > 1:
-				if "g:" in temp1[-2]:
-					for k, level in enumerate(temp1):
-						if levels[k] not in temp1[k]:
-							temp1.insert(k, levels[k]+"Incertae_sedis")
-							confid.insert(k, 9)
+			# fix missing taxonomic levels
+			temp1 = temp_line.split(",")
+			# temp1 =>  'd:Fungi' 'p:Ascomycota' 'c:Leotiomycetes' 'o:Helotiales' 's:Helotiales_sp'
+			if ranks[0] == "Kingdom":
+				levels = ["d:", "p:", "c:", "o:", "f:", "g:", "s:"]
+				if len(temp1)<len(levels) and len(temp1) > 1:
+					if "g:" in temp1[-2]:
+						for k, level in enumerate(temp1):
+							if levels[k] not in temp1[k]:
+								temp1.insert(k, levels[k]+"Incertae_sedis")
+								confid.insert(k, 9)
+					else:
+						for k, level in enumerate(temp1):
+							if levels[k] not in temp1[k]:
+								temp1.insert(k, levels[k]+"unidentified")
+								confid.insert(k, 0)
+			# else:
+			# 	levels = [r.replace('ank_', '') for r in ranks]
+			# 	if len(temp1)<len(ranks):
+			# 		print(levels, temp1, len(temp1))
+			# 		for k, level in enumerate(temp1):
+			# 			print(temp1[k], levels[k])
+			# 			if levels[k] not in temp1[k]:
+			# 				temp1.insert(k, levels[k]+"unidentified")
+			# 				confid.insert(k, 0)
+			# print(confid, temp1)
+			j=0
+			temp2 = []
+			while j<len(temp1):
+				if  "unidentified" in temp1[j]:
+					del confid[j:]
+					break
+				elif confid[j]==9 and float(confid[j+1])<confidence:
+					del confid[j:]
+					break
+				elif float(confid[j])<confidence:
+					del confid[j:]
+					break
 				else:
-					for k, level in enumerate(temp1):
-						if levels[k] not in temp1[k]:
-							temp1.insert(k, levels[k]+"unidentified")
-							confid.insert(k, 0)
-		# else:
-		# 	levels = [r.replace('ank_', '') for r in ranks]
-		# 	if len(temp1)<len(ranks):
-		# 		print(levels, temp1, len(temp1))
-		# 		for k, level in enumerate(temp1):
-		# 			print(temp1[k], levels[k])
-		# 			if levels[k] not in temp1[k]:
-		# 				temp1.insert(k, levels[k]+"unidentified")
-		# 				confid.insert(k, 0)
-		# print(confid, temp1)
-		j=0
-		temp2 = []
-		while j<len(temp1):
-			if  "unidentified" in temp1[j]:
-				del confid[j:]
-				break
-			elif confid[j]==9 and float(confid[j+1])<confidence:
-				del confid[j:]
-				break
-			elif float(confid[j])<confidence:
-				del confid[j:]
-				break
+					temp2.append(temp1[j].capitalize())
+				j+=1
+
+			# remove "_sp" species classificaitons
+			if len(temp2)>0 and temp2[-1].endswith("_sp"):
+				del temp2[-1]
+				del confid[-1]
+			# remove terminal Incertae_sedis
+			while len(temp2)>0 and "Incertae_sedis" in temp2[-1]:
+				del temp2[-1]
+				del confid[-1]
+
+			confid = [str(x) if x!=9 else "NA" for x in confid]
+
+			new_taxonomy = []
+			for item in temp2:
+				new_taxonomy.append(item[2:].capitalize())
+
+			if confid == []:
+				score = "NA"
 			else:
-				temp2.append(temp1[j].capitalize())
-			j+=1
+				score = confid[-1]
 
-		# remove "_sp" species classificaitons
-		if len(temp2)>0 and temp2[-1].endswith("_sp"):
-			del temp2[-1]
-			del confid[-1]
-		# remove terminal Incertae_sedis
-		while len(temp2)>0 and "Incertae_sedis" in temp2[-1]:
-			del temp2[-1]
-			del confid[-1]
+			tax_confi = ""
+			for k in range(len(new_taxonomy)):
+				tax_confi += F"\t{new_taxonomy[k]}\t{confid[k]}"
 
-		confid = [str(x) if x!=9 else "NA" for x in confid]
-
-		new_taxonomy = []
-		for item in temp2:
-			new_taxonomy.append(item[2:].capitalize())
-
-		if confid == []:
-			score = "NA"
+			output.write(F"{ID}\t{score}{tax_confi}\n")
 		else:
-			score = confid[-1]
-
-		tax_confi = ""
-		for k in range(len(new_taxonomy)):
-			tax_confi += F"\t{new_taxonomy[k]}\t{confid[k]}"
-
-		output.write(F"{ID}\t{score}{tax_confi}\n")
+			tax_confi = '\t'.join([""]*len(ranks)*2)
+			output.write(F"{ID}\t{0.0000}\t{tax_confi}\n")
 
 
 	output.close()

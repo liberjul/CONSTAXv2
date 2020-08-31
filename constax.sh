@@ -75,7 +75,7 @@ CONSTAXPATH_USER=false
 MAKE_PLOT=false
 CHECK=false
 PATHFILE=pathfile.txt
-MEM=false
+MEM=32000
 ISOLATES=null
 USE_ISOS=False # Used as python bool
 
@@ -316,10 +316,7 @@ base=$(basename -- ${DB%.fasta})
 
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" -t "$TFILES" 2>&1)
 
-if [[ "$MEM" != "false" ]]
-then
-  echo "Memory size: "$MEM"mb"
-fi
+echo "Memory size: "$MEM"mb"
 
 if [[ "$FORMAT" == "null" ]]
 then
@@ -370,7 +367,7 @@ then
 
   if [ $(command -v "$RDPPATH") ]
   then
-    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m
   else
     java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
   fi
@@ -421,7 +418,7 @@ fi
 
 if [ $(command -v "$RDPPATH") ]
 then
-  "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
+  "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
 else
   java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
 fi
