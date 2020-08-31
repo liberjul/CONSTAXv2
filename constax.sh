@@ -368,7 +368,7 @@ then
 	echo "__________________________________________________________________________"
   echo "Training RDP Classifier"
 
-  if [ $(command -v "$RDPPATH" > /dev/null 2>&1) ]
+  if [ $(command -v "$RDPPATH") ]
   then
     "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
   else
@@ -419,7 +419,7 @@ else
 
 fi
 
-if [ $(command -v "$RDPPATH" > /dev/null 2>&1) ]
+if [ $(command -v "$RDPPATH") ]
 then
   "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
 else
