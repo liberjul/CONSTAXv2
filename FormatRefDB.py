@@ -139,7 +139,7 @@ else:
 			line = line.replace(" Bacteria;", "?Bacteria;").replace(" Eukaryota;", "?Eukaryota;").replace(" Archaea;", "?Archaea;").replace(" ", "_")
 			ascii_line = unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore')
 			# temp = ascii_line.decode().replace("*", "_").replace("'", "").replace(",", "").replace("Oral_Taxon", "oral_taxon")[1:].split("?")
-			temp = ascii_line.decode().translate(str.maketrans("*',<>", "_    ")).replace("Oral_Taxon", "oral_taxon")[1:].split("?")
+			temp = ascii_line.decode().translate(str.maketrans("*,<>", "_   ")).replace("Oral_Taxon", "oral_taxon").replace("'","")[1:].split("?")
 
 			name = str(temp[0]).split(".")[0]
 			t_list = temp[1].strip().split(";")
