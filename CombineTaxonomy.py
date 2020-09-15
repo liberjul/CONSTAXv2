@@ -141,13 +141,16 @@ def reformat_UTAX(utax_file, output_dir, confidence, ranks):
 			score = confid[-1]
 		else:
 			score = 0
-		final_line = F"{temp3[0]}\t{score}\t{temp3[1][2:].capitalize()}\tNA"
+		if len(temp3) > 1:
+			final_line = F"{temp3[0]}\t{score}\t{temp3[1][2:].capitalize()}\tNA"
+			tax_confi = ""
+			for k in range(len(temp4)):
+				tax_confi += F"\t{temp4[k]}\t{confid[k]}"
 
-		tax_confi = ""
-		for k in range(len(temp4)):
-			tax_confi += F"\t{temp4[k]}\t{confid[k]}"
-
-		output.write(F"{final_line+tax_confi}\n")
+			output.write(F"{final_line+tax_confi}\n")
+		else:
+			tax_confi = '\t'.join([""]*len(ranks)*2)
+			output.write(F"{temp0[0]}\t{0.0000}\t{tax_confi}\n")
 
 	output.close()
 	return output_file
