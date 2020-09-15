@@ -583,7 +583,7 @@ if args.format == "UNITE":
 			combined.write(otu)
 			levels = []
 			for m in range(0,len(ranks)*2,2):
-				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], arg.conservative)
+				level = vote(rdp_dict[otu][m:m+2], sin_dict[otu][m:m+2], uta_dict[otu][m:m+2], args.conservative)
 				combined.write("\t"+rdp_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t"+uta_dict[otu][m]+"\t")
 				if level != "":
 					levels.append(level)
