@@ -518,7 +518,7 @@ if args.format == "UNITE":
 		elif classifier == "utax":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			uta_file = reformat_UTAX(file_name, args.output_dir, args.conf, ranks)
-			uta_dict = build_dict(uta_file)
+			uta_dict = build_dict(uta_file, ranks)
 		elif classifier == "blast":
 			print("\nReformatting "+classifier.upper()+" file\n")
 			blast_file = reformat_BLAST(file_name, args.output_dir, args.conf, max_hits=args.mhits, ethresh=args.evalue, p_iden_thresh=args.p_iden, ranks=ranks)
