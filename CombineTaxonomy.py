@@ -503,13 +503,13 @@ if args.format == "UNITE":
 			elif len(temp0)<10 or temp0[3]!="rootrank":
 				raise ValueError("Input file not in RDP format. Please Reformat As Below:\nOTU_###	_	Root	rootrank	1.0	Fungi	Kingdom	0.98	Zygomycota	Phylum	0.05	Zygomycota_Incertae_sedis	Class	0.05	Mucorales	Order	0.04	Syncephalastraceae	Family	0.01	Fennellomyces	Genus	0.01	Fennellomyces linderi	Species	0.01")
 		elif classifier == "utax":
-			if ",s:" not in temp0[1] or not temp0[1].startswith("d:"):
+			if "+" not in line and "-" not in line:
 				raise ValueError("Input file not in UTAX format. Please Reformat As Below:\nOTU_###	d:Fungi,p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
 		elif classifier == "blast":
 			if "query,subject,bitscore,e_value,percent_identity,query_coverage" not in temp0[0]:
 				raise ValueError("Input file not in BLAST format. Please Reformat As Below:\nquery,subject,bitscore,e_value,percent_identity,query_coverage,kingdom,phylum,class,order,family,genus,species")
 		else:
-			if "),s:" not in temp0[1] or not temp0[1].startswith("d:"):
+			if "+" not in line and "-" not in line:
 				raise ValueError("Input file not in SINTAX format. Please Reformat As Below:\nOTU_###	d:Fungi(1.0000),p:Ascomycota(0.9700),c:Pezizomycetes(0.8000),o:Pezizales(0.7900),f:Sarcosomataceae(0.7700),g:Pseudoplectania(0.3700),s:Pseudoplectania_nigrella(0.3700)	+	d:Fungi,p:Ascomycota,c:Pezizomycetes")
 
 		input_file.close()
