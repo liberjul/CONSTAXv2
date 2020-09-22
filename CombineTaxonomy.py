@@ -445,6 +445,18 @@ def count_classifications(filenames, output_dir):
 			output2.write(key+"\t"+"\t".join(str(x) for x in unique_dict[l][key])+"\n")
 	output2.close()
 
+def str2bool(v):
+	'''
+	Code borrowed from: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
+	'''
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 ###############################################################################
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ###############################################################################
@@ -472,7 +484,7 @@ parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-d", "--db", type=str, default="", help="database file")
 parser.add_argument("-t", "--tf", type=str, default="", help="training files path")
 parser.add_argument("-i", "--isolates", type=str, help="Use isolates")
-parser.add_argument("-s", "--conservative", type=bool, help="Use conservative rule (prevents overclassification, looses sensitivity)")
+parser.add_argument("-s", "--conservative", type=str2bool, nargs='?', const=True, default=False, help="Use conservative rule (prevents overclassification, looses sensitivity)")
 args = parser.parse_args()
 
 # confidence = float(args.conf)
