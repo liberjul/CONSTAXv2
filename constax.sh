@@ -397,7 +397,7 @@ echo "Assigning taxonomy to OTU's representative sequences"
 FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" 2>&1)
 
 "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
-if [[ "$SINTAXPATH" == vsearch ]]
+if [[ ${SINTAXPATH##*/} == "vsearch" ]]
 then
   sed -i 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
 fi
