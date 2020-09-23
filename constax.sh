@@ -53,7 +53,7 @@ fi
 
 eval set -- "$TEMP"
 
-VERSION=2.0.0; BUILD=0
+VERSION=2.0.2; BUILD=0
 TRAIN=false
 BLAST=false
 HELP=false
