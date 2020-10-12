@@ -77,6 +77,8 @@ CHECK=false
 PATHFILE=pathfile.txt
 MEM=32000
 ISOLATES=null
+HL_DB=null
+HL_FMT=null
 USE_ISOS=False # Used as python bool
 
 while true; do
@@ -98,6 +100,7 @@ while true; do
     --constax_path ) CONSTAXPATH_USER="${2%/}"; shift 2 ;;
     --pathfile ) PATHFILE="$2"; shift 2 ;;
     --isolates ) ISOLATES="$2"; shift 2 ;;
+    --high_level_db ) HL_DB="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
@@ -314,7 +317,7 @@ fi
 
 base=$(basename -- ${DB%.fasta})
 
-FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" -t "$TFILES" 2>&1)
+FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
 
 echo "Memory size: "$MEM"mb"
 
@@ -440,13 +443,27 @@ then
 
   blastn -query "$FRM_INPUT" -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
+if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
+  HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
+  if $MSU_HPCC && ! $BLAST
+  then
+    module load BLAST
+  fi
+
+  makeblastdb -in "$HL_DB" -dbtype nucl -out "${TFILES}/${HL_DB%.fasta}"__BLAST
+
+  blastn -query "$FRM_INPUT" -db "${TFILES}/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/hl_blast.out
+fi
+
+then
+
 rm "$FRM_INPUT"
 
 if $BLAST
 then
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT -s $CONSERVATIVE
 else
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT -s $CONSERVATIVE
 fi
 if $MSU_HPCC
 then

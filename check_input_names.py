@@ -1,3 +1,7 @@
+'''
+Script to convert invalid input names to compliant ASCII names. Uses a random
+hex string for file name.
+'''
 import argparse, unicodedata, random
 import numpy as np
 

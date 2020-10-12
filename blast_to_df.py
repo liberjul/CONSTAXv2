@@ -16,9 +16,6 @@ args = parser.parse_args()
 filename = args.db
 filename_base = args.tf + "/" + ".".join(os.path.basename(filename).split(".")[:-1])
 
-# os.system(F"rm {args.out_file}")
-
-# if args.format != "UNITE":
 taxa_dict = {}
 with open(filename_base + "__RDP_taxonomy_headers.txt", "r") as f_heads:
     line = f_heads.readline()
@@ -51,10 +48,6 @@ with open(args.in_file, "r") as ifile:
                 spl = line.strip().split("\t")
                 sub = spl[1]
                 eval, bitscore, id, qcov = spl[2:]
-                # if False: #args.format == "UNITE":
-                #     buffer = F"{buffer}{spl[0]},{sub_name},{bitscore},{eval},{id},{qcov},"
-                #     buffer += ",".join(tax.split(";")[1:]) + "\n"
-                # else:
                 buffer = F"{buffer}{spl[0]},{sub},{bitscore},{eval},{id},{qcov},"
                 buffer = F"{buffer}{taxa_dict[sub]}\n"
             line = ifile.readline()

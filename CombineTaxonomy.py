@@ -214,16 +214,7 @@ def reformat_SINTAX(sintax_file, output_dir, confidence, ranks):
 							if levels[k] not in temp1[k]:
 								temp1.insert(k, levels[k]+"unidentified")
 								confid.insert(k, 0)
-			# else:
-			# 	levels = [r.replace('ank_', '') for r in ranks]
-			# 	if len(temp1)<len(ranks):
-			# 		print(levels, temp1, len(temp1))
-			# 		for k, level in enumerate(temp1):
-			# 			print(temp1[k], levels[k])
-			# 			if levels[k] not in temp1[k]:
-			# 				temp1.insert(k, levels[k]+"unidentified")
-			# 				confid.insert(k, 0)
-			# print(confid, temp1)
+
 			j=0
 			temp2 = []
 			while j<len(temp1):
@@ -313,9 +304,9 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 	return output_file
 
 ################################################################################
-def build_iso_dict(isolate_file):
-	iso_dict = {}
-	with open(isolate_file, "r") as ifile:
+def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
+	hit_dict = {}
+	with open(blast_outfile, "r") as ifile:
 		line = ifile.readline()
 		while line != "":
 			if "# Query: " in line: # Checking if hits were found
@@ -323,15 +314,29 @@ def build_iso_dict(isolate_file):
 				line = ifile.readline()
 				line = ifile.readline()
 				if line == "# 0 hits found\n": # If no hits found
-					iso_dict[quer] = ["", "0"]
+					hit_dict[quer] = ["", "0"]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
 				if int(spl[5]) > 75:
-					iso_dict[spl[0]] = [spl[1], spl[4]]
+					subj = spl[1]
+					if hl and hl_fmt == "UNITE":
+						subj = subj.split("k__")[1].split(";")[0]
+					elif hl and hl_fmt == "SILVA":
+						if "_Eukaryota;" in subj:
+							subj = subj.split("_")[1].split(";")[0:9]
+							subj = ";".join(subj)
+						elif "Mitochondria" in subj:
+							subj = "Mitochondria"
+						elif "Chloroplast" in subj:
+							subj = "Chloroplast"
+						else:
+							subj = subj.split("_")[1].split(";")[0:1]
+					hit_dict[spl[0]] = [subj, spl[4]]
+
 				else:
-					iso_dict[spl[0]] = ["", "0"]
+					hit_dict[spl[0]] = ["", "0"]
 			line = ifile.readline()
-	return iso_dict
+	return hit_dict
 
 ################################################################################
 def build_dict(filename, ranks):
@@ -484,6 +489,7 @@ parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-d", "--db", type=str, default="", help="database file")
 parser.add_argument("-t", "--tf", type=str, default="", help="training files path")
 parser.add_argument("-i", "--isolates", type=str, help="Use isolates")
+parser.add_argument("-l", "--hl", type=str, help="Format of representative DB for high-level taxonomy")
 parser.add_argument("-s", "--conservative", type=str2bool, nargs='?', const=True, default=False, help="Use conservative rule (prevents overclassification, looses sensitivity)")
 args = parser.parse_args()
 
@@ -545,15 +551,23 @@ if args.format == "UNITE":
 		print("\tDone\n")
 	if args.isolates == "True":
 		print("\nReformatting isolate result file\n")
-		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
+		iso_dict = build_iso_hl_dict(F"{args.tax}/isolates_blast.out")
+		print("\tDone\n")
+	if args.hl != "null":
+		print("\nReformatting high level tax result file\n")
+		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
 	if args.isolates == "True":
-		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id\n")
+		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id")
 	else:
-		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
+		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies")
+	if args.hl != "null":
+		consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\n")
+	else:
+		consensus.write("\n")
 
 	if args.blast:
 			combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
@@ -572,11 +586,12 @@ if args.format == "UNITE":
 					if level != "":
 						levels.append(level)
 					combined.write(level)
+				consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 				if args.isolates == "True":
-					lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
-					consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
-				else:
-					consensus.write("\t".join(levels)+"\n")
+					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+				if args.hl != "null":
+					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+				consensus.write("\n")
 				combined.write("\n")
 			print("\tDone\n")
 
@@ -603,11 +618,12 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
-				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
-			else:
-				consensus.write("\t".join(levels)+"\n")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+			if args.hl != "null":
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -671,6 +687,10 @@ else:
 		print("\nReformatting isolate result file\n")
 		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
 		print("\tDone\n")
+	if args.hl != "null":
+		print("\nReformatting high level tax result file\n")
+		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
+		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
 	consensus = open(consensus_file, "w")
@@ -685,8 +705,10 @@ else:
 			consensus.write(F"\t{r}")
 		if args.isolates == "True":
 			consensus.write("\tIsolate\tIsolate_percent_id")
-		combined.write("\n")
+		if args.hl != "null":
+			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id")
 		consensus.write("\n")
+		combined.write("\n")
 
 		for otu in rdp_dict.keys():
 			consensus.write(otu+"\t")
@@ -698,11 +720,12 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
-				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
-			else:
-				consensus.write("\t".join(levels)+"\n")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+			if args.hl != "null":
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -727,6 +750,8 @@ else:
 			consensus.write(F"\t{r}")
 		if args.isolates == "True":
 			consensus.write("\tIsolate\tIsolate_percent_id")
+		if args.hl != "null":
+			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id")
 		combined.write("\n")
 		consensus.write("\n")
 
@@ -740,11 +765,12 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				lev_string = '\t'.join(levels+[""]*(len(ranks)-len(levels)))
-				consensus.write(F"{lev_string}\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\n")
-			else:
-				consensus.write("\t".join(levels)+"\n")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+			if args.hl != "null":
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 
