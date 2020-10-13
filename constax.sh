@@ -12,7 +12,7 @@ echo "################################################################"
 
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,high_level_db: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -46,6 +46,7 @@ then
   echo "--constax_path                                      Path to CONSTAX scripts"
   echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
   echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
+  echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
   echo "-h, --help                                          Display this help and exit"
   echo "-v, --version                                       Display version and exit"
   exit 1
@@ -143,6 +144,7 @@ if $HELP
     echo "--constax_path                                      Path to CONSTAX scripts"
     echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
     echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
+    echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
     echo "-h, --help                                          Display this help and exit"
     echo "-v, --version                                       Display version and exit"
 		exit 1
@@ -452,7 +454,7 @@ if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
 
   makeblastdb -in "$HL_DB" -dbtype nucl -out "${TFILES}/${HL_DB%.fasta}"__BLAST
 
-  blastn -query "$FRM_INPUT" -db "${TFILES}/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/hl_blast.out
+  blastn -query "$FRM_INPUT" -db "${TFILES}/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
 fi
 
 then

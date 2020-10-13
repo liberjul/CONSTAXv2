@@ -27,7 +27,6 @@ def convert_utax_line(utax_taxa):
 	else:
 		new_taxa.append(F"{r_lets[min(len(utax_taxa), len(r_lets)) - 1]}:{utax_taxa[-1]}")
 	return ",".join(new_taxa)
-# sys.path.append("/opt/software/CONSTAX/2/")
 
 
 parser = argparse.ArgumentParser()
@@ -69,9 +68,6 @@ if args.format == "UNITE":
 				#correct umlauts or special letters
 				ascii_line = unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore')
 				temp = ascii_line.decode()[1:].split("|")
-				# unico_line = unicode(line, '1252')
-				# ascii_line = unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore')
-				# temp = ascii_line[1:].split("|")
 
 				#UTAX file
 				utax_name = temp[1]+"|"+temp[2]
@@ -144,12 +140,6 @@ else:
 			name = str(temp[0]).split(".")[0]
 			t_list = temp[1].strip().split(";")
 
-			# temp_utax1 = [x for x in t_list if "unidentified" not in x]
-			# temp_utax2 = [y for y in temp_utax1 if "Incertae_sedis" not in y]
-			# temp_utax3 = [z for z in temp_utax2 if "unknown" not in z]
-			# new_utax_taxa = convert_utax_line(temp_utax3)
-			# fastatax.write(">"+name+";tax="+new_utax_taxa+";\n")
-
 			if "unidentified" in t_list:
 				indices = [i for i,x in enumerate(t_list) if x == "unidentified"]
 				non_unid = [i for i,x in enumerate(t_list) if x != "unidentified"]
@@ -171,24 +161,13 @@ else:
 				seq += line.strip()
 				line = database.readline()
 			seq = seq.replace("U", "T")
-			# fastatax.write(seq + "\n")
 			fasta.write(seq + "\n")
 
 	fasta.close()
 	taxon.close()
-	# fastatax.close()
 
 print(F"Reference database FASTAs formatted in {time.process_time() - start} seconds...\n")
 
-# with open("temp_db_file.txt", "w") as temp_file:
-# 	with open(taxon_fn, "r") as ifile:
-# 		line = ifile.readline()
-# 		temp_file.write("Seq_ID\t" + "\t".join([F"Rank_{x}" for x in range(1, max_rank+1)]) + "\n")
-# 		while line != "":
-# 			temp_file.write(line)
-# 			line = ifile.readline()
-#
-# os.system(F"cat temp_db_file.txt > {taxon_fn}")
 os.system(F"rm {filename_base}__RDP_taxonomy_trained.txt 2> /dev/null")
 os.system(F"rm {filename_base}__RDP_taxonomy_headers.txt 2> /dev/null")
 
