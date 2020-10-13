@@ -446,6 +446,7 @@ then
   blastn -query "$FRM_INPUT" -db "$TAX/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
 if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
+then
   HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
   if $MSU_HPCC && ! $BLAST
   then
