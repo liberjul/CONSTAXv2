@@ -588,7 +588,7 @@ if args.format == "UNITE":
 					combined.write(level)
 				consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 				if args.isolates == "True":
-					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
 				if args.hl != "null":
 					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
 				consensus.write("\n")
@@ -620,7 +620,7 @@ if args.format == "UNITE":
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
 			consensus.write("\n")
@@ -722,7 +722,7 @@ else:
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
 			consensus.write("\n")
@@ -767,7 +767,7 @@ else:
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]})
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
 			consensus.write("\n")
