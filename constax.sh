@@ -392,7 +392,7 @@ then
   fi
   echo "Classifier training complete using BLAST: $BLAST" > "${TFILES}"/training_check.txt
 
-	# -Xmx set to memory GB you want to use
+	# -Xmx set to memory in MB you want to use
 
 fi
 
@@ -474,14 +474,10 @@ then
 fi
 
 # plot R
-# Rscript /mnt/research/common-data/Bio/UserDownloads/CONSTAX/R/ComparisonBars.R -o "$OUTPUT/"
-
 if $MAKE_PLOT && $BLAST
 then
-  # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" FALSE
   Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
 elif $MAKE_PLOT
 then
-  # Rscript /mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020/ComparisonBars_w_blast.R "$OUTPUT/" TRUE
   Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
 fi
