@@ -440,9 +440,9 @@ then
   then
     module load BLAST
   fi
-
-  makeblastdb -in "$ISOLATES" -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
-
+  python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "${TFILES}/"isolates_formatted.fasta
+  makeblastdb -in "${TFILES}/"isolates_formatted.fasta -dbtype nucl -out "${TFILES}/${ISOLATES%.fasta}"__BLAST
+  rm "${TFILES}/"isolates_formatted.fasta
   blastn -query "$FRM_INPUT" -db "${TFILES}/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
 if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
@@ -451,9 +451,9 @@ if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
   then
     module load BLAST
   fi
-
-  makeblastdb -in "$HL_DB" -dbtype nucl -out "${TFILES}/${HL_DB%.fasta}"__BLAST
-
+  python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "${TFILES}/"hl_formatted.fasta
+  makeblastdb -in "${TFILES}/"hl_formatted.fasta -dbtype nucl -out "${TFILES}/${HL_DB%.fasta}"__BLAST
+  rm "${TFILES}/"hl_formatted.fasta
   blastn -query "$FRM_INPUT" -db "${TFILES}/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
 fi
 

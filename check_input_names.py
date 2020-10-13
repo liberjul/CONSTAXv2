@@ -15,6 +15,7 @@ convert_lines_vec = np.vectorize(convert_lines)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", type=str, help="database file")
+parser.add_argument("-n", "--name", type=str, default="", help="output name")
 args = parser.parse_args()
 
 buffer = ""
@@ -23,8 +24,10 @@ with open(args.input, "r") as ifile:
     lines_normalized = convert_lines_vec(lines)
     buffer = "".join(lines_normalized)
 
-name = F"formatted_inputs_{'%06x' % random.randrange(16**6)}.fasta"
+if args.name == "":
+    name = F"formatted_inputs_{'%06x' % random.randrange(16**6)}.fasta"
+    print(name)
+else:
+    name = args.name
 with open(name, "w") as ofile:
     ofile.write(buffer)
-
-print(name)
