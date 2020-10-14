@@ -429,7 +429,6 @@ else
 fi
 
 echo "__________________________________________________________________________"
-echo "Combining Taxonomies"
 
 if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
 then
@@ -447,6 +446,7 @@ then
 fi
 if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
 then
+  echo "High Level Taxonomy Assignment"
   HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
   if $MSU_HPCC && ! $BLAST
   then
@@ -459,7 +459,7 @@ then
 fi
 
 rm "$FRM_INPUT"
-
+echo "Combining Taxonomies"
 if $BLAST
 then
   python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT -s $CONSERVATIVE
