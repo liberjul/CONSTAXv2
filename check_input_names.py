@@ -22,14 +22,14 @@ args = parser.parse_args()
 rec_dict={}
 with open(args.input, "r", encoding='utf-8') as ifile:
     line = ifile.readline()
-        while line != "":
-            header = line
+    while line != "":
+        header = line
+        line = ifile.readline()
+        seq = ""
+        while line != "" and line[0] != ">":
+            seq = F"{seq}{line}"
             line = ifile.readline()
-            seq = ""
-            while line != "" and line[0] != ">":
-                seq = F"{seq}{line}"
-                line = ifile.readline()
-            rec_dict[header] = seq
+        rec_dict[header] = seq
 
 if args.name == "":
     name = F"formatted_inputs_{'%06x' % random.randrange(16**6)}.fasta"
@@ -41,6 +41,6 @@ rec_hash = {}
 for i in range(rec_array.shape[0]):
     rec_hash[i] = convert_lines(rec_array[i], filter=args.filter)
 
-buffer = "".join(hash.values())
+buffer = "".join(rec_hash.values())
 with open(name, "w") as ofile:
     ofile.write(buffer)
