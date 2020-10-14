@@ -7,7 +7,7 @@ import numpy as np
 
 def convert_lines(line):
     if line[0] == ">":
-        return unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore').decode()
+        return unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore').decode().replace(" ", "_")
     else:
         return line
 
