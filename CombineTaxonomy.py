@@ -330,7 +330,7 @@ def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
 						elif "Chloroplast" in subj:
 							subj = "Chloroplast"
 						else:
-							subj = subj.split("_")[1].split(";")[0:1]
+							subj = "_".join(subj.split("_")[1].split(";")[0:2])
 					hit_dict[spl[0]] = [subj, spl[4]]
 
 				else:
