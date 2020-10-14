@@ -28,7 +28,7 @@ then
   echo "-m, --max_hits=10                                   Maximum number of BLAST hits to use, for use with -b option"
   echo "-e, --evalue=1                                      Maximum expect value of BLAST hits to use, for use with -b option"
   echo "-p, --p_iden=0.8                                    Minimum proportion identity of BLAST hits to use, for use with -b option"
-  echo "-d, --db                                            Database to train classifiers, default uses UNITE General Release Feb 04 2020"
+  echo "-d, --db                                            Database to train classifiers, in FASTA format"
   echo "-f, --trainfile=./training_files                    Path to which training files will be written"
   echo "-i, --input=otus.fasta                              Input file in FASTA format containing sequence records to classify"
   echo "-o, --output=./outputs                              Output directory for classifications"
@@ -39,8 +39,8 @@ then
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
   echo "--check                                             If specified, runs checks but stops before training or classifying"
-  echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
-  echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
+  echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA"
+  echo "--sintax_path                                       Path to USEARCH/VSEARCH executable for SINTAX classification"
   echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
   echo "--rdp_path                                          Path to RDP classifier.jar file"
   echo "--constax_path                                      Path to CONSTAX scripts"
@@ -54,7 +54,7 @@ fi
 
 eval set -- "$TEMP"
 
-VERSION=2.0.2; BUILD=0
+VERSION=2.0.3; BUILD=0
 TRAIN=false
 BLAST=false
 HELP=false
@@ -126,7 +126,7 @@ if $HELP
     echo "-m, --max_hits=10                                   Maximum number of BLAST hits to use, for use with -b option"
     echo "-e, --evalue=1                                      Maximum expect value of BLAST hits to use, for use with -b option"
     echo "-p, --p_iden=0.8                                    Minimum proportion identity of BLAST hits to use, for use with -b option"
-    echo "-d, --db                                            Database to train classifiers, default uses UNITE General Release Feb 04 2020"
+    echo "-d, --db                                            Database to train classifiers"
     echo "-f, --trainfile=./training_files                    Path to which training files will be written"
     echo "-i, --input=otus.fasta                              Input file in FASTA format containing sequence records to classify"
     echo "-o, --output=./outputs                              Output directory for classifications"
@@ -137,8 +137,8 @@ if $HELP
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
     echo "--check                                             If specified, runs checks but stops before training or classifying"
-    echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA."
-    echo "--sintax_path                                       Path to USEARCH executable for SINTAX classification"
+    echo "--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA"
+    echo "--sintax_path                                       Path to USEARCH/VSEARCH executable for SINTAX classification"
     echo "--utax_path                                         Path to USEARCH executable for UTAX classification"
     echo "--rdp_path                                          Path to RDP classifier.jar file"
     echo "--constax_path                                      Path to CONSTAX scripts"
