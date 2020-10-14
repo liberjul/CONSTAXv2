@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", type=str, help="database file")
 parser.add_argument("-n", "--name", type=str, default="", help="output name")
 parser.add_argument("-f", "--filter", type=bool, nargs='?', const=True, default=False, help="filter unidentified taxa")
+parser.add_argument("-m", "--format", type=str, default="UNITE", help="database format")
 args = parser.parse_args()
 
 buffer = ""
@@ -31,7 +32,7 @@ if args.name == "":
 else:
     name = args.name
 with open(name, "w") as ofile:
-    if args.filter:
+    if args.filter and args.format=="UNITE":
         head, seq = "",""
         for line in lines_normalized:
             if line[0] == ">":

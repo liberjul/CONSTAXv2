@@ -452,7 +452,7 @@ then
   then
     module load BLAST
   fi
-  python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
+  python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter --format $HL_FMT
   makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/${HL_DB%.fasta}"__BLAST
   rm "$TAX/"hl_formatted.fasta
   blastn -query "$FRM_INPUT" -db "$TAX/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
