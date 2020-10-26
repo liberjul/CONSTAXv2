@@ -390,7 +390,7 @@ then
   else
     echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
   fi
-  echo "Classifier training complete using BLAST: $BLAST" > "${TFILES}"/training_check.txt
+  echo "Classifier training complete using BLAST: $BLAST" >> "${TFILES}"/training_check.txt
 
 	# -Xmx set to memory in MB you want to use
 
