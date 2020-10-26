@@ -437,7 +437,7 @@ def count_classifications(filenames, output_dir):
 			count_n[m] = str(level)
 		output1.write("\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
 		output1.write("Classified\t"+"\t".join(count_y)+"\n")
-		output1.write("Unclassified\t"+"\t".join(count_n))
+		output1.write("Unclassified\t"+"\t".join(count_n) + "\n")
 		output1.close()
 		file_num+=1
 
