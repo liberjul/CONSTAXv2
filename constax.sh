@@ -238,6 +238,15 @@ else # Training not true
   if grep -Fxq "Classifier training complete using BLAST: $BLAST" "${TFILES}"/training_check.txt # If trainfile path doesn't exist or is empty
   then
     echo "Classifying without training..."
+    if [[ "$(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" != "$(grep -o 'BLAST version 2[.].*' ${TFILES}/training_check.txt | tail -n1 | cut -d' ' -f3)" ]]
+    then
+      echo "BLAST executable version does not match the version used to generate the training files, "
+      echo "if BLAST Database error occurs, change your executable or use -t flag."
+    elif ! grep -Fxq "SINTAX executable ${SINTAXPATH##*/}" "${TFILES}"/training_check.txt
+    then
+      echo "SINTAX executable does not match the executable used to generate the training files, "
+      echo "if SINTAX error occurs, change your executable or use -t flag."
+    fi
   else
     echo "Cannot classify without existing training files, please specify -t"
 		exit 1
@@ -391,6 +400,8 @@ then
     echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
   fi
   echo "Classifier training complete using BLAST: $BLAST" >> "${TFILES}"/training_check.txt
+  if $BLAST; then echo "BLAST version $(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" >> "${TFILES}"/training_check.txt; fi
+  echo "SINTAX executable ${SINTAXPATH##*/}" >> "${TFILES}"/training_check.txt
 
 	# -Xmx set to memory in MB you want to use
 
