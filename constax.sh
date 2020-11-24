@@ -258,7 +258,7 @@ then
   source "$PATHFILE"
 else # Then try in package directory.
   echo "Pathfile input not found in local directory ..."
-  DIR=$(conda list | head -n 1 | rev | cut -d" " -f1 | rev | cut -d: -f1)
+  DIR=$(conda list | head -n 1 | rev | cut -d' ' -f1 | rev | cut -d: -f1)
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
   if [ -f "$PATHFILE" ]
   then
