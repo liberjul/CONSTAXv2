@@ -39,7 +39,7 @@ CONSTAX v.1 was authored by:
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    installation
