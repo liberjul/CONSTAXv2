@@ -38,21 +38,11 @@ CONSTAX v.1 was authored by:
 `Gdanetz K, Benucci GMN, Vande Pol N, Bonito G (2017) CONSTAX: a tool for improved taxonomic resolution of environmental fungal ITS sequences. BMC Bioinformatics 18:538 doi 10.1186/s12859-017-1952-x <https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-017-1952-x>`_
 
 
-How to install
---------------
-
-Simple installation with conda:
-*******************************
-
-  .. code-block:: default
-
-      conda install constax -c bioconda
-
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    license
    help
    tutorial
