@@ -25,7 +25,7 @@ Developed by
 
 * `Gian M. N. Benucci <https://github.com/Gian77>`_
 
-CONSTAX v.1 was authored by:
+CONSTAX 1.0.0 was authored by:
 
 * `Kristi Gdanetz MacCready <https://github.com/gdanetzk>`_
 
@@ -37,15 +37,18 @@ CONSTAX v.1 was authored by:
 
 `Gdanetz K, Benucci GMN, Vande Pol N, Bonito G (2017) CONSTAX: a tool for improved taxonomic resolution of environmental fungal ITS sequences. BMC Bioinformatics 18:538 doi 10.1186/s12859-017-1952-x <https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-017-1952-x>`_
 
+See the menu on the left for how to install CONSTAX and how to use it.
 
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
 
    installation
+   options
+   usage
    license
    help
-   tutorial
+   tutorials
 
 
 Indices and tables
