@@ -19,23 +19,23 @@ Custom installation
 
       .. tab:: Linux
 
-         .. code-block:: default
+        .. code-block:: default
 
-            wget https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
-            gunzip usearch<version>.gz
-      
+            curl -O https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
+            gunzip usearch11.0.667_i86linux32.gz
+
       .. tab:: Windows
 
         .. code-block:: default
 
-           curl -O https://www.drive5.com/downloads/usearch11.0.667_win32.gz
-           gunzip usearch11.0.667_win32.gz
+            curl -O https://www.drive5.com/downloads/usearch11.0.667_win32.gz
+            gunzip usearch11.0.667_win32.gz
 
       .. tab:: OSX
 
         .. code-block:: default
 
-           curl -O https://www.drive5.com/downloads/usearch11.0.667_i86osx32.gz
-           gunzip usearch11.0.667_i86osx32.gz
+            curl -O https://www.drive5.com/downloads/usearch11.0.667_i86osx32.gz
+            gunzip usearch11.0.667_i86osx32.gz
 
   - `VSEARCH <https://github.com/torognes/vsearch>`_ can be installed by `conda <https://anaconda.org/bioconda/vsearch>`_, `pip <https://pypi.org/project/vsearch/>`_, or downloading from `source <https://github.com/torognes/vsearch#download-and-install>`_.
