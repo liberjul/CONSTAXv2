@@ -44,6 +44,7 @@ See the menu on the left for how to install CONSTAX and how to use it.
    :caption: Contents:
 
    installation
+   referenceDB
    options
    usage
    license

@@ -1,8 +1,8 @@
 Installation
-============
+=============
 
 Simple installation with conda for Linux/OSX/WSL
--------------------------------
+-------------------------------------------------
 
   .. code-block:: default
 
@@ -21,7 +21,7 @@ Custom installation
 
           .. code-block:: default
 
-          curl -O https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
+          wget https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
           gunzip usearch<version>.gz
 
       .. tab:: Windows
