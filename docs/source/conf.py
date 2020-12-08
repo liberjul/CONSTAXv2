@@ -32,9 +32,7 @@ release = '2.0.3'
 # ones.
 #extensions = []
 extensions = [
-    'sphinx_tabs.tabs',
-    'recommonmark',
-    'sphinx_tabs.tabs'
+    'recommonmark'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
