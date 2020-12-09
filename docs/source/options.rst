@@ -4,12 +4,12 @@ CONSTAX Options
 To visualize CONSTAX options:
 
     .. code-block:: default
-       
+
        constax --help
 
 This is what CONSTAX will display on the terminal
 
-    .. code-block:: default
+    .. code-block:: text
 
        Usage: constax [OPTION] ...
        Classify input OTU sequences by CONSTAX consensus taxonomy algorithm
@@ -41,4 +41,3 @@ This is what CONSTAX will display on the terminal
        --high_level_db                        FASTA database file of representative sequences for assignment of high level taxonomy
        -h, --help                             Display this help and exit
        -v, --version                          Display version and exit
-
