@@ -4,14 +4,14 @@ Tutorial
 This is a simple tutorial about CONSTAX. We will explain how to run CONSTAX on a
 local computer and also on a computer cluster like the `HPCC <https://icer.msu.edu/>`_ available at Michigan State University. 
 
-Before we start, we need to create a folder called **tutorial**. This CONSTAX test will happen
+Before we start, we need to create a folder called ``tutorial``. This CONSTAX test will happen
 inside this folder so you first need to copy all the files you we will use before running the
-software. We need the OTU representative sequence fasta file (e.g. *otus.fasta*),
+software. We need the OTU representative sequence fasta file (e.g. ``otus.fasta``),
 the representative sequence fasta file of your culture isolates if you have any and you want to
-try to match with the OTUs (e.g. *isolates.fasta*), and the sequence reference database you want to use, for Fungi (e.g. *sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta*, see the Database section)
+try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the Database section)
 You tutorial folder shuld look like this:
 
-    .. code-block:: text
+.. code-block:: language
 
     gian@gian-Z390-GY:~/tutorial$ ll
     total 164224
@@ -24,13 +24,13 @@ You tutorial folder shuld look like this:
 It is smart to use the sh command line interpreter, so will create a and sh file and we will
 write the CONSTAX comman in it.
 
-    .. code-block:: text
+.. code-block:: language
 
     gian@gian-Z390-GY:~/tutorial$ nano constax.sh
     
-This is how the content of .sh file look like
+This is how the content of the ``.sh`` file should look like
 
-    .. code-block:: text
+.. code-block:: language
 
     #!/bin/bash
 
@@ -48,26 +48,27 @@ This is how the content of .sh file look like
     --blast \
     --pathfile /home/gian/CONSTAX_v2/tutorial/pathfile.txt
 
-In the pathfile.txt you will include the abosolute PATHs for the software that are needed. VSEARCH,
+In the ``pathfile.txt`` you will include the abosolute PATHs for the software that are needed. VSEARCH,
 BLAST, ans RDP are already available through the conda environment, what you need more is
 USEARCH for the SINTAX classification.
 The pathfile.txt should look like this below:
 
-    .. code-block:: text
+.. code-block:: language
 
-       code 
-    
-    
+   CONSTAXPATH=/home/gian/anaconda3/pkgs/constax-2.0.3-0/opt/constax-2.0.3/
+   SINTAXPATH=/home/gian/Downloads/usearch11.0.667_i86linux32
+   RDPPATH=classifier
 
+As you can see you need to navigate through anaconda and find the ``constax-2.0.3/``
 
 Before you can run CONSTAX you need to activate your anaconda environment (alternatively,
 you can include this in the constax.sh file).
 
-    .. code-block::
+.. code-block:: language
     
     gian@gian-Z390-GY:~/tutorial$ conda activate
 
-
+To see how to set up a conda environment with CONSTAX please refer to 
 
 
 
