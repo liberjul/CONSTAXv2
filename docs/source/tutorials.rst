@@ -2,16 +2,16 @@ Tutorial
 ========
 
 This is a simple tutorial about CONSTAX. We will explain how to run CONSTAX on a
-local computer and also on a computer cluster like the "HPCC <https://icer.msu.edu/"_ available at Michigan State University. 
+local computer and also on a computer cluster like the `HPCC <https://icer.msu.edu/`_ available at Michigan State University. 
 
-Before we start, we need to create a folder called "tutorial". This CONSTAX test will happen
+Before we start, we need to create a folder called `tutorial`. This CONSTAX test will happen
 inside this folder so you first need to copy all the files you we will use before running the
 software. We need the OTU representative sequence fasta file (e.g. otus.fasta),
 the representative sequence fasta file of your culture isolates if you have any and you want to
-try to match with the OTUs (e.g. isolates.fasta), and the sequence reference database you want to use, for Fungi (e.g. sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta, see the Database section)
+try to match with the OTUs (e.g. *isolates.fasta*), and the sequence reference database you want to use, for Fungi (e.g. sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta, see the Database section)
 You tutorial folder shuld look like this:
 
-    .. code-block::
+    .. code-block:: default
 
     gian@gian-Z390-GY:~/tutorial$ ll
     total 164224
@@ -24,13 +24,13 @@ You tutorial folder shuld look like this:
 It is smart to use the sh command line interpreter, so will create a and sh file and we will
 write the CONSTAX comman in it.
 
-    .. code-block::
+    .. code-block:: default
 
     gian@gian-Z390-GY:~/tutorial$ nano constax.sh
     
 This is how the content of .sh file look like
 
-    .. code-block::
+    .. code-block:: default
 
     #!/bin/bash
 
@@ -53,7 +53,9 @@ BLAST, ans RDP are already available through the conda environment, what you nee
 USEARCH for the SINTAX classification.
 The pathfile.txt should look like this below:
 
-    .. code-block::
+    .. code-block:: default
+
+       code 
     
     
 
