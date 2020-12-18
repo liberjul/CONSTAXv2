@@ -78,9 +78,9 @@ Minimum proportion identity of BLAST hits to use, for use with -b option. Minimu
 
 .. code-block:: default
 
--d, --db
+   -d, --db
 
-Database to train classifiers. UNITE and SILVA formats are supported. See [Datasets](https://github.com/liberjul/CONSTAXv2#datasets).
+Database to train classifiers. UNITE and SILVA formats are supported. See `Datasets <https://github.com/liberjul/CONSTAXv2#datasets>`_.
 
 .. code-block:: default
 
@@ -110,7 +110,7 @@ Directory for taxonomy assignments.
    
    -t, --train
 
-Complete training if specified. Cannot run classification without training files present, so this option is necessary at least the first time you run CONSTAX or you change the taxonomic referenced sequence database.
+Complete training if specified. Cannot run classification without training files present, so this option is necessary at least at the first time you run CONSTAX or you changed the taxonomic referenced sequence database.
 
 .. code-block:: default
 
