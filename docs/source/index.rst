@@ -20,12 +20,19 @@ CONSTAX 2.0.3 improves upon 1.0.0 with the following features:
 * Isolate matching
 
 Developed by
+^^^^^^^^^^^^
 
 * `Julian A. Liber <https://github.com/liberjul>`_
 
 * `Gian M. N. Benucci <https://github.com/Gian77>`_
 
-CONSTAX 1.0.0 was authored by:
+Funded by
+^^^^^^^^^
+
+* `Gregory Bonito <https://www.researchgate.net/profile/Gregory_Bonito>`_
+
+CONSTAX 1.0.0 was authored by
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * `Kristi Gdanetz MacCready <https://github.com/gdanetzk>`_
 
@@ -35,6 +42,9 @@ CONSTAX 1.0.0 was authored by:
 
 * `Gregory Bonito <https://www.researchgate.net/profile/Gregory_Bonito>`_
 
+
+Reference
+^^^^^^^^^
 `Gdanetz K, Benucci GMN, Vande Pol N, Bonito G (2017) CONSTAX: a tool for improved taxonomic resolution of environmental fungal ITS sequences. BMC Bioinformatics 18:538 doi 10.1186/s12859-017-1952-x <https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-017-1952-x>`_
 
 See the menu on the left for how to install CONSTAX and how to use it.
@@ -49,7 +59,7 @@ See the menu on the left for how to install CONSTAX and how to use it.
    usage
    license
    help
-   tutorials
+   tutorial1
 
 
 Indices and tables
