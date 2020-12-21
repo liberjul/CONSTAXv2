@@ -53,7 +53,7 @@ BLAST, ans RDP are already available through the conda environment, what you nee
 USEARCH for the SINTAX classification.
 The pathfile.txt should look like this below:
 
-.. image:: /home/gian/project_constax/images/pathfile.png
+.. image:: images/pathfile.png
    :align: center
 
 This above is how your pathfile should look like.
