@@ -4,12 +4,16 @@ Installation
 Simple installation with conda for Linux/OSX/WSL
 -------------------------------------------------
 
+CONSTAX comes in a conda package that contained all the dependancies needed to run the software and can be easily installed this way:
+
   .. code-block:: default
 
       conda install constax -c bioconda
 
-Custom installation
---------------------
+Custom installation of USEARCH
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to use USEARCH which is a propetary, instead of VSEARCH, you will have to install it yourself and generate a pathfile.txt to specify the binary location. Please see the tutorial secitons.
 
 * USEARCH/VSEARCH
 

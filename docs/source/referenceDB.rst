@@ -8,7 +8,7 @@ For Fungi or all Eukaryotes, the `UNITE <https://unite.ut.ee/>`_ database is pre
 CONSTAX is one of those under the `General <https://unite.ut.ee/repository.php>`_ fasta format.
 
 For Bacteria and Archaea, we recommend the `SILVA <https://www.arb-silva.de/no_cache/download/archive/current/Exports/>`_ reference database. 
-The `SILVA_XXX_SSURef_tax_silva.fasta.gz` file can be gunzip-ped and used.
+The ``SILVA_XXX_SSURef_tax_silva.fasta.gz`` file can be gunzip-ped and used.
 
 .. Note::
    SILVA taxonomy is not assigned by Linnean ranks (Kingdom, Phylum, etc.), so instead placeholder ranks 1-n are used. 

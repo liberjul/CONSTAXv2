@@ -8,7 +8,8 @@ Before we start, we need to create a folder called ``tutorial``. This CONSTAX te
 inside this folder so you first need to copy all the files you we will use before running the
 software. We need the OTU representative sequence fasta file (e.g. ``otus.fasta``),
 the representative sequence fasta file of your culture isolates if you have any and you want to
-try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the Database section)
+try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the Database section).
+
 You tutorial folder shuld look like this:
 
 .. image:: images/folder.png
@@ -26,9 +27,11 @@ This is how the content of the ``.sh`` file should look like
 .. image:: images/script.png
    :align: center
 
-The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. 
+.. note::
 
-In this case we suggestd to create a ``pathfile.txt`` 
+Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database.
+
+The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. In this case we suggestd to create a ``pathfile.txt`` 
 
 .. code-block:: language
 
