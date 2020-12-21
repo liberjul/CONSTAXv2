@@ -53,14 +53,13 @@ See the menu on the left for how to install CONSTAX and how to use it.
    :maxdepth: 3
    :caption: Contents:
 
+   license
    installation
    referenceDB
    options
-   usage
-   license
-   help
    tutorial1
-
+   tutorial2
+   help
 
 Indices and tables
 ==================
