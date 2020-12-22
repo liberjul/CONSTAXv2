@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 Contacts
-========
+^^^^^^^^
 Do you have questions about the software license? Please contact `Julian A. Liber <https://github.com/liberjul>`_
 or `Gian M. N. Benucci <https://github.com/Gian77>`_
 

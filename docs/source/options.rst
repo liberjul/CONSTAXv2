@@ -5,7 +5,7 @@ To visualize CONSTAX options:
 
 .. code-block:: default
 
-   constax --help
+   gian@gian-Z390-GY:~/tutorial$ constax --help
 
 This is what CONSTAX will display on the terminal
 
@@ -121,7 +121,7 @@ Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB 
 
    --sintax_path
 
-Path to USEARCH/VSEARCH executable for SINTAX classification. Can also be `vsearch` if already on path.
+Path to USEARCH/VSEARCH executable for SINTAX classification. Can also be ``vsearch`` if already on path.
 
 .. code-block:: default
 
@@ -133,7 +133,7 @@ Path to USEARCH executable for UTAX classification.
 
    --rdp_path
 
-Path to RDP `classifier.jar` file, or `classifier` if on path from RDPTools conda install.
+Path to RDP ``classifier.jar`` file, or ``classifier`` if on path from RDPTools conda install.
 
 .. code-block:: default
 
