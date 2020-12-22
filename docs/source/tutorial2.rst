@@ -5,7 +5,7 @@ To run CONSTAX on the high performace cluster computer present at  Michigan Stat
 
 The code will look like as bwlow
 
-.. image:: images/combined.png
+.. image:: images/msu_hpcc.png
    :align: center
 
 .. note:: 
