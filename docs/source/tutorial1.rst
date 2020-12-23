@@ -94,7 +94,7 @@ While classifiations perfomed by each classifier will be store in ``combined_tax
 
 Please explore other CONSTAX outpus, such as ``Classification_Summary.txt``. 
 
-If you want to use some test otus.fasta to practice the use of CONSTAX you can find some in `**THIS** <https://github.com/liberjul/CONSTAXv2/tree/master/otu_files.`_ github repo of CONSTAX.
+If you want to use some test otus.fasta to practice the use of CONSTAX you can find some in `**THIS** <https://github.com/liberjul/CONSTAXv2/tree/master/otu_files>`_ github repo of CONSTAX.
 
 Now. We can try to run CONSTAX again changing some parameters to see some other options.
 For example, modify the ``constax.sh`` script as showed below.
