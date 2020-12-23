@@ -4,20 +4,21 @@ Welcome to CONSTAX's documentation!
 **CONSTAX** (*CONSensus TAXonomy*) is a tool, written in Python 3, for improved taxonomic resolution of environmental fungal ITS sequences. Briefly, CONSTAX compares the taxonomic classifications obtained from RDP Classifier, UTAX or BLAST, and SINTAX and merges them into an improved consensus taxonomy using a 2 out of 3 rule (e.g. If an OTU is classified as taxon A by RDP and UTAX/BLAST and taxon B by SINTAX, taxon A will be used in the consensus taxonomy) and the classification p-value to break the ties (e.g. when 3 different classification are obtained for the same OTU). This tool also produces summary classification outputs that are useful for downstream analyses. In summary, our results demonstrate that independent taxonomy assignment tools classify unique members of the fungal community, and greater classification power (proportion of assigned operational taxonomic units at a given taxonomic rank) is realized by generating consensus taxonomy of available classifiers with CONSTAX.
 
 CONSTAX 2.0.3 improves upon 1.0.0 with the following features:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Updated software requirements, including Python 3 and Java 8
+* **Updated software requirements, including Python 3 and Java 8**
 
-* Simple installation with conda
+* **Simple installation with conda**
 
-* Compatibility with SILVA-formatted databases
+* **Compatibility with SILVA-formatted databases**
 
-* Streamlined command-line implementation
+* **Streamlined command-line implementation**
 
-* BLAST classification option, due to legacy status of UTAX
+* **BLAST classification option, due to legacy status of UTAX**
 
-* Parallelization of classification tasks
+* **Parallelization of classification tasks**
 
-* Isolate matching
+* **Isolate matching**
 
 Developed by
 ^^^^^^^^^^^^

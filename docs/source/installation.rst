@@ -4,7 +4,7 @@ Installation
 Simple installation with conda for Linux/OSX/WSL
 -------------------------------------------------
 
-CONSTAX comes in a conda package that contained all the dependancies needed to run the software and can be easily installed this way:
+CONSTAX comes in a conda package that contains all the dependancies needed to run the software and can be easily installed as showed below.
 
   .. code-block:: default
 

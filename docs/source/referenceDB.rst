@@ -1,3 +1,5 @@
+.. _referenceDB:
+
 Suggested Reference Databases
 =============================
 

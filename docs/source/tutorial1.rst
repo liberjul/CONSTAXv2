@@ -2,13 +2,13 @@ Running CONSTAX locally
 =======================
 
 This is a simple tutorial about CONSTAX. We will explain how to run CONSTAX on a
-local computer and also on a computer cluster like the `HPCC <https://icer.msu.edu/>`_ available at Michigan State University. 
+local computer like a laptop or a desktop computer.
 
 Before we start, we need to create a folder called ``tutorial``. This CONSTAX test will happen
 inside this folder so you first need to copy all the files you we will use before running the
 software. We need the OTU representative sequence fasta file (e.g. ``otus.fasta``),
 the representative sequence fasta file of your culture isolates if you have any and you want to
-try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the Database section).
+try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the :ref:`referenceDB` page for details).
 
 You tutorial folder shuld look like this:
 
@@ -94,17 +94,9 @@ While classifiations perfomed by each classifier will be store in ``combined_tax
 
 Please explore other CONSTAX outpus, such as ``Classification_Summary.txt``. 
 
+If you want to use some test otus.fasta to practice the use of CONSTAX you can find some in `**THIS** <https://github.com/liberjul/CONSTAXv2/tree/master/otu_files.`_ github repo of CONSTAX.
 
-
-
-
-
-
-
-
-
-
-
-
+Now. We can try to run CONSTAX again changing some parameters to see some other options.
+For example, modify the ``constax.sh`` script as showed below.
 
 
