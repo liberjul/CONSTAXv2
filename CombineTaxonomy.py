@@ -454,6 +454,10 @@ def count_classifications(filenames, output_dir, format, rank_count, use_blast=F
 	for l in range(0, rank_count):
 		key_list = list(unique_dict[l].keys())
 		key_list.sort()
+		if key_list[0].isspace():
+			for c in range(len(unique_dict[l]["Unidentified"])):
+				unique_dict[l]["Unidentified"][c] += unique_dict[l][key_list[0]][c]
+			key_list = key_list[1:]
 		for key in key_list:
 			output2.write(key+"\t"+"\t".join(str(x) for x in unique_dict[l][key])+"\n")
 	output2.close()
