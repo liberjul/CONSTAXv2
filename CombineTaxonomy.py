@@ -388,16 +388,19 @@ def vote(cla1, cla2, cla3, conservative):
 	return winner
 
 ################################################################################
-def count_classifications(filenames, output_dir):
-	# rdp, utax, sintax, consensus
+def count_classifications(filenames, output_dir, format, rank_count, use_blast=False):
+	# rdp, utax, sintax, consensus OR
+	# rdp, sintax, blast, consensus
 	file_num = 0
-	unique_dict = {0:{}, 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}}
+	unique_dict = {}
+	for i in range(rank_count):
+		unique_dict[i] = {}
 	for i, file in enumerate(filenames):
 		input = open(file, "r")
 		all_lines = input.readlines()
 		input.close()
-		count_y = [0,0,0,0,0,0,0]
-		count_n = [0,0,0,0,0,0,0]
+		count_y = [0]*rank_count
+		count_n = [0]*rank_count
 		output1 = open(F"{output_dir}otu_taxonomy_CountClassified.txt", "w")
 		if i<3:	#first 3 files have scores
 			start= 2
@@ -408,12 +411,12 @@ def count_classifications(filenames, output_dir):
 		for j, line in enumerate(all_lines[1:]):
 			temp = line.strip().split("\t")
 			taxonomy = temp[start::freq]
-			if len(taxonomy)==7:
+			if len(taxonomy)==rank_count:
 				# strip numbers from species identifications
 				species = "".join(list(filter(lambda c: not c.isdigit(), taxonomy[-1])))
 				taxonomy[-1] = species.replace("_"," ").strip()
 
-			for k in range(0,7):
+			for k in range(0,rank_count):
 				if k<len(taxonomy):
 					count_y[k]+=1
 					if taxonomy[k] not in unique_dict[k]:
@@ -435,15 +438,20 @@ def count_classifications(filenames, output_dir):
 			count_y[l] = str(level)
 		for m, level in enumerate(count_n):
 			count_n[m] = str(level)
-		output1.write("\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
+		if format == "UNITE":
+			output1.write("\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
+		else:
+			output1.write("\t" + "\t".join([F'Rank_{x}' for x in range(1,rank_count+1)])+ "\n")
 		output1.write("Classified\t"+"\t".join(count_y)+"\n")
 		output1.write("Unclassified\t"+"\t".join(count_n) + "\n")
 		output1.close()
 		file_num+=1
-
 	output2 = open(F"{output_dir}Classification_Summary.txt", "w")
-	output2.write("Classification\tRDP\tUTAX\tSINTAX\tConsensus\n")
-	for l in range(0, 7):
+	if use_blast:
+		output2.write("Classification\tRDP\tUTAX\tSINTAX\tConsensus\n")
+	else:
+		output2.write("Classification\tRDP\tSINTAX\tBLAST\tConsensus\n")
+	for l in range(0, rank_count):
 		key_list = list(unique_dict[l].keys())
 		key_list.sort()
 		for key in key_list:
@@ -558,7 +566,7 @@ if args.format == "UNITE":
 		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
-	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
+	consensus_file = F"{args.output_dir}constax_taxonomy.txt"
 	consensus = open(consensus_file, "w")
 	if args.isolates == "True":
 		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id")
@@ -600,7 +608,7 @@ if args.format == "UNITE":
 
 
 			print("\nGenerating classification counts & summary table\n")
-			count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir)
+			count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir, "UNITE", len(ranks), use_blast=True)
 	else:
 		combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
 		combined.write("OTU_ID\tKingdom_RDP\tKingdom_SINTAX\tKingdom_UTAX\tKingdom_Consensus\tPhylum_RDP\tPhylum_SINTAX\tPhylum_UTAX")
@@ -632,7 +640,7 @@ if args.format == "UNITE":
 
 
 		print("\nGenerating classification counts & summary table\n")
-		count_classifications([rdp_file, uta_file, sin_file, consensus_file], args.output_dir)
+		count_classifications([rdp_file, uta_file, sin_file, consensus_file], args.output_dir, "UNITE", len(ranks))
 	print("\tDone\n\n")
 	print("____________________________________________________________________\n")
 else:
@@ -692,7 +700,7 @@ else:
 		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
-	consensus_file = F"{args.output_dir}consensus_taxonomy.txt"
+	consensus_file = F"{args.output_dir}constax_taxonomy.txt"
 	consensus = open(consensus_file, "w")
 
 	combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
@@ -734,7 +742,7 @@ else:
 
 
 		print("\nGenerating classification counts & summary table\n")
-		count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir)
+		count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir, "SILVA", len(ranks), use_blast=True)
 	else:
 		combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
 		filename = args.db
@@ -779,6 +787,6 @@ else:
 
 
 		print("\nGenerating classification counts & summary table\n")
-		count_classifications([rdp_file, uta_file, sin_file, consensus_file], args.output_dir)
+		count_classifications([rdp_file, uta_file, sin_file, consensus_file], args.output_dir, "SILVA", len(ranks))
 	print("\tDone\n\n")
 	print("____________________________________________________________________\n")
