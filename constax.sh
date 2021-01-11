@@ -1,5 +1,33 @@
 #!/bin/bash -login
 
+VERSION=2.0.4; BUILD=0
+TRAIN=false
+BLAST=false
+HELP=false
+SHOW_VERSION=false
+MSU_HPCC=false
+CONSERVATIVE=False
+CONF=0.8
+NTHREADS=1
+MAX_HITS=10
+EVALUE=1
+P_IDEN=0.8
+INPUT=otus.fasta
+OUTPUT=./outputs
+TAX=./taxonomy_assignments
+SINTAXPATH_USER=false
+UTAXPATH_USER=false
+RDPPATH_USER=false
+CONSTAXPATH_USER=false
+MAKE_PLOT=false
+CHECK=false
+PATHFILE=pathfile.txt
+MEM=32000
+ISOLATES=null
+HL_DB=null
+HL_FMT=null
+USE_ISOS=False # Used as python bool
+
 echo "################################################################"
 echo "###############*** This is CONSTAX v.2 ***######################"
 echo "#                                                              #"
@@ -9,7 +37,7 @@ echo "#  Julian Liber, Gian Maria Niccolo' Benucci, Gregory Bonito   #"
 echo "#                                                              #"
 echo "#         https://github.com/liberjul/CONSTAXv2                #"
 echo "################################################################"
-
+echo "Version $VERSION build $BUILD"
 
 ### Parse variable inputs
 TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,high_level_db: \
@@ -53,34 +81,6 @@ then
 fi
 
 eval set -- "$TEMP"
-
-VERSION=2.0.3; BUILD=0
-TRAIN=false
-BLAST=false
-HELP=false
-SHOW_VERSION=false
-MSU_HPCC=false
-CONSERVATIVE=False
-CONF=0.8
-NTHREADS=1
-MAX_HITS=10
-EVALUE=1
-P_IDEN=0.8
-INPUT=otus.fasta
-OUTPUT=./outputs
-TAX=./taxonomy_assignments
-SINTAXPATH_USER=false
-UTAXPATH_USER=false
-RDPPATH_USER=false
-CONSTAXPATH_USER=false
-MAKE_PLOT=false
-CHECK=false
-PATHFILE=pathfile.txt
-MEM=32000
-ISOLATES=null
-HL_DB=null
-HL_FMT=null
-USE_ISOS=False # Used as python bool
 
 while true; do
   case "$1" in
@@ -151,7 +151,7 @@ if $HELP
 fi
 if $SHOW_VERSION
 then
-  echo "CONSTAX version $VERSION"
+  echo "CONSTAX version $VERSION build $BUILD"
   exit 1
 fi
 if [ $MAX_HITS -eq 0 ]
