@@ -26,7 +26,11 @@ MEM=32000
 ISOLATES=null
 HL_DB=null
 HL_FMT=null
+HL_QC=75
+HL_ID=0
 USE_ISOS=False # Used as python bool
+ISO_QC=75
+ISO_ID=0
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
@@ -35,7 +39,7 @@ echo "github.com/liberjul/CONSTAXv2"
 echo "constax.readthedocs.io/"
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,high_level_db: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -69,7 +73,11 @@ then
   echo "--constax_path                                      Path to CONSTAX scripts"
   echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
   echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
+  echo "--isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches"
+  echo "--isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches"
   echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
+  echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
+  echo "--high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
   echo "-h, --help                                          Display this help and exit"
   echo "-v, --version                                       Display version and exit"
   exit 1
@@ -96,7 +104,11 @@ while true; do
     --constax_path ) CONSTAXPATH_USER="${2%/}"; shift 2 ;;
     --pathfile ) PATHFILE="$2"; shift 2 ;;
     --isolates ) ISOLATES="$2"; shift 2 ;;
+    --isolates_query_coverage ) ISO_QC="$2"; shift 2 ;;
+    --isolates_percent_identity  ) ISO_ID="$2"; shift 2 ;;
     --high_level_db ) HL_DB="$2"; shift 2 ;;
+    --high_level_query_coverage ) HL_QC="$2"; shift 2 ;;
+    --high_level_percent_identity  ) HL_ID="$2"; shift 2 ;;
     -t | --train ) TRAIN=true; shift ;;
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
@@ -112,11 +124,6 @@ done
 
 if $HELP
 	then
-    echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
-    echo "This software is distributed under MIT License"
-    echo "© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
-    echo "github.com/liberjul/CONSTAXv2"
-    echo "constax.readthedocs.io/"
     echo ""
     echo "Usage: constax [OPTION] ..."
     echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
@@ -145,7 +152,11 @@ if $HELP
     echo "--constax_path                                      Path to CONSTAX scripts"
     echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
     echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
+    echo "--isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches"
+    echo "--isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches"
     echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
+    echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
+    echo "--high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
     echo "-h, --help                                          Display this help and exit"
     echo "-v, --version                                       Display version and exit"
 		exit 1
@@ -166,6 +177,22 @@ then
 elif [ $NTHREADS -lt 1 2> /dev/null ] || [ $? == 2 ]
 then
   echo "Set -n/--nthreads to an integer greater than 0"
+  exit 1
+elif [ $ISO_QC -lt 1 2> /dev/null ] || [ $ISO_QC -gt 100 2> /dev/null ] || [ $? == 2 ]
+then
+  echo "Set --isolates_query_coverage to an integer greater than 0 and less than or equal to  100"
+  exit 1
+elif [ $ISO_ID -lt 1 2> /dev/null ] || [ $ISO_ID -gt 100 2> /dev/null ] || [ $? == 2 ]
+then
+  echo "Set --isolates_percent_identity to an integer greater than 0 and less than or equal to 100"
+  exit 1
+elif [ $HL_QC -lt 1 2> /dev/null ] || [ $HL_QC -gt 100 2> /dev/null ] || [ $? == 2 ]
+then
+  echo "Set --high_level_query_coverage to an integer greater than 0 and less than 100"
+  exit 1
+elif [ $HL_ID -lt 1 2> /dev/null ] || [ $HL_ID -gt 100 2> /dev/null ] || [ $? == 2 ]
+then
+  echo "Set --high_level_percent_identity to an integer greater than 0 and less than 100"
   exit 1
 elif [[ $P_IDEN =~ '^[+-]?[0-9]+([.][0-9]+)?$' ]] || (( $(echo "$P_IDEN > 1.0" | bc -l) )) || (( $(echo "$P_IDEN < 0.0" | bc -l) ))
 then
@@ -474,9 +501,9 @@ rm "$FRM_INPUT"
 echo "Combining Taxonomies"
 if $BLAST
 then
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
 else
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
 fi
 if $MSU_HPCC
 then

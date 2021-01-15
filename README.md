@@ -111,6 +111,12 @@ python fasta_select_by_keyword.py -i SILVA_138_SSURef_tax_silva.fasta \
 constax --help
 ```
 ```
+Welcome to CONSTAX version 2.0.4 build 2 - The CONSensus TAXonomy classifier
+This software is distributed under MIT License
+© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito
+github.com/liberjul/CONSTAXv2
+constax.readthedocs.io/
+
 Usage: constax [OPTION] ...
 Classify input OTU sequences by CONSTAX consensus taxonomy algorithm
 Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta
@@ -131,14 +137,18 @@ Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 --conservative                                      If specified, use conservative consensus rule (2 null = null winner)
 --make_plot                                         If specified, run R script to make plot of classified taxa
 --check                                             If specified, runs checks but stops before training or classifying
---mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA.
---sintax_path                                       Path to USEARCH/VSEARCH executable for SINTAX classification, or `vsearch` if on PATH
+--mem                                               Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA
+--sintax_path                                       Path to USEARCH/VSEARCH executable for SINTAX classification
 --utax_path                                         Path to USEARCH executable for UTAX classification
---rdp_path                                          Path to RDP `classifier.jar` file or `classifier` if on PATH
+--rdp_path                                          Path to RDP classifier.jar file
 --constax_path                                      Path to CONSTAX scripts
 --pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables
 --isolates                                          FASTA formatted file of isolates to use BLAST against
---high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy.
+--isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches
+--isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches
+--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy
+--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches
+--high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches
 -h, --help                                          Display this help and exit
 -v, --version                                       Display version and exit
 ```

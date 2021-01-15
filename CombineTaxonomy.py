@@ -304,7 +304,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 	return output_file
 
 ################################################################################
-def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
+def build_iso_hl_dict(blast_outfile, hl_qc=75, hl_id=0, iso_qc=75, iso_id=0, hl=False, hl_fmt="UNITE"):
 	hit_dict = {}
 	with open(blast_outfile, "r") as ifile:
 		line = ifile.readline()
@@ -317,21 +317,24 @@ def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
 					hit_dict[quer] = ["", "0", "0"]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
-				if int(spl[5]) > 75:
-					subj = spl[1]
-					if hl and hl_fmt == "UNITE":
-						subj = subj.split("k__")[1].split(";")[0]
-					elif hl and hl_fmt == "SILVA":
-						if "_Eukaryota;" in subj:
-							subj = subj.split("_")[1].split(";")[0:9]
-							subj = ";".join(subj)
-						elif "Mitochondria" in subj:
-							subj = "Mitochondria"
-						elif "Chloroplast" in subj:
-							subj = "Chloroplast"
-						else:
-							subj = "_".join(subj.split("_")[1].split(";")[0:2])
-					hit_dict[spl[0]] = [subj, spl[4], spl[5]]
+				if hl:
+					if int(spl[5]) >= hl_qc and if int(spl[4]) >= hl_id:
+						if hl_fmt == "UNITE":
+							subj = subj.split("k__")[1].split(";")[0]
+						elif hl_fmt == "SILVA":
+							if "_Eukaryota;" in subj:
+								subj = subj.split("_")[1].split(";")[0:9]
+								subj = ";".join(subj)
+							elif "Mitochondria" in subj:
+								subj = "Mitochondria"
+							elif "Chloroplast" in subj:
+								subj = "Chloroplast"
+							else:
+								subj = "_".join(subj.split("_")[1].split(";")[0:2])
+					else:
+						hit_dict[spl[0]] = ["", "0", "0"]
+				elif int(spl[5]) >= iso_qc and if int(spl[4]) >= iso_id:
+					hit_dict[spl[0]] = [spl[1], spl[4], spl[5]]
 
 				else:
 					hit_dict[spl[0]] = ["", "0", "0"]
@@ -501,7 +504,11 @@ parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-d", "--db", type=str, default="", help="database file")
 parser.add_argument("-t", "--tf", type=str, default="", help="training files path")
 parser.add_argument("-i", "--isolates", type=str, help="Use isolates")
+parser.add_argument("--iso_qc", type=int, help="Threshold for isolate query coverage")
+parser.add_argument("--iso_id", type=int, help="Threshold for isolate percent_identity")
 parser.add_argument("-l", "--hl", type=str, help="Format of representative DB for high-level taxonomy")
+parser.add_argument("--hl_qc", type=int, help="Threshold for high-level taxonomy query coverage")
+parser.add_argument("--hl_id", type=int, help="Threshold for high-level taxonomy percent_identity")
 parser.add_argument("-s", "--conservative", type=str2bool, nargs='?', const=True, default=False, help="Use conservative rule (prevents overclassification, looses sensitivity)")
 args = parser.parse_args()
 
@@ -563,11 +570,11 @@ if args.format == "UNITE":
 		print("\tDone\n")
 	if args.isolates == "True":
 		print("\nReformatting isolate result file\n")
-		iso_dict = build_iso_hl_dict(F"{args.tax}/isolates_blast.out")
+		iso_dict = build_iso_hl_dict(F"{args.tax}/isolates_blast.out", iso_qc=args.iso_qc, iso_id=args.iso_id)
 		print("\tDone\n")
 	if args.hl != "null":
 		print("\nReformatting high level tax result file\n")
-		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
+		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl, hl_qc=args.hl_qc, hl_id=args.hl_id)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}constax_taxonomy.txt"
@@ -697,11 +704,11 @@ else:
 		print("\tDone\n")
 	if args.isolates == "True":
 		print("\nReformatting isolate result file\n")
-		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out")
+		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out", iso_qc=args.iso_qc, iso_id=args.iso_id)
 		print("\tDone\n")
 	if args.hl != "null":
 		print("\nReformatting high level tax result file\n")
-		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl)
+		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl, hl_qc=args.hl_qc, hl_id=args.hl_id)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
 	consensus_file = F"{args.output_dir}constax_taxonomy.txt"
