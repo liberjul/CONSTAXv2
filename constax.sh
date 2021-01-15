@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.4; BUILD=0
+VERSION=2.0.4; BUILD=2
 TRAIN=false
 BLAST=false
 HELP=false
@@ -28,16 +28,11 @@ HL_DB=null
 HL_FMT=null
 USE_ISOS=False # Used as python bool
 
-echo "################################################################"
-echo "###############*** This is CONSTAX v.2 ***######################"
-echo "#                                                              #"
-echo "#                     MIT License                              #"
-echo "#                 Copyright (C) 2020                           #"
-echo "#  Julian Liber, Gian Maria Niccolo' Benucci, Gregory Bonito   #"
-echo "#                                                              #"
-echo "#         https://github.com/liberjul/CONSTAXv2                #"
-echo "################################################################"
-echo "Version $VERSION build $BUILD"
+echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
+echo "This software is distributed under MIT License"
+echo "© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
+echo "github.com/liberjul/CONSTAXv2"
+echo "constax.readthedocs.io/"
 
 ### Parse variable inputs
 TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,high_level_db: \
@@ -117,6 +112,12 @@ done
 
 if $HELP
 	then
+    echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
+    echo "This software is distributed under MIT License"
+    echo "© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
+    echo "github.com/liberjul/CONSTAXv2"
+    echo "constax.readthedocs.io/"
+    echo ""
     echo "Usage: constax [OPTION] ..."
     echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
     echo "Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
