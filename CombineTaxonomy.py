@@ -314,7 +314,7 @@ def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
 				line = ifile.readline()
 				line = ifile.readline()
 				if line == "# 0 hits found\n": # If no hits found
-					hit_dict[quer] = ["", "0"]
+					hit_dict[quer] = ["", "0", "0"]
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
 				if int(spl[5]) > 75:
@@ -331,10 +331,10 @@ def build_iso_hl_dict(blast_outfile, hl=False, hl_fmt="UNITE"):
 							subj = "Chloroplast"
 						else:
 							subj = "_".join(subj.split("_")[1].split(";")[0:2])
-					hit_dict[spl[0]] = [subj, spl[4]]
+					hit_dict[spl[0]] = [subj, spl[4], spl[5]]
 
 				else:
-					hit_dict[spl[0]] = ["", "0"]
+					hit_dict[spl[0]] = ["", "0", "0"]
 			line = ifile.readline()
 	return hit_dict
 
@@ -573,11 +573,11 @@ if args.format == "UNITE":
 	consensus_file = F"{args.output_dir}constax_taxonomy.txt"
 	consensus = open(consensus_file, "w")
 	if args.isolates == "True":
-		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id")
+		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tIsolate\tIsolate_percent_id\tIsolate_query_cover")
 	else:
 		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies")
 	if args.hl != "null":
-		consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\n")
+		consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover\n")
 	else:
 		consensus.write("\n")
 
@@ -600,9 +600,9 @@ if args.format == "UNITE":
 					combined.write(level)
 				consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 				if args.isolates == "True":
-					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
+					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 				if args.hl != "null":
-					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 				consensus.write("\n")
 				combined.write("\n")
 			print("\tDone\n")
@@ -632,9 +632,9 @@ if args.format == "UNITE":
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
-				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
@@ -716,9 +716,9 @@ else:
 			combined.write(F"\t{r}_RDP\t{r}_BLAST\t{r}_SINTAX\t{r}_Consensus")
 			consensus.write(F"\t{r}")
 		if args.isolates == "True":
-			consensus.write("\tIsolate\tIsolate_percent_id")
+			consensus.write("\tIsolate\tIsolate_percent_id\tIsolate_query_cover")
 		if args.hl != "null":
-			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id")
+			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover")
 		consensus.write("\n")
 		combined.write("\n")
 
@@ -734,9 +734,9 @@ else:
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
-				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
@@ -761,9 +761,9 @@ else:
 			combined.write(F"\t{r}_RDP\t{r}_SINTAX\t{r}_UTAX\t{r}_Consensus")
 			consensus.write(F"\t{r}")
 		if args.isolates == "True":
-			consensus.write("\tIsolate\tIsolate_percent_id")
+			consensus.write("\tIsolate\tIsolate_percent_id\tIsolate_query_cover")
 		if args.hl != "null":
-			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id")
+			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover")
 		combined.write("\n")
 		consensus.write("\n")
 
@@ -779,9 +779,9 @@ else:
 				combined.write(level)
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
-				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}")
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
-				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}")
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
