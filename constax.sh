@@ -27,10 +27,10 @@ ISOLATES=null
 HL_DB=null
 HL_FMT=null
 HL_QC=75
-HL_ID=0
+HL_ID=1
 USE_ISOS=False # Used as python bool
 ISO_QC=75
-ISO_ID=0
+ISO_ID=1
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
@@ -74,10 +74,10 @@ then
   echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
   echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
   echo "--isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches"
-  echo "--isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches"
+  echo "--isolates_percent_identity=1                       Threshold of aligned sequence percent identity to report isolate matches"
   echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
   echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
-  echo "--high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
+  echo "--high_level_percent_identity=1                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
   echo "-h, --help                                          Display this help and exit"
   echo "-v, --version                                       Display version and exit"
   exit 1
@@ -153,10 +153,10 @@ if $HELP
     echo "--pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables"
     echo "--isolates                                          FASTA formatted file of isolates to use BLAST against"
     echo "--isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches"
-    echo "--isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches"
+    echo "--isolates_percent_identity=1                       Threshold of aligned sequence percent identity to report isolate matches"
     echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
     echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
-    echo "--high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
+    echo "--high_level_percent_identity=1                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
     echo "-h, --help                                          Display this help and exit"
     echo "-v, --version                                       Display version and exit"
 		exit 1

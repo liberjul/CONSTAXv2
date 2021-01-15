@@ -145,10 +145,10 @@ Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 --pathfile                                          File with paths to SINTAX, UTAX, RDP, and CONSTAX executables
 --isolates                                          FASTA formatted file of isolates to use BLAST against
 --isolates_query_coverage=75                        Threshold of sequence query coverage to report isolate matches
---isolates_percent_identity=0                       Threshold of aligned sequence percent identity to report isolate matches
+--isolates_percent_identity=1                       Threshold of aligned sequence percent identity to report isolate matches
 --high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy
 --high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches
---high_level_percent_identity=0                     Threshold of aligned sequence percent identity to report high-level taxonomy matches
+--high_level_percent_identity=1                     Threshold of aligned sequence percent identity to report high-level taxonomy matches
 -h, --help                                          Display this help and exit
 -v, --version                                       Display version and exit
 ```
