@@ -37,6 +37,7 @@ echo "This software is distributed under MIT License"
 echo "© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
 echo "https://github.com/liberjul/CONSTAXv2"
 echo "https://constax.readthedocs.io/"
+echo ""
 
 ### Parse variable inputs
 TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
@@ -124,7 +125,6 @@ done
 
 if $HELP
 	then
-    echo ""
     echo "Usage: constax [OPTION] ..."
     echo "Classify input OTU sequences by CONSTAX consensus taxonomy algorithm"
     echo "Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta"
