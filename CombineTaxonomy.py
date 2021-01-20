@@ -318,7 +318,7 @@ def build_iso_hl_dict(blast_outfile, hl_qc=75, hl_id=0, iso_qc=75, iso_id=0, hl=
 			elif line[0] != "#": # BLAST hit lines
 				spl = line.strip().split("\t")
 				if hl:
-					if int(spl[5]) >= hl_qc and int(spl[4]) >= hl_id:
+					if int(float(spl[5])) >= hl_qc and int(float(spl[4])) >= hl_id:
 						if hl_fmt == "UNITE":
 							subj = subj.split("k__")[1].split(";")[0]
 						elif hl_fmt == "SILVA":
@@ -333,7 +333,7 @@ def build_iso_hl_dict(blast_outfile, hl_qc=75, hl_id=0, iso_qc=75, iso_id=0, hl=
 								subj = "_".join(subj.split("_")[1].split(";")[0:2])
 					else:
 						hit_dict[spl[0]] = ["", "0", "0"]
-				elif int(spl[5]) >= iso_qc and int(spl[4]) >= iso_id:
+				elif int(float(spl[5])) >= iso_qc and int(float(spl[4])) >= iso_id:
 					hit_dict[spl[0]] = [spl[1], spl[4], spl[5]]
 
 				else:
