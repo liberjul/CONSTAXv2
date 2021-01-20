@@ -277,7 +277,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 		classification_buf += "\n"
 
 	blast_res = pd.read_csv(blast_file) # Read the input csv
-	blast_res = blast_res.astype({"e_value" : "float64"})
+	blast_res = blast_res.astype({"e_value" : "float64", "query" : "str"})
 	uniq = pd.unique(blast_res["query"]) # List of all otus
 	for q in uniq:
 		q_list = [q.split(" ")[0], "0.0"] # OTU and placeholder confidence
