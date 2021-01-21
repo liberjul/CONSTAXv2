@@ -319,6 +319,7 @@ def build_iso_hl_dict(blast_outfile, hl_qc=75, hl_id=0, iso_qc=75, iso_id=0, hl=
 				spl = line.strip().split("\t")
 				if hl:
 					if int(float(spl[5])) >= hl_qc and int(float(spl[4])) >= hl_id:
+						subj = spl[1]
 						if hl_fmt == "UNITE":
 							subj = subj.split("k__")[1].split(";")[0]
 						elif hl_fmt == "SILVA":
