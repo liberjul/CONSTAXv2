@@ -332,11 +332,11 @@ def build_iso_hl_dict(blast_outfile, hl_qc=75, hl_id=0, iso_qc=75, iso_id=0, hl=
 								subj = "Chloroplast"
 							else:
 								subj = "_".join(subj.split("_")[1].split(";")[0:2])
+						hit_dict[spl[0]] = [subj, spl[4], spl[5]]
 					else:
 						hit_dict[spl[0]] = ["", "0", "0"]
 				elif int(float(spl[5])) >= iso_qc and int(float(spl[4])) >= iso_id:
 					hit_dict[spl[0]] = [spl[1], spl[4], spl[5]]
-
 				else:
 					hit_dict[spl[0]] = ["", "0", "0"]
 			line = ifile.readline()
