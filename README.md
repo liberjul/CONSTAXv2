@@ -38,13 +38,8 @@ CONSTAX v.2 improves upon v.1 with the following features:
 conda install -c bioconda constax
 ```
 This uses conda installations, including vsearch instead of usearch. You can modify `SINTAXPATH` in pathfile.txt if you have a usearch installation.
-### Simple installation for Windows
-```
-git clone https://github.com/liberjul/CONSTAXv2.git
-cd CONSTAXv2
-bash install.sh
-```
-### Custom installation
+
+### Custom installation, and installation for Windows
 
 #### USEARCH installation
 1. Download the desired version from [here](https://www.drive5.com/usearch/download.html).
