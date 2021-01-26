@@ -128,6 +128,7 @@ Example constax -t --db sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 -x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments
 -t, --train                                         Complete training if specified
 -b, --blast                                         Use BLAST instead of UTAX if specified
+--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output
 --msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments
 --conservative                                      If specified, use conservative consensus rule (2 null = null winner)
 --make_plot                                         If specified, run R script to make plot of classified taxa
@@ -213,6 +214,10 @@ Complete training if specified. Cannot run classification without training files
 -b, --blast
 ```
 Use BLAST instead of UTAX if specified. If installed with conda, this in the option that will work by default. UTAX is available from [USEARCH](https://www.drive5.com/usearch/download.html). BLAST classification generally performs better with faster training, similar classification speed, and greater accuracy.
+```
+--select_by_keyword
+```
+Takes a keyword argument and `--input` FASTA file to produce a filtered database with headers containing the keyword with name `--output`. Helpful for limiting search database to Bacteria, Archaea, Fungi, or other group.
 ```
 --msu_hpcc
 ```

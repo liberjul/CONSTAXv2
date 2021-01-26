@@ -64,7 +64,7 @@ then
   echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
   echo "-t, --train                                         Complete training if specified"
   echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
-  echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword"
+  echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output"
   echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
@@ -144,7 +144,7 @@ if $HELP
     echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
     echo "-t, --train                                         Complete training if specified"
     echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
-    echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword"
+    echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output"
     echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
@@ -362,8 +362,8 @@ then
 fi
 if [[ "$KEYWORD" != "null" ]]
 then
-  python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o ${INPUT%.fasta}_"$KEYWORD".fasta -k $KEYWORD
-  echo "Filtered file output to ${INPUT%.fasta}_"$KEYWORD".fasta"
+  python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o "$OUTPUT" -k $KEYWORD
+  echo "Filtered file output to $OUTPUT"
   exit 1
 fi
 
