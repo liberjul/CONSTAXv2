@@ -5,6 +5,7 @@ TRAIN=false
 BLAST=false
 HELP=false
 SHOW_VERSION=false
+KEYWORD=null
 MSU_HPCC=false
 CONSERVATIVE=False
 CONF=0.8
@@ -40,7 +41,7 @@ echo "https://constax.readthedocs.io/"
 echo ""
 
 ### Parse variable inputs
-TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
+TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,select_by_keyword:,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
              -n 'constax' -- "$@"`
 
 if [ $? != 0 ]
@@ -63,6 +64,7 @@ then
   echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
   echo "-t, --train                                         Complete training if specified"
   echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
+  echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword"
   echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
   echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
   echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
@@ -114,6 +116,7 @@ while true; do
     -b | --blast ) BLAST=true; shift ;;
 		-h | --help ) HELP=true; shift ;;
     -v | --version) SHOW_VERSION=true; shift ;;
+    --select_by_keyword) KEYWORD="$2"; shift 2 ;;
     --msu_hpcc ) MSU_HPCC=true; shift ;;
     --conservative ) CONSERVATIVE=True; shift ;;
     --make_plot ) MAKE_PLOT=true; shift ;;
@@ -141,6 +144,7 @@ if $HELP
     echo "-x, --tax=./taxonomy_assignments                    Directory for taxonomy assignments"
     echo "-t, --train                                         Complete training if specified"
     echo "-b, --blast                                         Use BLAST instead of UTAX if specified"
+    echo "--select_by_keyword                                 Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword"
     echo "--msu_hpcc                                          If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments"
     echo "--conservative                                      If specified, use conservative consensus rule (2 null = null winner)"
     echo "--make_plot                                         If specified, run R script to make plot of classified taxa"
@@ -351,6 +355,11 @@ fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
 then
   echo "USEARCH executable must be version 9.X or lower to use UTAX"
+  exit 1
+fi
+if [[ "$KEYWORD" != "null" ]]
+then
+  python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o ${INPUT%.fasta}_"$KEYWORD".fasta -k $KEYWORD
   exit 1
 fi
 
