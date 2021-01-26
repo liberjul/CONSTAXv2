@@ -217,72 +217,74 @@ then
   echo "Input file $INPUT must end with .fasta, exiting..."
   exit 1
 fi
-
-if ! [ -s "$DB" ]
+if [[ "$KEYWORD" == "null" ]]
 then
-	echo "Database file $DB is non-existent or empty, exiting..."
-  exit 1
-elif [[ "$DB" != *.fasta ]]
-then
-  echo "Database file $DB must end with .fasta, exiting..."
-  exit 1
-fi
-if [ -d "$OUTPUT" ]  && ! [ -z "$(ls -A $OUTPUT)" ]
-then
-	echo "Overwritting previous classification..."
-fi
-if [ -d "$TAX" ]  && ! [ -z "$(ls -A $TAX)" ]
-then
-	echo "Overwritting previous taxonomy assignments..."
-fi
-if ! [ -d "$OUTPUT" ] # Output directory doesn't exist
-then
-	mkdir "$OUTPUT"
-fi
-if ! [ -d "$TAX" ] # Taxonomic assignments directory does not exist
-then
-	mkdir "$TAX"
-fi
-
-if $TRAIN && [ -z "$TFILES" ] # if training true and path not specified
-then
-	TFILES="training_files"
-fi
-
-if $TRAIN && ! [ -d "$TFILES" ] # if training is true and path does not exist
-then
-	mkdir "$TFILES"
-fi
-
-if $TRAIN
-then
-  if [ -z "$(ls -A $TFILES)" ] # training true and training file path empty
+  if ! [ -s "$DB" ]
   then
-  	echo "Training, with output to $TFILES..."
-  else # training true and trainfile path is not empty
-    echo "Performing training and overwritting training files..."
+  	echo "Database file $DB is non-existent or empty, exiting..."
+    exit 1
+  elif [[ "$DB" != *.fasta ]]
+  then
+    echo "Database file $DB must end with .fasta, exiting..."
+    exit 1
   fi
-else # Training not true
-  if  [ -z "$TFILES" ] #  No trainfile path provided
+  if [ -d "$OUTPUT" ]  && ! [ -z "$(ls -A $OUTPUT)" ]
   then
-    TFILES="training_files"
+  	echo "Overwritting previous classification..."
   fi
-  if grep -Fxq "Classifier training complete using BLAST: $BLAST" "${TFILES}"/training_check.txt # If trainfile path doesn't exist or is empty
+  if [ -d "$TAX" ]  && ! [ -z "$(ls -A $TAX)" ]
   then
-    echo "Classifying without training..."
-    if [[ "$(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" != "$(grep -o 'BLAST version 2[.].*' ${TFILES}/training_check.txt | tail -n1 | cut -d' ' -f3)" ]]
+  	echo "Overwritting previous taxonomy assignments..."
+  fi
+  if ! [ -d "$OUTPUT" ] # Output directory doesn't exist
+  then
+  	mkdir "$OUTPUT"
+  fi
+  if ! [ -d "$TAX" ] # Taxonomic assignments directory does not exist
+  then
+  	mkdir "$TAX"
+  fi
+
+  if $TRAIN && [ -z "$TFILES" ] # if training true and path not specified
+  then
+  	TFILES="training_files"
+  fi
+
+  if $TRAIN && ! [ -d "$TFILES" ] # if training is true and path does not exist
+  then
+  	mkdir "$TFILES"
+  fi
+
+  if $TRAIN
+  then
+    if [ -z "$(ls -A $TFILES)" ] # training true and training file path empty
     then
-      echo "BLAST executable version does not match the version used to generate the training files, "
-      echo "if BLAST Database error occurs, change your executable or use -t flag."
-    elif ! grep -Fxq "SINTAX executable ${SINTAXPATH##*/}" "${TFILES}"/training_check.txt
-    then
-      echo "SINTAX executable does not match the executable used to generate the training files, "
-      echo "if SINTAX error occurs, change your executable or use -t flag."
+    	echo "Training, with output to $TFILES..."
+    else # training true and trainfile path is not empty
+      echo "Performing training and overwritting training files..."
     fi
-  else
-    echo "Cannot classify without existing training files, please specify -t"
-		exit 1
-	fi
+  else # Training not true
+    if  [ -z "$TFILES" ] #  No trainfile path provided
+    then
+      TFILES="training_files"
+    fi
+    if grep -Fxq "Classifier training complete using BLAST: $BLAST" "${TFILES}"/training_check.txt # If trainfile path doesn't exist or is empty
+    then
+      echo "Classifying without training..."
+      if [[ "$(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" != "$(grep -o 'BLAST version 2[.].*' ${TFILES}/training_check.txt | tail -n1 | cut -d' ' -f3)" ]]
+      then
+        echo "BLAST executable version does not match the version used to generate the training files, "
+        echo "if BLAST Database error occurs, change your executable or use -t flag."
+      elif ! grep -Fxq "SINTAX executable ${SINTAXPATH##*/}" "${TFILES}"/training_check.txt
+      then
+        echo "SINTAX executable does not match the executable used to generate the training files, "
+        echo "if SINTAX error occurs, change your executable or use -t flag."
+      fi
+    else
+      echo "Cannot classify without existing training files, please specify -t"
+  		exit 1
+  	fi
+  fi
 fi
 if [ -f "$PATHFILE" ] # First try in local directory
 then
@@ -321,6 +323,7 @@ fi
 
 if $MSU_HPCC
 then
+  echo "Using paths for the MSU HPCC ..."
   SINTAXPATH=/mnt/research/rdp/public/thirdParty/usearch10.0.240_i86linux64
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
@@ -360,6 +363,7 @@ fi
 if [[ "$KEYWORD" != "null" ]]
 then
   python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o ${INPUT%.fasta}_"$KEYWORD".fasta -k $KEYWORD
+  echo "Filtered file output to ${INPUT%.fasta}_"$KEYWORD".fasta"
   exit 1
 fi
 
