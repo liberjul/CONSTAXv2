@@ -1,4 +1,4 @@
-Running CONSTAX locally
+Run CONSTAX locally
 =======================
 
 This is a simple tutorial about CONSTAX. We will explain how to run CONSTAX on a
