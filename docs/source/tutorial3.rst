@@ -7,7 +7,7 @@ from the SILVA database that contains Bacteria and Archaea sequences.
 First thig to do is to download the SILVA reference database here.
 
 Then, the best way is to create a script (it can be and ``.sh`` file or a ``.sb`` file depending 
-if you are running CONSATAX locally or on the MSU hpcc) that generates the Bacteria and the Arachaea 
+if you are running CONSTAX locally or on the MSU hpcc) that generates the Bacteria and the Arachaea 
 ``fasta`` files and directly concatenate them together.
  
 This is how the content of the ``.sh`` file should look like
@@ -22,7 +22,7 @@ This is how the content of the ``.sh`` file should look like
 
 When the scripts is finished running you can ispect the results.
 
- .. image:: images/SILVA.png
+.. image:: images/SILVA.png
    :align: center
 
 The headers are formatted corrctly and you can now use the newly created reference to classify your sequences.
