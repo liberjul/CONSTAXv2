@@ -492,9 +492,9 @@ then
     module load BLAST
   fi
   python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
-  makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/${ISOLATES%.fasta}"__BLAST
+  makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST
   rm "$TAX/"isolates_formatted.fasta
-  blastn -query "$FRM_INPUT" -db "$TAX/${ISOLATES%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+  blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 fi
 if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
 then
@@ -505,9 +505,9 @@ then
     module load BLAST
   fi
   python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
-  makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/${HL_DB%.fasta}"__BLAST
+  makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST
   rm "$TAX/"hl_formatted.fasta
-  blastn -query "$FRM_INPUT" -db "$TAX/${HL_DB%.fasta}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+  blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
 fi
 
 rm "$FRM_INPUT"
