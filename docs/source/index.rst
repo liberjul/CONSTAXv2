@@ -60,6 +60,7 @@ See the menu on the left for how to install CONSTAX and how to use it.
    options
    tutorial1
    tutorial2
+   tutorial3
    help
 
 Indices and tables
