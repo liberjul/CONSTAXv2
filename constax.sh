@@ -495,6 +495,7 @@ then
   makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST
   rm "$TAX/"isolates_formatted.fasta
   blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+  rm "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST.n*
 fi
 if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
 then
@@ -508,6 +509,7 @@ then
   makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST
   rm "$TAX/"hl_formatted.fasta
   blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+  rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
 fi
 
 rm "$FRM_INPUT"
