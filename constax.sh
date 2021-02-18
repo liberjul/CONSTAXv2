@@ -40,6 +40,11 @@ echo "https://github.com/liberjul/CONSTAXv2"
 echo "https://constax.readthedocs.io/"
 echo ""
 
+echo "Please cite us as:"
+echo "CONSTAX2: Improved taxonomic classification of environmental DNA markers"
+echo "Julian Aaron Liber, Gregory Bonito, Gian Maria Niccolò Benucci"
+echo "bioRxiv 2021.02.15.430803; doi: https://doi.org/10.1101/2021.02.15.430803"
+
 ### Parse variable inputs
 TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,select_by_keyword:,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
              -n 'constax' -- "$@"`
