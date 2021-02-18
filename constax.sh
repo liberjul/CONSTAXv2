@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.5; BUILD=0
+VERSION=2.0.6; BUILD=0
 TRAIN=false
 BLAST=false
 HELP=false
