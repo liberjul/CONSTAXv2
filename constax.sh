@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.6; BUILD=0
+VERSION=2.0.7; BUILD=0
 TRAIN=false
 BLAST=false
 HELP=false
@@ -427,9 +427,28 @@ then
 
   if [ $(command -v "$RDPPATH") ]
   then
-    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m
+    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
   else
-    java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt
+    java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
+  fi
+  cat rdp_train.out
+  if grep -Fq "duplicate taxon name" rdp_train.out
+  then
+    echo "RDP training error, redoing with duplicate taxa"
+    python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH" --dup
+    if [ $(command -v "$RDPPATH") ]
+    then
+      "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
+    else
+      java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
+    fi
+    if [ -s rdp_train.out ]
+    then
+      cat rdp_train.out
+      exit 1
+    else
+      echo "RDP training error overcome, continuing with classification"
+    fi
   fi
 
   # The rRNAClassifier.properties file should be in one of these two places

@@ -106,7 +106,7 @@ python fasta_select_by_keyword.py -i SILVA_138_SSURef_tax_silva.fasta \
 constax --help
 ```
 ```
-Welcome to CONSTAX version 2.0.4 build 2 - The CONSensus TAXonomy classifier
+Welcome to CONSTAX version 2.0.7 build 0 - The CONSensus TAXonomy classifier
 This software is distributed under MIT License
 © Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito
 github.com/liberjul/CONSTAXv2

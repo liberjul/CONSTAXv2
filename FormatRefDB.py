@@ -34,6 +34,7 @@ parser.add_argument("-d", "--db", type=str, help="database file")
 parser.add_argument("-t", "--tf", type=str, help="training files path")
 parser.add_argument("-f", "--format", type=str, help="database formatting")
 parser.add_argument("-p", "--path", type=str, help="path to subscript imports")
+parser.add_argument("--dup", action='store_true')
 args = parser.parse_args()
 
 sys.path.append(args.path + "/")
@@ -171,7 +172,7 @@ print(F"Reference database FASTAs formatted in {time.process_time() - start} sec
 os.system(F"rm {filename_base}__RDP_taxonomy_trained.txt 2> /dev/null")
 os.system(F"rm {filename_base}__RDP_taxonomy_headers.txt 2> /dev/null")
 
-subscript_lineage2taxonomyTrain.lin2tax(filename_base, args.format)
+subscript_lineage2taxonomyTrain.lin2tax(filename_base, args.format, args.dup)
 subscript_fasta_addFullLineage.addFullLineage(filename_base, args.format)
 
 print("Database formatting complete\n____________________________________________________________________\n\n")

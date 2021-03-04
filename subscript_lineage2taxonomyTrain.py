@@ -3,7 +3,7 @@
 #Approach:each taxon is uniquely identified by the combination of its tax id and depth from the root rank, its attributes comprise: name, parent taxid, and level of depth from the root rank.
 import os
 
-def lin2tax(file_base, format):
+def lin2tax(file_base, format, dup=False):
 	print("\n\tTraining Taxonomy")
 	with open(file_base+"__RDP_taxonomy.txt", 'r') as f:
 		line = f.readline()
@@ -20,6 +20,8 @@ def lin2tax(file_base, format):
 		line = f.readline()
 		if format == "UNITE":
 			name_to_end = {}
+			if dup:
+				end_name_dict = {}
 			while line != "":
 				rec_count = 0
 				th_buf = "" # taxon header buffer
@@ -50,6 +52,13 @@ def lin2tax(file_base, format):
 						ID += 1
 						hash[name] = ID #add name-id to the map
 						end_name = name.split(';')[-1]
+						if dup:
+							if end_name not in end_name_dict:
+								end_name_dict[end_name] = 1
+								end_name = F"{end_name}_1"
+							else:
+								end_name_dict[end_name] += 1
+								end_name = F"{end_name}_{end_name_dict[end_name]}"
 						header = F"{header};{end_name}"
 						name_to_end[name] = end_name
 						output_buf = F"{output_buf}{ID}*{end_name}*{pID}*{depth}*{rank}\n"
@@ -92,6 +101,7 @@ def lin2tax(file_base, format):
 						ID += 1
 						hash[name] = ID #add name-id to the map
 						end_name = name.split(';')[-1]
+						# Allow for taxa which have more than 1 parent lineage
 						if end_name not in end_name_dict:
 							end_name_dict[end_name] = 1
 							end_name = F"{end_name}_1"
