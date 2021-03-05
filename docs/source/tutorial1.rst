@@ -61,7 +61,7 @@ At this point your are ready to give CONSTAX a try.
 
     gian@gian-Z390-GY:~/tutorial$ sh constax.sh
 
-And CONSTAX will strat running...
+And CONSTAX will start running...
 
 .. image:: images/run.png
    :align: center

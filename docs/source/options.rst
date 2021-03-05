@@ -54,7 +54,7 @@ Database to train classifiers. UNITE and SILVA formats are supported. See `Datas
 .. code-block:: default
 
    -f, --trainfile=./training_files
-                    
+
 Path to which training files will be written.
 
 .. code-block:: default
@@ -76,7 +76,7 @@ Output directory for classifications.
 Directory for taxonomy assignments.
 
 .. code-block:: default
-   
+
    -t, --train
 
 Complete training if specified. Cannot run classification without training files present, so this option is necessary at least at the first time you run CONSTAX or you changed the taxonomic referenced sequence database.
@@ -97,7 +97,7 @@ If specified, use executable paths on Michigan State University HPCC. Overrides 
 
    --conservative
 
-If specified, use conservative consensus rule (2 null = null winner. For example, if BLAST is the only algorithm that classifies OTU_135 to Family Strophariaceae while SINTAX and RDP give not classification, then no classification is reported at the rank of Family for OTU_135 in the CONSTAX taxonomy). According to our tests, works better for SILVA database to use this option.
+If specified, use conservative consensus rule (2 null = null winner. For example, if BLAST is the only algorithm that classifies OTU_135 to Family Strophariaceae while SINTAX and RDP give no classification, then no classification is reported at the rank of Family for OTU_135 in the CONSTAX taxonomy). According to our tests, works better for SILVA database to use this option.
 
 .. code-block:: default
 
@@ -112,7 +112,7 @@ If specified, run R script to make plot of classified taxa. The plot compares ho
 If specified, runs checks but stops before training or classifying.
 
 .. code-block:: default
-   
+
    --mem
 
 Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA. This is necessary for training the referenced databases.

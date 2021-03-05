@@ -447,7 +447,13 @@ then
       cat rdp_train.out
       exit 1
     else
-      echo "RDP training error overcome, continuing with classification"
+      echo "RDP training error overcome, continuing with classification after SINTAX is retrained"
+      if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+      then
+        "$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+      else
+        "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+      fi
     fi
   fi
 
