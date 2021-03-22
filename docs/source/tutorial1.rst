@@ -10,13 +10,12 @@ software. We need the OTU representative sequence fasta file (e.g. ``otus.fasta`
 the representative sequence fasta file of your culture isolates if you have any and you want to
 try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the :ref:`referenceDB` page for details).
 
-You tutorial folder shuld look like this:
+You tutorial folder should look like this:
 
 .. image:: images/folder.png
    :align: center
 
-It is smart to use the sh command line interpreter, so will create a and ``.sh`` file and we will
-write the CONSTAX commans in it.
+It is smart to use the sh command line interpreter, so we will create a ``.sh`` file and write the CONSTAX commands in it.
 
 .. code-block:: language
 
@@ -31,13 +30,13 @@ This is how the content of the ``.sh`` file should look like
 
     Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database.
 
-The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. In this case we suggestd to create a ``pathfile.txt``
+The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. In this case we suggested to create a ``pathfile.txt``
 
 .. code-block:: language
 
     gian@gian-Z390-GY:~/tutorial$ nano pathfile.txt
 
-where you will add the abosolute PATHs for the required softwares. VSEARCH, BLAST, and RDP are already available through the conda environment, what you will need is just USEARCH for the SINTAX classification. The pathfile.txt should look like this below:
+where you will add the absolute PATHs for the required software. VSEARCH, BLAST, and RDP are already available through the conda environment, what you will need is just USEARCH for the SINTAX classification. The pathfile.txt should look like this below:
 
 .. image:: images/pathfile.png
    :align: center
@@ -59,7 +58,7 @@ At this point your are ready to give CONSTAX a try.
 
 .. code-block:: language
 
-    gian@gian-Z390-GY:~/tutorial$ sh constax.sh
+    gian@gian-Z390-GY:~/tutorial$ constax
 
 And CONSTAX will start running...
 
@@ -87,12 +86,12 @@ The taxonomic classification of your OTUs representative sequences will be in ``
 .. image:: images/consensus.png
    :align: center
 
-While classifiations perfomed by each classifier will be store in ``combined_taxonomy.txt``
+While classifications performed by each classifier will be store in ``combined_taxonomy.txt``
 
 .. image:: images/combined.png
    :align: center
 
-Please explore other CONSTAX outpus, such as ``Classification_Summary.txt``.
+Please explore other CONSTAX outputs, such as ``Classification_Summary.txt``.
 
 If you want to use some test ``otus.fasta`` to practice the use of CONSTAX you can find some in `THIS <https://github.com/liberjul/CONSTAXv2/tree/master/otu_files>`_ github repo of CONSTAX.
 
