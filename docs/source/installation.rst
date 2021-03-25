@@ -4,16 +4,43 @@ Installation
 Simple installation with conda for Linux/OSX/WSL
 -------------------------------------------------
 
-CONSTAX comes in a conda package that contains all the dependancies needed to run the software and can be easily installed as showed below.
+CONSTAX comes in a conda package that contains all the dependencies needed to run the software and can be easily installed as showed below.
 
   .. code-block:: default
 
       conda install constax -c bioconda
 
+If conda is not installed, `follow their instructions <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ to install it. Briefly:
+
+#. Download the correct installation for your system, and run it.
+.. tabs::
+
+    .. tab:: Linux / WSL
+
+      .. code-block:: default
+
+          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+          bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
+
+    .. tab:: OSX
+
+      .. code-block:: default
+
+          curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+          bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+
+#. Follow the prompts.
+
+#. Close and reopen terminal.
+
+#. Try the command ``conda list``.
+
+#. Proceed to installing CONSTAX as above.
+
 Custom installation of USEARCH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to use USEARCH which is a propetary, instead of VSEARCH, you will have to install it yourself and generate a pathfile.txt to specify the binary location. Please see the tutorial secitons.
+If you want to use USEARCH which is a proprietary, instead of VSEARCH, you will have to install it yourself and generate a pathfile.txt to specify the binary location. Please see the tutorial sections.
 
 * USEARCH/VSEARCH
 
