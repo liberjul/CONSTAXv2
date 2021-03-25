@@ -13,6 +13,7 @@ CONSTAX comes in a conda package that contains all the dependencies needed to ru
 If conda is not installed, `follow their instructions <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ to install it. Briefly:
 
 #. Download the correct installation for your system, and run it.
+
 .. tabs::
 
     .. tab:: Linux / WSL
