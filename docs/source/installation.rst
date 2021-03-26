@@ -12,31 +12,33 @@ CONSTAX comes in a conda package that contains all the dependencies needed to ru
 
 If conda is not installed, `follow their instructions <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ to install it. Briefly:
 
-* Download the correct installation for your system, and run it.
+#. Download the correct installation for your system, and run it.
 
-  .. tabs::
+  * Miniconda installation commands:
 
-      .. tab:: Linux / WSL
+    .. tabs::
 
-        .. code-block:: default
+        .. tab:: Linux / WSL
 
-            wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
-            bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
+          .. code-block:: default
 
-      .. tab:: OSX
+              wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+              bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
 
-        .. code-block:: default
+        .. tab:: OSX
 
-            curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
-            bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+          .. code-block:: default
 
-* Follow the prompts.
+              curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+              bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
 
-* Close and reopen terminal.
+#. Follow the prompts.
 
-* Try the command ``conda list``.
+#. Close and reopen terminal.
 
-* Proceed to installing CONSTAX as above.
+#. Try the command ``conda list``.
+
+#. Proceed to installing CONSTAX as above.
 
 Custom installation of USEARCH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
