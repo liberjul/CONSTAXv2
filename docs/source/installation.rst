@@ -14,21 +14,21 @@ If conda is not installed, `follow their instructions <https://conda.io/projects
 
 #. Download the correct installation for your system, and run it.
 
-.. tabs::
+  .. tabs::
 
-    .. tab:: Linux / WSL
+      .. tab:: Linux / WSL
 
-      .. code-block:: default
+        .. code-block:: default
 
-          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
-          bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
+            wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+            bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
 
-    .. tab:: OSX
+      .. tab:: OSX
 
-      .. code-block:: default
+        .. code-block:: default
 
-          curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
-          bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+            curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+            bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
 
 #. Follow the prompts.
 
