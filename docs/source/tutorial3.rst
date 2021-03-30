@@ -4,10 +4,10 @@ Generate SILVA reference database
 This is a tutorial about how to generate a reference database, that can be used with CONSTAX.
 from the SILVA database that contains Bacteria and Archaea sequences.
 
-First thig to do is to download the SILVA reference database here.
+First thing to do is to download the SILVA reference database here.
 
 Then, the best way is to create a script (it can be and ``.sh`` file or a ``.sb`` file depending
-if you are running CONSTAX locally or on the MSU hpcc) that generates the Bacteria and the Archaea
+if you are running CONSTAX locally or on the MSU HPCC) that generates the Bacteria and the Archaea
 ``fasta`` files and directly concatenate them together.
 
 This is how the content of the ``.sh`` file should look like
