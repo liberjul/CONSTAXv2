@@ -4,13 +4,16 @@ Installation
 Simple installation with conda for Linux/OSX/WSL
 -------------------------------------------------
 
+CONSTAX is a command line tool. You will need to open and run commands
+in a terminal to use it. Windows user can `install WSL <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_ to use CONSTAX or `custom install <https://github.com/liberjul/CONSTAXv2#custom-installation-and-installation-for-windows>`_ on their machine.
+
 CONSTAX comes in a conda package that contains all the dependencies needed to run the software and can be easily installed as showed below.
 
   .. code-block:: default
 
       conda install constax -c bioconda
 
-If conda is not installed, `follow their instructions <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ to install it. Briefly:
+If conda is not installed (you get an error which might include ``command not found``), `follow their instructions <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ to install it. Briefly:
 
 1. Download the correct installation for your system, and run it.
 
