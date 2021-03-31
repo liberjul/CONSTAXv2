@@ -5,7 +5,7 @@ This tutorial is about how to examine poorly classified fungal OTUS by
 comparing to SHs from the UNITE database, which often don't have species names
 associated with them but are consistent taxa which could be of interest to the user.
 
-This will require a `downloaded UNITE database<https://constax.readthedocs.io/en/latest/tutorial5.html>`_.
+This will require a `downloaded UNITE database <https://constax.readthedocs.io/en/latest/tutorial5.html>`_.
 
 You can do this two separate ways:
 
@@ -20,7 +20,7 @@ You can do this two separate ways:
        -d sh_general_release_fungi_35077_RepS_04.02.2020.fasta \
        --isolates sh_general_release_fungi_35077_RepS_04.02.2020.fasta
 
-    The accessions found in the ``constax_taxonomy.txt`` file in the output directory is searchable at the `UNITE search page<https://unite.ut.ee/search.php#fndtn-panel1>`_.
+    The accessions found in the ``constax_taxonomy.txt`` file in the output directory is searchable at the `UNITE search page <https://unite.ut.ee/search.php#fndtn-panel1>`_.
 
 2. Examine the ``blast.out`` file in the directory specified by ``-x/--tax`` or the default ``./taxonomy_assignments`` directory.
 
