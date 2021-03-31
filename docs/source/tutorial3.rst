@@ -5,7 +5,7 @@ This is a tutorial about how to generate a reference database, that can be used 
 from the SILVA database that contains Bacteria and Archaea sequences.
 
 First thing to do is to download the `SILVA reference database here <https://www.arb-silva.de/no_cache/download/archive/>`_.
-You should use the latest release, then go to ``release_<XXX>`` > ``Exports`` and download a gzipped fasta such as ``SILVA_138_SSURef_tax_silva.fasta.gz``
+You should use the latest release such as 138. Go to ``release_<XXX>`` > ``Exports``  where ``<XXX>`` is the release number, and download a gzipped fasta such as ``SILVA_138_SSURef_tax_silva.fasta.gz``
 with the name ending in ``_SSURef_tax_silva.fasta.gz``.
 
 .. tabs::
