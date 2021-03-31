@@ -52,7 +52,7 @@ This is how the content of the ``.sh`` file should look like
 
 .. warning::
     Remember to specify the keywords correctly, as they appear in the SILVA reference.
-    For example, to target the Kingdom Bacteria the right keyword is ``" Bacteria;"``
+    For example, to target the domain Bacteria the right keyword is ``" Bacteria;"``
     with a space before the name and ";" after it.
 
 When the scripts are finished running you can inspect the results.
