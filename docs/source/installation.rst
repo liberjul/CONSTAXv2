@@ -54,7 +54,7 @@ If you want to use USEARCH which is a proprietary, instead of VSEARCH, you will 
 
   .. tabs::
 
-      .. tab:: Linux
+      .. tab:: Linux/WSL
 
         .. code-block:: default
 

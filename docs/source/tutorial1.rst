@@ -81,7 +81,7 @@ and the classification in ``taxonomy_assignments``
 .. image:: images/assign.png
    :align: center
 
-The taxonomic classification of your OTUs representative sequences will be in ``consensus_taxonomy.txt``.
+The taxonomic classification of your OTUs representative sequences will be in ``constax_taxonomy.txt``.
 
 .. image:: images/consensus.png
    :align: center
