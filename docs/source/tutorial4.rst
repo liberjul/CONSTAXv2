@@ -9,7 +9,7 @@ This will require a `downloaded UNITE database <https://constax.readthedocs.io/e
 
 You can do this two separate ways:
 
-1. Use the same database for both ``-d/--db`` and for ``--isolates``
+1. Use the same database for both ``-d/--db`` and for ``--isolates``.
 
     .. code-block:: language
 
@@ -37,4 +37,4 @@ You can do this two separate ways:
       OTU_1   KC306757        8.16e-88        322     96.891  100
       OTU_1   KC306757        8.16e-88        322     96.891  100
 
-  The second column is an accession number that can be searched at the `UNITE search page<https://unite.ut.ee/search.php#fndtn-panel1>`_.
+  The second column is an accession number that can be searched at the `UNITE search page <https://unite.ut.ee/search.php#fndtn-panel1>`_.

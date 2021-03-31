@@ -1,10 +1,29 @@
-Generate SILVA reference database
+Download and generate SILVA reference database
 =================================
 
 This is a tutorial about how to generate a reference database, that can be used with CONSTAX.
 from the SILVA database that contains Bacteria and Archaea sequences.
 
-First thing to do is to download the SILVA reference database here.
+First thing to do is to download the `SILVA reference database here <https://www.arb-silva.de/no_cache/download/archive/>`_.
+You should use the latest release, then go to ``release_<XXX>`` > ``Exports`` and download a gzipped fasta such as ``SILVA_138_SSURef_tax_silva.fasta.gz``
+with the name ending in ``_SSURef_tax_silva.fasta.gz``.
+
+.. tabs::
+
+   .. tab:: Linux/WSL
+
+     .. code-block:: default
+
+         wget https://www.arb-silva.de/fileadmin/silva_databases/release_138/Exports/SILVA_138_SSURef_tax_silva.fasta.gz
+         gunzip SILVA_138_SSURef_tax_silva.fasta.gz
+
+   .. tab:: OSX
+
+     .. code-block:: default
+
+         curl -O https://www.arb-silva.de/fileadmin/silva_databases/release_138/Exports/SILVA_138_SSURef_tax_silva.fasta.gz
+         gunzip SILVA_138_SSURef_tax_silva.fasta.gz
+
 
 Then, the best way is to create a script (it can be and ``.sh`` file or a ``.sb`` file depending
 if you are running CONSTAX locally or on the MSU HPCC) that generates the Bacteria and the Archaea
@@ -18,16 +37,16 @@ This is how the content of the ``.sh`` file should look like
 .. code-block:: language
 
    constax \
-   -i SILVA_138.SILVA_138_SSURef_tax_silva.fasta \
+   -i SILVA_138_SSURef_tax_silva.fasta \
    --select_by_keyword " Bacteria;" \
    --output silva_Db_bacteria.fasta
 
    constax \
-   -i SILVA_138.SILVA_138_SSURef_tax_silva.fasta \
+   -i SILVA_138_SSURef_tax_silva.fasta \
    --select_by_keyword " Archaea;" \
    --output silva_Db_archaea.fasta
 
-   cat silva_Db_bacteria.fasta silva_Db_archaea.fasta > SILVA_138.1_SSURef_bact_arch.fasta
+   cat silva_Db_bacteria.fasta silva_Db_archaea.fasta > SILVA_138_SSURef_bact_arch.fasta
    rm silva_Db_bacteria.fasta silva_Db_archaea.fasta
 
 
