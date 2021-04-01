@@ -712,7 +712,7 @@ else:
 		print("\tDone\n")
 	if args.isolates == "True":
 		print("\nReformatting isolate result file\n")
-		iso_dict = build_iso_dict(F"{args.tax}/isolates_blast.out", iso_qc=args.iso_qc, iso_id=args.iso_id)
+		iso_dict = build_iso_hl_dict(F"{args.tax}/isolates_blast.out", iso_qc=args.iso_qc, iso_id=args.iso_id)
 		print("\tDone\n")
 	if args.hl != "null":
 		print("\nReformatting high level tax result file\n")
