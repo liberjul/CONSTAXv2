@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, subprocess, argparse
+import os, subprocess, argparse,sys
 
 def false_to_null(arg):
     if arg == "False":
@@ -76,4 +76,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-subprocess.Popen("./constax_no_inputs.sh", env=env).wait()
+if len(sys.argv) > 1:
+    subprocess.run("./constax_no_inputs.sh", env=env).wait()
+else:
+    subprocess.run(sys.arv[1].strip("/") + "/constax_no_inputs.sh", env=env).wait()
