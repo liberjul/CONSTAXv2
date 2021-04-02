@@ -76,6 +76,8 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
+version=2.0.8; build=0
+
 if args.constax_path != "False":
     constax_path = args.constax_path
 elif args.msu_hpcc:
