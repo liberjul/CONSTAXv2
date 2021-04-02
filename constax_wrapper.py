@@ -76,7 +76,35 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-if len(sys.argv) > 1:
-    subprocess.run("./constax_no_inputs.sh", env=env).wait()
+if args.constax_path != "False":
+    constax_path = args.constax_path
+elif args.msu_hpcc:
+    constax_path = "/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020"
+elif os.path.isfile(args.pathfile):
+    with open(args.pathfile, "r") as pathfile:
+        line = pathfile.readline()
+        while line != "" and "CONSTAXPATH=" not in line:
+            line = pathfile.readline()
+        constax_path = line.strip().split("CONSTAXPATH=")[1]
 else:
-    subprocess.run(sys.arv[1].strip("/") + "/constax_no_inputs.sh", env=env).wait()
+    subprocess.run("conda --list > temp.txt")
+    with open("temp.txt", "r") as ifile:
+        line = ifile.readline()
+        dir = linestrip(":\n").split(" at ")[0]
+    pathfile = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt"
+    if os.path.isfile(pathfile):
+        with open(pathfile, "r") as pathfile:
+            line = pathfile.readline()
+            while line != "" and "CONSTAXPATH=" not in line:
+                line = pathfile.readline()
+            constax_path = line.strip().split("CONSTAXPATH=")[1]
+    else:
+        raise FileNotFoundError("Cannot find CONSTAXPATH directory.")
+
+constax_path = constax_path.strip("/")
+if os.path.isfile(F"{constax_path}/constax_no_inputs.sh"):
+    subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env).wait()
+elif os.path.isfile("./constax_no_inputs.sh"):
+    subprocess.run( "./constax_no_inputs.sh", env=env).wait()
+else:
+    raise FileNotFoundError("Cannot find constax_no_inputs.sh")
