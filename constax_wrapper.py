@@ -89,7 +89,7 @@ elif os.path.isfile(args.pathfile):
             line = pathfile.readline()
         constax_path = line.strip().split("CONSTAXPATH=")[1]
 else:
-    os.system("conda --list > temp.txt")
+    os.system("conda list > temp.txt")
     with open("temp.txt", "r") as ifile:
         line = ifile.readline()
         dir = line.strip(":\n").split(" at ")[0]
