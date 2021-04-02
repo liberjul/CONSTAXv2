@@ -92,7 +92,7 @@ else:
     os.system("conda list > temp.txt")
     with open("temp.txt", "r") as ifile:
         line = ifile.readline()
-        dir = line.strip(":\n").split(" at ")[0]
+        dir = line.strip(":\n").split(" at ")[1]
     os.remove("temp.txt")
     pathfile = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt"
     if os.path.isfile(pathfile):
@@ -106,10 +106,9 @@ else:
 
 if constax_path[-1] != "/":
     constax_path += "/"
-print("Looking for constax_no_inputs in ", constax_path)
 if os.path.isfile(F"/{constax_path}/constax_no_inputs.sh"):
     subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env)
 elif os.path.isfile("./constax_no_inputs.sh"):
     subprocess.run( "./constax_no_inputs.sh", env=env)
 else:
-    raise FileNotFoundError("Cannot find constax_no_inputs.sh")
+    raise FileNotFoundError(F"Cannot find constax_no_inputs.sh in {constax_path}")
