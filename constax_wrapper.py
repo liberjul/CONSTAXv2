@@ -104,8 +104,10 @@ else:
     else:
         raise FileNotFoundError("Cannot find CONSTAXPATH directory.")
 
-constax_path = constax_path.strip("/")
-if os.path.isfile(F"{constax_path}/constax_no_inputs.sh"):
+if constax_path[-1] != "/":
+    constax_path += "/"
+print("Looking for constax_no_inputs in ", constax_path)
+if os.path.isfile(F"/{constax_path}/constax_no_inputs.sh"):
     subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env)
 elif os.path.isfile("./constax_no_inputs.sh"):
     subprocess.run( "./constax_no_inputs.sh", env=env)
