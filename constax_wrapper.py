@@ -76,7 +76,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-version=2.0.8; build=0
+version="2.0.8"; build="0"
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -89,10 +89,11 @@ elif os.path.isfile(args.pathfile):
             line = pathfile.readline()
         constax_path = line.strip().split("CONSTAXPATH=")[1]
 else:
-    subprocess.run("conda --list > temp.txt")
+    os.system("conda --list > temp.txt")
     with open("temp.txt", "r") as ifile:
         line = ifile.readline()
-        dir = linestrip(":\n").split(" at ")[0]
+        dir = line.strip(":\n").split(" at ")[0]
+    os.remove("temp.txt")
     pathfile = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt"
     if os.path.isfile(pathfile):
         with open(pathfile, "r") as pathfile:
@@ -105,8 +106,8 @@ else:
 
 constax_path = constax_path.strip("/")
 if os.path.isfile(F"{constax_path}/constax_no_inputs.sh"):
-    subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env).wait()
+    subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env)
 elif os.path.isfile("./constax_no_inputs.sh"):
-    subprocess.run( "./constax_no_inputs.sh", env=env).wait()
+    subprocess.run( "./constax_no_inputs.sh", env=env)
 else:
     raise FileNotFoundError("Cannot find constax_no_inputs.sh")
