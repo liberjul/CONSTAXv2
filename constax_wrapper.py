@@ -96,19 +96,31 @@ else:
     os.remove("temp.txt")
     pathfile = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt"
     if os.path.isfile(pathfile):
-        with open(pathfile, "r") as pathfile:
-            line = pathfile.readline()
+        with open(pathfile, "r") as pfile:
+            line = pfile.readline()
             while line != "" and "CONSTAXPATH=" not in line:
-                line = pathfile.readline()
+                line = pfile.readline()
             constax_path = line.strip().split("CONSTAXPATH=")[1]
     else:
         raise FileNotFoundError("Cannot find CONSTAXPATH directory.")
 
 if constax_path[-1] != "/":
     constax_path += "/"
-if os.path.isfile(F"/{constax_path}/constax_no_inputs.sh"):
-    subprocess.run( F"{constax_path}/constax_no_inputs.sh", env=env)
-elif os.path.isfile("./constax_no_inputs.sh"):
+if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
+    subprocess.run( F"{constax_path}constax_no_inputs.sh", env=env)
+elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
     subprocess.run( "./constax_no_inputs.sh", env=env)
-else:
-    raise FileNotFoundError(F"Cannot find constax_no_inputs.sh in {constax_path}")
+else: # If those don't work, change the pathfile to fix it for future runs
+    if 'dir' in globals():
+        new_constax_path = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}"
+    else:
+        os.system("conda list > temp.txt")
+        with open("temp.txt", "r") as ifile:
+            line = ifile.readline()
+            dir = line.strip(":\n").split(" at ")[1]
+        os.remove("temp.txt")
+    os.system(F"sed -i 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|")
+    if os.path.isfile(F"/{new_constax_path}/constax_no_inputs.sh"):
+        subprocess.run( F"{new_constax_path}/constax_no_inputs.sh", env=env)
+    else:
+        raise FileNotFoundError(F"Cannot find constax_no_inputs.sh in {new_constax_path}")
