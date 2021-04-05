@@ -136,8 +136,8 @@ else: # If those don't work, change the pathfile to fix it for future runs
 try:
     subprocess.run(script_loc, env=env, check=True)
 except subprocess.CalledProcessError as e:
-    if "exit 2" in str(e):
-        subprocess.run(F"sed -i -e 's/python/python3/' {script_loc}", shell=True) # fix python version
+    if "exit status 2" in str(e):
+        subprocess.run(F"sed -i -e 's|python|python3|' {script_loc}", shell=True) # fix python version
         subprocess.run(script_loc, env=env)
     else:
         print(str(e))
