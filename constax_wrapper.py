@@ -119,8 +119,8 @@ else: # If those don't work, change the pathfile to fix it for future runs
             line = ifile.readline()
             dir = line.strip(":\n").split(" at ")[1]
         os.remove("temp.txt")
-    os.system(F"sed -i 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|")
-    if os.path.isfile(F"/{new_constax_path}/constax_no_inputs.sh"):
+    os.system(F"sed -i 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt")
+    if os.path.isfile(F"{new_constax_path}/constax_no_inputs.sh"):
         subprocess.run( F"{new_constax_path}/constax_no_inputs.sh", env=env)
     else:
         raise FileNotFoundError(F"Cannot find constax_no_inputs.sh in {new_constax_path}")
