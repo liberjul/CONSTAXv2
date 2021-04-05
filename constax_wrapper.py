@@ -89,7 +89,7 @@ elif os.path.isfile(args.pathfile):
             line = pathfile.readline()
         constax_path = line.strip().split("CONSTAXPATH=")[1]
 else:
-    os.system("conda list > temp.txt")
+    subprocess.run("conda list > temp.txt", shell=True)
     with open("temp.txt", "r") as ifile:
         line = ifile.readline()
         dir = line.strip(":\n").split(" at ")[1]
@@ -106,13 +106,12 @@ else:
             constax_path = line.strip().split("CONSTAXPATH=")[1]
     else:
         raise FileNotFoundError("Cannot find pathfile.txt at ", pathfile)
-
 if constax_path[-1] != "/":
     constax_path += "/"
 if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
-    subprocess.run( F"{constax_path}constax_no_inputs.sh", env=env)
+    script_loc = F"{constax_path}constax_no_inputs.sh"
 elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
-    subprocess.run( "./constax_no_inputs.sh", env=env)
+    script_loc = "./constax_no_inputs.sh"
 else: # If those don't work, change the pathfile to fix it for future runs
     if 'dir' in globals():
         if "envs" in dir:
@@ -120,7 +119,7 @@ else: # If those don't work, change the pathfile to fix it for future runs
         else:
             new_constax_path = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}"
     else:
-        os.system("conda list > temp.txt")
+        subprocess.run("conda list > temp.txt", shell=True)
         with open("temp.txt", "r") as ifile:
             line = ifile.readline()
             dir = line.strip(":\n").split(" at ")[1]
@@ -129,8 +128,16 @@ else: # If those don't work, change the pathfile to fix it for future runs
             new_constax_path = F"{dir}/opt/constax-{version}"
         else:
             new_constax_path = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}"
-    os.system(F"sed -i 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt")
+    subprocess.run(F"sed -i -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
     if os.path.isfile(F"{new_constax_path}/constax_no_inputs.sh"):
-        subprocess.run( F"{new_constax_path}/constax_no_inputs.sh", env=env)
+        script_loc = F"{new_constax_path}/constax_no_inputs.sh"
     else:
         raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", new_constax_path)
+try:
+    subprocess.run(script_loc, env=env, check=True)
+except subprocess.CalledProcessError as e:
+    if "exit 2" in str(e):
+        subprocess.run(F"sed -i -e 's/python/python3/' {script_loc}", shell=True) # fix python version
+        subprocess.run(script_loc, env=env)
+    else:
+        print(str(e))

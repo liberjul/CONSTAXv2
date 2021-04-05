@@ -19,6 +19,10 @@ then
   echo "CONSTAX version $VERSION build $BUILD"
   exit 1
 fi
+#Check Python version
+python -V > ver_python.txt 2>&1
+if grep -Fq "Python 2" ver_python.txt; then exit 2; fi
+
 if [ $MAX_HITS -eq 0 ]
 then
   echo "Set -m/--max_hits to an integer greater than zero."
@@ -333,7 +337,7 @@ FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" 2>&1)
 "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if [[ ${SINTAXPATH##*/} == "vsearch" ]]
 then
-  sed -i 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
+  sed -i -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
 fi
 if $BLAST
 then
