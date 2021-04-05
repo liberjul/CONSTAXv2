@@ -198,7 +198,7 @@ else
   echo "RDP: $RDPPATH"
   if ! [ $(command -v java -jar "$RDPPATH") ] && ! [ $(command -v "$RDPPATH") ] ; then echo "RDP not executable alone or by java -jar" ; fi
   echo "UTAX: $UTAXPATH"
-  if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable" ; fi
+  if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable. Did you mean to use -b/--blast flag?" ; fi
   if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
   if [ -d "$CONSTAXPATH" ] ; then echo "CONSTAX directory not found" ; fi
@@ -299,8 +299,11 @@ then
         "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
       fi
     fi
+    if [ -f rdp_train.out ]
+    then
+      rm rdp_train.out
+    fi
   fi
-
   # The rRNAClassifier.properties file should be in one of these two places
   if [ -f "$CONSTAXPATH"/rRNAClassifier.properties ]
   then
