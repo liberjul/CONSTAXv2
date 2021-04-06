@@ -76,7 +76,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-version="2.0.8"; build="0"
+version="2.0.8"; build="1"; build_string="hdfd78af_1"
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -94,18 +94,18 @@ else:
         line = ifile.readline()
         dir = line.strip(":\n").split(" at ")[1]
     os.remove("temp.txt")
-    if "envs" in dir:
-        pathfile = F"{dir}/opt/constax-{version}/pathfile.txt"
-    else:
-        pathfile = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt"
-    if os.path.isfile(pathfile):
-        with open(pathfile, "r") as pfile:
-            line = pfile.readline()
-            while line != "" and "CONSTAXPATH=" not in line:
+    pathfiles = [F"{dir}/opt/constax-{version}/pathfile.txt", F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt", F"{dir}/pkgs/constax-{version}-{build_string}/opt/constax-{version}/pathfile.txt"]
+    path_found = False
+    for pathfile in pathfiles:
+        if os.path.isfile(pathfile):
+            path_found = True
+            with open(pathfile, "r") as pfile:
                 line = pfile.readline()
-            constax_path = line.strip().split("CONSTAXPATH=")[1]
-    else:
-        raise FileNotFoundError("Cannot find pathfile.txt at ", pathfile)
+                while line != "" and "CONSTAXPATH=" not in line:
+                    line = pfile.readline()
+                constax_path = line.strip().split("CONSTAXPATH=")[1]
+    if not path_found:
+        raise FileNotFoundError("Cannot find pathfile.txt at ", pathfiles)
 if constax_path[-1] != "/":
     constax_path += "/"
 if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
@@ -113,31 +113,27 @@ if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the pat
 elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
     script_loc = "./constax_no_inputs.sh"
 else: # If those don't work, change the pathfile to fix it for future runs
-    if 'dir' in globals():
-        if "envs" in dir:
-            new_constax_path = F"{dir}/opt/constax-{version}"
-        else:
-            new_constax_path = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}"
-    else:
+    if 'dir' not in globals():
         subprocess.run("conda list > temp.txt", shell=True)
         with open("temp.txt", "r") as ifile:
             line = ifile.readline()
             dir = line.strip(":\n").split(" at ")[1]
         os.remove("temp.txt")
-        if "envs" in dir:
-            new_constax_path = F"{dir}/opt/constax-{version}"
-        else:
-            new_constax_path = F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}"
+    constax_paths = [F"{dir}/opt/constax-{version}", F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}", F"{dir}/pkgs/constax-{version}-{build_string}/opt/constax-{version}"]
+    path_found = False
+    for pos_constax_path in constax_paths:
+        if os.path.isfile(F"{pos_constax_path}/constax_no_inputs.sh"):
+            path_found = True
+            new_constax_path = pos_constax_path
+            script_loc = F"{pos_constax_path}/constax_no_inputs.sh"
+    if not path_found:
+        raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", constax_paths)
     subprocess.run(F"sed -i -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
-    if os.path.isfile(F"{new_constax_path}/constax_no_inputs.sh"):
-        script_loc = F"{new_constax_path}/constax_no_inputs.sh"
-    else:
-        raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", new_constax_path)
 try:
     subprocess.run(script_loc, env=env, check=True)
 except subprocess.CalledProcessError as e:
     if "exit status 2" in str(e):
-        subprocess.run(F"sed -i -e 's|python|python3|' {script_loc}", shell=True) # fix python version
+        subprocess.run(F"sed -i -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
         subprocess.run(script_loc, env=env)
-    else:
+    elif "exit status 1" not in str(e):
         print(str(e))
