@@ -76,7 +76,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-version="2.0.8"; build="1"; build_string="hdfd78af_1"
+version="2.0.9"; build="0"; build_string="hdfd78af_1"
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -128,12 +128,12 @@ else: # If those don't work, change the pathfile to fix it for future runs
             script_loc = F"{pos_constax_path}/constax_no_inputs.sh"
     if not path_found:
         raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", constax_paths)
-    subprocess.run(F"sed -i -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
+    subprocess.run(F"sed -i'' -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
 try:
     subprocess.run(script_loc, env=env, check=True)
 except subprocess.CalledProcessError as e:
     if "exit status 2" in str(e):
-        subprocess.run(F"sed -i -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
+        subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
         subprocess.run(script_loc, env=env)
     elif "exit status 1" not in str(e):
         print(str(e))

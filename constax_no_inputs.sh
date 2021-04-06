@@ -149,7 +149,7 @@ else # Then try in package directory.
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
   if [ -f "$PATHFILE" ]
   then
-    sed "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE" > "$PATHFILE".tmp
+    sed -i'' -e "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE" > "$PATHFILE".tmp
     source "$PATHFILE".tmp
     rm "$PATHFILE".tmp
   else
@@ -337,7 +337,7 @@ FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" 2>&1)
 "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if [[ ${SINTAXPATH##*/} == "vsearch" ]]
 then
-  sed -i -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
+  sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
 fi
 if $BLAST
 then
