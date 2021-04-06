@@ -139,22 +139,19 @@ then
   	fi
   fi
 fi
-if [ -f "$PATHFILE" ] # First try in local directory
+if [ -f "pathfile.txt" ] # First try in local directory
 then
-  echo "Using local pathfile $PATHFILE"
-  source "$PATHFILE"
+  echo "Using local pathfile.txt"
+  source pathfile.txt
 else # Then try in package directory.
   echo "Pathfile input not found in local directory ..."
   DIR=$(conda list | head -n 1 | rev | cut -d' ' -f1 | rev | cut -d: -f1)
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
-  if [ -f "$PATHFILE" ]
-  then
-    sed -i'' -e "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE" > "$PATHFILE".tmp
-    source "$PATHFILE".tmp
-    rm "$PATHFILE".tmp
-  else
-    echo "Pathfile input not found at $PATHFILE ..."
-  fi
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
+  PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD_STRING/opt/constax-$VERSION/pathfile.txt"
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
+  PATHFILE=$DIR"/opt/constax-$VERSION/pathfile.txt"
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
 fi
 # Check for user input paths
 if [ $(command -v "$SINTAXPATH_USER") ] && [[ "$SINTAXPATH_USER" != false ]]

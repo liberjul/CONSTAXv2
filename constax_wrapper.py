@@ -104,6 +104,7 @@ else:
                 while line != "" and "CONSTAXPATH=" not in line:
                     line = pfile.readline()
                 constax_path = line.strip().split("CONSTAXPATH=")[1]
+            break
     if not path_found:
         raise FileNotFoundError("Cannot find pathfile.txt at ", pathfiles)
 if constax_path[-1] != "/":
@@ -126,10 +127,13 @@ else: # If those don't work, change the pathfile to fix it for future runs
             path_found = True
             new_constax_path = pos_constax_path
             script_loc = F"{pos_constax_path}/constax_no_inputs.sh"
+            break
     if not path_found:
         raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", constax_paths)
     subprocess.run(F"sed -i'' -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
 try:
+    env["CONSTAXPATH_USER"] = script_loc.strip("/constax_no_inputs.sh")
+    env["PATHFILE"] = script_loc.strip("constax_no_inputs.sh") + "pathfile.txt"
     subprocess.run(script_loc, env=env, check=True)
 except subprocess.CalledProcessError as e:
     if "exit status 2" in str(e):
