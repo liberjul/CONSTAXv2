@@ -3,7 +3,7 @@ Welcome to CONSTAX's documentation!
 
 **CONSTAX** (*CONSensus TAXonomy*) is a tool,
 written in Python 3, for improved taxonomic resolution
-of environmental fungal ITS sequences. Briefly, CONSTAX
+of environmental DNA sequences. Briefly, CONSTAX
 compares the taxonomic classifications obtained from RDP
 Classifier, UTAX or BLAST, and SINTAX and merges them
 into an improved consensus taxonomy using a 2 out of 3 rule
@@ -19,7 +19,7 @@ CONSTAX 2.0.9 improves upon 1.0.0 with the following features:
 
 * **Simple installation with conda**
 
-* **Compatibility with SILVA-formatted databases**
+* **Compatibility with SILVA-formatted databases (for Bacteria, Archaea, protists, etc.)**
 
 * **Streamlined command-line implementation**
 
