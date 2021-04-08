@@ -46,9 +46,7 @@ This is how the content of the ``.sh`` file should look like
 
 .. note::
 
-    Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database. 
-
-For SILVA please see the :ref:`tutorial3` page for details on how to create a valid SILVA database before running CONSTAX.
+    Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database. For SILVA please see the :ref:`tutorial3` page for details on how to create a valid SILVA database before running CONSTAX.
 
 The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. In this case we suggested to create a ``pathfile.txt``
 

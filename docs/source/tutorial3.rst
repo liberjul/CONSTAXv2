@@ -1,3 +1,5 @@
+.. _tutorial3:
+
 Download and generate SILVA reference database
 ==============================================
 
