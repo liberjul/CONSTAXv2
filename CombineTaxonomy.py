@@ -1,4 +1,4 @@
-\tCONSTAX# Written by Natalie Vande Pol
+# Written by Natalie Vande Pol
 # November 15, 2017
 # Revised by Julian Liber
 # August 11, 2020
