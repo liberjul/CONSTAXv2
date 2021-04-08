@@ -1,4 +1,4 @@
-# Written by Natalie Vande Pol
+\tCONSTAX# Written by Natalie Vande Pol
 # November 15, 2017
 # Revised by Julian Liber
 # August 11, 2020
@@ -452,9 +452,9 @@ def count_classifications(filenames, output_dir, format, rank_count, use_blast=F
 		file_num+=1
 	output2 = open(F"{output_dir}Classification_Summary.txt", "w")
 	if use_blast:
-		output2.write("Classification\tRDP\tUTAX\tSINTAX\tConsensus\n")
+		output2.write("Classification\tRDP\tUTAX\tSINTAX\tCONSTAX\n")
 	else:
-		output2.write("Classification\tRDP\tSINTAX\tBLAST\tConsensus\n")
+		output2.write("Classification\tRDP\tSINTAX\tBLAST\tCONSTAX\n")
 	for l in range(0, rank_count):
 		key_list = list(unique_dict[l].keys())
 		key_list.sort()
