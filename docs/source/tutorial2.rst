@@ -10,9 +10,49 @@ The code will look like as below
 .. image:: images/msu_hpcc.png
    :align: center
 
+.. code-block:: language
+
+    #!/bin/bash --login
+
+    #SBATCH --time=10:00:00
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=20
+    #SBATCH --mem=128G
+    #SBATCH --job-name constax_fungi
+    #SBACTH -A shade-cole-bonito
+
+    cd ${SLURM_SUBMIT_DIR}
+
+    conda activate py3
+
+    constax \
+    --num_threads $SLURM_CPUS_PER_TASK \
+    --mem $SLURM_MEM_PER_NODE \
+    --db /mnt/home/benucci/DATABASES/sh_general_release_fungi_35077_RepS_04.02.2020.fasta \
+    --train \
+    --trainfile /mnt/home/benucci/CONSTAX_v2/tutorial/training_files_fungi/ \
+    --input /mnt/home/benucci/CONSTAX_v2/tutorial/ITS1_soil_500_otu.fasta \
+    --isolates /mnt/home/benucci/CONSTAX_v2/tutorial/isolates.fasta \
+    --isolates_query_coverage=97 \
+    --isolates_percent_identity=97 \
+    --high_level_db /mnt/home/benucci/DATABASES/sh_general_release_fungi_35077_RepS_04.02.2020.fasta \
+    --high_level_query_coverage=85 \
+    --high_level_percent_identity=60 \
+    --tax /mnt/home/benucci/CONSTAX_v2/tutorial/taxonomy_assignments_fungi07/ \
+    --output /mnt/home/benucci/CONSTAX_v2/tutorial/taxonomy_assignments_fungi07/ \
+    --conf 0.7 \
+    --blast \
+    --msu_hpcc \
+    --make_plot
+
+    conda deactivate
+
+    scontrol show job $SLURM_JOB_ID
+
+
 .. note::
 
-As you can see this time ``constax.sh`` does not contain the ``--train`` option,
+    As you can see this time ``constax.sh`` does not contain the ``--train`` option,
 since the reference database has been already trained it is not required any
 additional training. This will improve the speed and therefore the running time
 will be less. The resources you need to compute just the classification are much

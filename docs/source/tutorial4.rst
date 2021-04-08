@@ -1,5 +1,5 @@
 Examine SH (Species Hypothesis) hits from UNITE database
-=================================
+========================================================
 
 This tutorial is about how to examine poorly classified fungal OTUS by
 comparing to SHs from the UNITE database, which often don't have species names

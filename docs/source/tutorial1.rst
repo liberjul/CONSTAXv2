@@ -26,9 +26,27 @@ This is how the content of the ``.sh`` file should look like
 .. image:: images/script.png
    :align: center
 
+.. code-block:: language
+
+    constax \
+    --num_threads 10 \
+    --mem 32000 \
+    --db /home/gian/DATABASES/sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta \
+    --train \
+    --input /home/gian/CONSTAXv2/tutorial/otus.fasta \
+    --isolates /home/gian/CONSTAXv2/tutorial/isolates.fasta \
+    --trainfile /home/gian/CONSTAXv2/tutorial/training_files/ \
+    --tax /home/gian/CONSTAXv2/tutorial/taxonomy_assignements/ \
+    --output /home/gian/CONSTAXv2/tutorial/taxonomy_assignements/ \
+    --conf 0.8 \
+    --blast \
+    --make_plot \
+    --pathfile /home/gian/CONSTAXv2/tutorial/pathfile.txt
+
+
 .. note::
 
-    Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database.
+    Remember. If using a reference database for the first time, you will need to use the -t or **-\\-train** flag to train the classifiers on the dataset. The training step is necessary only at first use, you can just point to the **-\\-trainfile** <PATH> for the subsequent classifications with the same reference database. For SILVA please see the :ref:`tutorial3` page for details on how to create a valid SILVA database before running CONSTAX.
 
 The ``--pathfile`` option is necessary ONLY if you are planning to use USEARCH instead of VSEARCH for your classification. In this case we suggested to create a ``pathfile.txt``
 
