@@ -1,5 +1,5 @@
 Download and generate SILVA reference database
-=================================
+==============================================
 
 This is a tutorial about how to generate a reference database, that can be used with CONSTAX.
 from the SILVA database that contains Bacteria and Archaea sequences.
@@ -34,7 +34,11 @@ This is how the content of the ``.sh`` file should look like
 .. image:: images/format_silva.png
    :align: center
 
+You can copy and paste this code below as a guideline.
+
 .. code-block:: language
+   
+   #!/bin/bash
 
    constax \
    -i SILVA_138_SSURef_tax_silva.fasta \
