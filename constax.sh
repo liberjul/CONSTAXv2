@@ -35,7 +35,7 @@ ISO_ID=1
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
-echo "© Copyright 2020, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
+echo "© Copyright 2021, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
 echo "https://github.com/liberjul/CONSTAXv2"
 echo "https://constax.readthedocs.io/"
 echo ""
