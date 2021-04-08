@@ -15,7 +15,7 @@ blast <- as.logical(args[2])
 format <- args[3]
 
 # comb_tax = read.table(paste(output_dir, "combined_taxonomy.txt", sep=""), header=TRUE, row.names=1, sep="\t")
-comb_tax = read.table(paste(output_dir, "combined_taxonomy.txt", sep=""), sep="\t")
+comb_tax = read.table(paste(output_dir, "constax_taxonomy.txt", sep=""), sep="\t")
 head(comb_tax)
 system.time(comb_tax[comb_tax==''|comb_tax==' ']<-NA)
 
@@ -23,40 +23,40 @@ sapply(comb_tax, function(x) sum(is.na(x))) -> unassigned_comb_tax
 comb_tax_df <- as.data.frame(unassigned_comb_tax)
 if (format == "UNITE"){
   if (blast){
-    comb_tax_df$Classifier <- rep(c("RDP", "BLAST", "SINTAX", "COMBINED"), 7)
+    comb_tax_df$Classifier <- rep(c("RDP", "BLAST", "SINTAX", "CONSTAX"), 7)
 
     comb_tax_df$Rank <- row.names(comb_tax_df)
     comb_tax_df$Assigned <- sqrt((comb_tax_df$unassigned_comb_tax -nrow(comb_tax))^2)
     comb_tax_df
 
-    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","BLAST","SINTAX","COMBINED"))
+    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","BLAST","SINTAX","CONSENSUS"))
   } else {
-    comb_tax_df$Classifier <- rep(c("RDP", "SINTAX", "UTAX", "COMBINED"), 7)
+    comb_tax_df$Classifier <- rep(c("RDP", "SINTAX", "UTAX", "CONSTAX"), 7)
 
     comb_tax_df$Rank <- row.names(comb_tax_df)
     comb_tax_df$Assigned <- sqrt((comb_tax_df$unassigned_comb_tax -nrow(comb_tax))^2)
     comb_tax_df
 
-    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","UTAX","SINTAX","COMBINED"))
+    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","UTAX","SINTAX","CONSENSUS"))
   }
 } else {
   rank_count <- (dim(comb_tax)[1]-1)/3
   if (blast){
-    comb_tax_df$Classifier <- rep(c("RDP", "BLAST", "SINTAX", "COMBINED"), rank_count)
+    comb_tax_df$Classifier <- rep(c("RDP", "BLAST", "SINTAX", "CONSENSUS"), rank_count)
 
     comb_tax_df$Rank <- row.names(comb_tax_df)
     comb_tax_df$Assigned <- sqrt((comb_tax_df$unassigned_comb_tax -nrow(comb_tax))^2)
     comb_tax_df
 
-    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","BLAST","SINTAX","COMBINED"))
+    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","BLAST","SINTAX","CONSENSUS"))
   } else {
-    comb_tax_df$Classifier <- rep(c("RDP", "SINTAX", "UTAX", "COMBINED"), rank_count)
+    comb_tax_df$Classifier <- rep(c("RDP", "SINTAX", "UTAX", "CONSENSUS"), rank_count)
 
     comb_tax_df$Rank <- row.names(comb_tax_df)
     comb_tax_df$Assigned <- sqrt((comb_tax_df$unassigned_comb_tax -nrow(comb_tax))^2)
     comb_tax_df
 
-    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","UTAX","SINTAX","COMBINED"))
+    comb_tax_df$Classifier <- factor(comb_tax_df$Classifier, levels = c("RDP","UTAX","SINTAX","CONSENSUS"))
   }
 }
 
