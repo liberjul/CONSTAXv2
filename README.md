@@ -189,7 +189,7 @@ Classification confidence threshold, used by each classifier (0,1]. Increase for
 ```
 Number of threads to use for parallelization. Maximum classification speed at about 32 threads. Training only uses 1 thread.
 ```
--m, --max_hits=10                                   
+-m, --mhits=10                                   
 ```
 Maximum number of BLAST hits to use, for use with -b option. When classifying with BLAST, this many hits are kept. Confidence for a given taxa is based on the proportion of these hits agree with that taxa. 5 works well for UNITE, 20 with SILVA (standard, not NR).
 ```
