@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, subprocess, argparse,sys
+import os, subprocess, argparse, sys, time
 
 def false_to_null(arg):
     if arg == "False":
@@ -89,12 +89,12 @@ elif os.path.isfile(args.pathfile):
             line = pathfile.readline()
         constax_path = line.strip().split("CONSTAXPATH=")[1]
 else:
-    subprocess.run("conda list > temp.txt", shell=True)
-    with open("temp.txt", "r") as ifile:
-        line = ifile.readline()
-        dir = line.strip(":\n").split(" at ")[1]
-    os.remove("temp.txt")
-    pathfiles = [F"{dir}/opt/constax-{version}/pathfile.txt", F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt", F"{dir}/pkgs/constax-{version}-{build_string}/opt/constax-{version}/pathfile.txt"]
+    if "CONDA_PREFIX" not in env:
+        raise NameError("CONDA_PREFIX environment variable not found.")
+    elif "envs" in env["CONDA_PREFIX"]:
+        pathfiles = [F"{env['CONDA_PREFIX']}/opt/constax-{version}/pathfile.txt"]
+    else:
+        pathfiles = [F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt", F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build_string}/opt/constax-{version}/pathfile.txt"]
     path_found = False
     for pathfile in pathfiles:
         if os.path.isfile(pathfile):
@@ -114,13 +114,12 @@ if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the pat
 elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
     script_loc = "./constax_no_inputs.sh"
 else: # If those don't work, change the pathfile to fix it for future runs
-    if 'dir' not in globals():
-        subprocess.run("conda list > temp.txt", shell=True)
-        with open("temp.txt", "r") as ifile:
-            line = ifile.readline()
-            dir = line.strip(":\n").split(" at ")[1]
-        os.remove("temp.txt")
-    constax_paths = [F"{dir}/opt/constax-{version}", F"{dir}/pkgs/constax-{version}-{build}/opt/constax-{version}", F"{dir}/pkgs/constax-{version}-{build_string}/opt/constax-{version}"]
+    if "CONDA_PREFIX" not in env:
+        raise NameError("CONDA_PREFIX environment variable not found.")
+    elif "envs" in env["CONDA_PREFIX"]:
+        constax_paths = [F"{env['CONDA_PREFIX']}/opt/constax-{version}"]
+    else:
+        constax_paths = [F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build}/opt/constax-{version}", F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build_string}/opt/constax-{version}"]
     path_found = False
     for pos_constax_path in constax_paths:
         if os.path.isfile(F"{pos_constax_path}/constax_no_inputs.sh"):
@@ -131,13 +130,40 @@ else: # If those don't work, change the pathfile to fix it for future runs
     if not path_found:
         raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", constax_paths)
     subprocess.run(F"sed -i'' -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
-try:
+if "CONDA_PREFIX" not in env:
+    raise NameError("CONDA_PREFIX environment variable not found.")
+else:
+    log_file = F"log_constax2_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     env["CONSTAXPATH_USER"] = script_loc.strip("/constax_no_inputs.sh")
     env["PATHFILE"] = script_loc.strip("constax_no_inputs.sh") + "pathfile.txt"
-    subprocess.run(script_loc, env=env, check=True)
-except subprocess.CalledProcessError as e:
-    if "exit status 2" in str(e):
-        subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
-        subprocess.run(script_loc, env=env)
-    elif "exit status 1" not in str(e):
-        print(str(e))
+    if "envs" in env["CONDA_PREFIX"]:
+        active_env = env["CONDA_PREFIX"].split("/envs/")[-1]
+        try:
+            with open(log_file, "w") as f:
+                subprocess.run(F"bash -c 'conda activate {active_env}; {script_loc}'", env=env, check=True, shell=True, stderr=f)
+        except subprocess.CalledProcessError as e:
+            if "exit status 2" in str(e):
+                subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
+                subprocess.run(script_loc, env=env)
+            with open(log_file, "r") as ifile:
+                if "conda activate" in ifile.read():
+                    try:
+                        subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, check=True, shell=True)
+                    except subprocess.CalledProcessError as e:
+                        if "exit status 2" in str(e):
+                            subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
+                            subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, shell=True)
+                        elif "exit status 1" not in str(e):
+                            print(str(e))
+                else:
+                    for line in ifile:
+                        print(line)
+    else:
+        try:
+            subprocess.run(F"{script_loc}", env=env, check=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            if "exit status 2" in str(e):
+                subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
+                subprocess.run(script_loc, env=env)
+            elif "exit status 1" not in str(e):
+                print(str(e))
