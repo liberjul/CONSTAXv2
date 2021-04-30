@@ -76,7 +76,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-version="2.0.9"; build="0"; build_string="hdfd78af_1"
+version="2.0.10"; build="0"; build_string="hdfd78af_1"
 
 if args.constax_path != "False":
     constax_path = args.constax_path
