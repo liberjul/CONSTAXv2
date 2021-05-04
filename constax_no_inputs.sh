@@ -220,7 +220,11 @@ fi
 base=$(basename -- ${DB%.fasta})
 
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
-
+if [[ $FORMAT == "INVALID" ]]
+then
+  echo "Database file $DB must be in UNITE or SILVA format, exiting..."
+  exit 1
+fi
 echo "Memory size: "$MEM"mb"
 
 if [[ "$FORMAT" == "null" ]]
@@ -379,6 +383,11 @@ if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
 then
   echo "High Level Taxonomy Assignment"
   HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
+  if [[ $HL_FMT == "INVALID" ]]
+  then
+    echo "High-level taxonomy database file $HL_DB must be in UNITE or SILVA format, exiting..."
+    exit 1
+  fi
   if $MSU_HPCC && ! $BLAST
   then
     module load BLAST
@@ -392,6 +401,7 @@ fi
 
 rm "$FRM_INPUT"
 echo "Combining Taxonomies"
+echo -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
 if $BLAST
 then
   python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
