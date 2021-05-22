@@ -109,7 +109,7 @@ else:
         raise FileNotFoundError("Cannot find pathfile.txt at ", pathfiles)
 if constax_path[-1] != "/":
     constax_path += "/"
-if os.path.isfile(F"/{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
+if os.path.isfile(F"{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
     script_loc = F"{constax_path}constax_no_inputs.sh"
 elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
     script_loc = "./constax_no_inputs.sh"
