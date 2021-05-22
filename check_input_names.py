@@ -2,14 +2,26 @@
 Script to convert invalid input names to compliant ASCII names. Uses a random
 hex string for file name.
 '''
-import argparse, unicodedata, random
+import argparse, unicodedata, random, warnings
 import numpy as np
 
-def convert_lines(line_arr, filter=False):
+def check_seq(seq, input_file, otu_name):
+    lets = set("UTNAGC\n")
+    out_seq = seq.upper()
+    seq_set = set(out_seq)
+    if len(seq_set-lets) > 0:
+        raise ValueError(F"Invalid character(s) {seq_set-lets} are present in sequences in input file {input_file}")
+    elif len(out_seq) < 16:
+        otu_name = otu_name.strip().strip(">")
+        warnings.warn(F"Sequence length of {otu_name} is less than 15 nucleotides and may cause this SINTAX error: 'assert failed: m_U.Size == SeqCount'", RuntimeWarning)
+    else:
+        return out_seq
+
+def convert_lines(line_arr, filter=False, input_name=""):
     if filter and "k__unidentified" in line_arr[0]:
         return ""
     else:
-        return F"{unicodedata.normalize('NFKD', line_arr[0]).encode('ASCII', 'ignore').decode().replace(' ', '_')}{line_arr[1]}"
+        return F"{unicodedata.normalize('NFKD', line_arr[0]).encode('ASCII', 'ignore').decode().replace(' ', '_')}{check_seq(line_arr[1], input_name, line_arr[0])}"
 
 convert_lines_vec = np.vectorize(convert_lines)
 
@@ -39,7 +51,7 @@ else:
 rec_array = np.array(list(rec_dict.items()))
 rec_hash = {}
 for i in range(rec_array.shape[0]):
-    rec_hash[i] = convert_lines(rec_array[i], filter=args.filter)
+    rec_hash[i] = convert_lines(rec_array[i], filter=args.filter, input_name=args.input)
 
 buffer = "".join(rec_hash.values())
 with open(name, "w") as ofile:
