@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.10; BUILD=0; BUILD_STRING=hdfd78af_1
+VERSION=2.0.11; BUILD=0; BUILD_STRING=hdfd78af_1
 TRAIN=false
 BLAST=false
 HELP=false
@@ -481,7 +481,7 @@ fi
 echo "__________________________________________________________________________"
 echo "Assigning taxonomy to OTU's representative sequences"
 
-FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" 2>&1)
+FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" >&1)
 
 "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
 if [[ ${SINTAXPATH##*/} == "vsearch" ]]
