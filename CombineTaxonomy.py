@@ -365,6 +365,22 @@ def build_dict(filename, ranks):
 	return dict
 
 ################################################################################
+def real_hier(filename):
+	taxa_set = set()
+	with open(filename, "r") as ifile:
+		line = ifile.readline()
+		line = ifile.readline()
+		while line != "":
+			trim_line = line.strip().split("\t")[1:]
+			taxa_set.add(trim_line[0])
+			entry = "\t".join(trim_line)
+			while entry not in taxa_set:
+				taxa_set.add(entry)
+				trim_line = trim_line[:-1]
+				entry = "\t".join(trim_line)
+	return taxa_set
+
+################################################################################
 def vote(cla1, cla2, cla3, conservative):
 	winner = ""
 	taxa = [cla1[0].replace("NA", ""), cla2[0].replace("NA", ""), cla3[0].replace("NA", "")]
@@ -511,6 +527,7 @@ parser.add_argument("-l", "--hl", type=str, help="Format of representative DB fo
 parser.add_argument("--hl_qc", type=int, help="Threshold for high-level taxonomy query coverage")
 parser.add_argument("--hl_id", type=int, help="Threshold for high-level taxonomy percent_identity")
 parser.add_argument("-s", "--conservative", type=str2bool, nargs='?', const=True, default=False, help="Use conservative rule (prevents overclassification, looses sensitivity)")
+parser.add_argument("-n", "--consistent", type=str2bool, nargs='?', const=True, default=False, help="Check for consistent hierarchy in consensus assignments")
 args = parser.parse_args()
 
 # confidence = float(args.conf)
@@ -526,6 +543,8 @@ if args.format == "UNITE":
 
 	header_line = open(filename_base + "__RDP_taxonomy.txt", "r").readline()
 	ranks = header_line.strip().split("\t")[1:]
+	if args.consistent:
+		taxa_set = real_hier(filename_base + "__RDP_taxonomy.txt")
 	for classifier in three_classifiers:
 		file_name = F"{args.tax}otu_taxonomy."+classifier
 		try:
@@ -589,7 +608,9 @@ if args.format == "UNITE":
 	else:
 		consensus.write("OTU_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies")
 	if args.hl != "null":
-		consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover\n")
+		consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover")
+	if args.consistent:
+		consensus.write("\tConsistent_hierarchy\n")
 	else:
 		consensus.write("\n")
 
@@ -615,7 +636,11 @@ if args.format == "UNITE":
 					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 				if args.hl != "null":
 					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
-				consensus.write("\n")
+				if args.consistent:
+					tax_string = '\t'.join(levels)
+					consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+				else:
+					consensus.write("\n")
 				combined.write("\n")
 			print("\tDone\n")
 
@@ -647,7 +672,11 @@ if args.format == "UNITE":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
-			consensus.write("\n")
+			if args.consistent:
+				tax_string = '\t'.join(levels)
+				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+			else:
+				consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -665,6 +694,8 @@ else:
 
 	header_line = open(filename_base + "__RDP_taxonomy.txt", "r").readline() # Extract first line of taxonomy file to get ranks
 	ranks = header_line.strip().split("\t")[1:]
+	if args.consistent:
+		taxa_set = real_hier(filename_base + "__RDP_taxonomy.txt")
 	for classifier in three_classifiers:
 		file_name = F"{args.tax}otu_taxonomy."+classifier
 		try:
@@ -734,6 +765,8 @@ else:
 			consensus.write("\tIsolate\tIsolate_percent_id\tIsolate_query_cover")
 		if args.hl != "null":
 			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover")
+		if args.consistent:
+			consensus.write("\tConsistent_hierarchy")
 		consensus.write("\n")
 		combined.write("\n")
 
@@ -752,7 +785,11 @@ else:
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
-			consensus.write("\n")
+			if args.consistent:
+				tax_string = '\t'.join(levels)
+				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+			else:
+				consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 
@@ -779,6 +816,8 @@ else:
 			consensus.write("\tIsolate\tIsolate_percent_id\tIsolate_query_cover")
 		if args.hl != "null":
 			consensus.write("\tHigh_level_taxonomy\tHL_hit_percent_id\tHL_hit_query_cover")
+		if args.consistent:
+			consensus.write("\tConsistent_hierarchy")
 		combined.write("\n")
 		consensus.write("\n")
 
@@ -797,7 +836,11 @@ else:
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
-			consensus.write("\n")
+			if args.consistent:
+				tax_string = '\t'.join(levels)
+				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+			else:
+				consensus.write("\n")
 			combined.write("\n")
 		print("\tDone\n")
 

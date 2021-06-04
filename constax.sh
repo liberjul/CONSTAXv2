@@ -8,6 +8,7 @@ SHOW_VERSION=false
 KEYWORD=null
 MSU_HPCC=false
 CONSERVATIVE=False
+CONSISTENT=False
 CONF=0.8
 NTHREADS=1
 MAX_HITS=10
@@ -546,9 +547,9 @@ rm "$FRM_INPUT"
 echo "Combining Taxonomies"
 if $BLAST
 then
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT
 else
-  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE
+  python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT
 fi
 if $MSU_HPCC
 then

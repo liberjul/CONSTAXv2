@@ -26,6 +26,7 @@ parser.add_argument("-b", "--blast", action="store_true", help="Use BLAST instea
 parser.add_argument("--select_by_keyword", type=str, default="False", help="Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output")
 parser.add_argument("--msu_hpcc", action="store_true", help="If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments")
 parser.add_argument("-s", "--conservative", action="store_true", help="If specified, use conservative consensus rule (2 False = False winner)")
+parser.add_argument("--consistent", action="store_true", help="If specified, show if the consensus taxonomy is consistent with the real hierarchical taxonomy")
 parser.add_argument("--make_plot", action="store_true", help="If specified, run R script to make plot of classified taxa")
 parser.add_argument("--check", action="store_true", help="If specified, runs checks but stops before training or classifying")
 parser.add_argument("--mem", type=str, default="32000", help="Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA")
@@ -49,6 +50,7 @@ env["SHOW_VERSION"]=str(args.version).lower()
 env["KEYWORD"]=false_to_null(args.select_by_keyword)
 env["MSU_HPCC"]=str(args.msu_hpcc).lower()
 env["CONSERVATIVE"]=str(args.conservative).lower()
+env["CONSISTENT"]=str(args.consistent).lower()
 env["CONF"]=args.conf
 env["NTHREADS"]=args.num_threads
 env["MAX_HITS"]=args.mhits

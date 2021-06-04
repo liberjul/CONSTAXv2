@@ -138,6 +138,7 @@ optional arguments:
                         False)
   --msu_hpcc            If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments (default: False)
   -s, --conservative    If specified, use conservative consensus rule (2 False = False winner) (default: False)
+  --consistent          If specified, show if the consensus taxonomy is consistent with the real hierarchical taxonomy (default: False)
   --make_plot           If specified, run R script to make plot of classified taxa (default: False)
   --check               If specified, runs checks but stops before training or classifying (default: False)
   --mem MEM             Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA (default: 32000)
