@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.11; BUILD=0; BUILD_STRING=hdfd78af_1
+VERSION=2.0.12; BUILD=0; BUILD_STRING=hdfd78af_1
 TRAIN=false
 BLAST=false
 HELP=false
