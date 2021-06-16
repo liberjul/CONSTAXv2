@@ -6,7 +6,7 @@ import argparse, unicodedata, random, warnings
 import numpy as np
 
 def check_seq(seq, input_file, otu_name):
-    lets = set("ATCGRYSWKMBDHVN\n") #IUPAC nucleotides
+    lets = set("ATCGURYSWKMBDHVN\n") #IUPAC nucleotides
     out_seq = seq.upper()
     seq_set = set(out_seq)
     if len(seq_set-lets) > 0:

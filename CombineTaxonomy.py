@@ -482,6 +482,7 @@ def count_classifications(filenames, output_dir, format, rank_count, use_blast=F
 			output2.write(key+"\t"+"\t".join(str(x) for x in unique_dict[l][key])+"\n")
 	output2.close()
 
+################################################################################
 def str2bool(v):
 	'''
 	Code borrowed from: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
