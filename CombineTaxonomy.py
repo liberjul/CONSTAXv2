@@ -374,10 +374,23 @@ def real_hier(filename):
 			trim_line = line.strip().split("\t")[1:]
 			taxa_set.add(trim_line[0])
 			entry = "\t".join(trim_line)
+			if "_sp." in entry or "_sp_" in entry:
+				entry = entry.split("_sp")[0] + "_sp"
+			if "Incertae_sedis" in entry:
+				spl = entry.split("\t")
+				spl = ["Incertae_sedis" if "Incertae_sedis" in x else x for x in spl]
+				entry = "\t".join(spl)
 			while entry not in taxa_set:
 				taxa_set.add(entry)
 				trim_line = trim_line[:-1]
 				entry = "\t".join(trim_line)
+				if "_sp." in entry or "_sp_" in entry:
+					entry = entry.split("_sp")[0] + "_sp"
+				if "Incertae_sedis" in entry:
+					spl = entry.split("\t")
+					spl = ["Incertae_sedis" if "Incertae_sedis" in x else x for x in spl]
+					entry = "\t".join(spl)
+			line = ifile.readline()
 	return taxa_set
 
 ################################################################################
@@ -639,7 +652,7 @@ if args.format == "UNITE":
 					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 				if args.consistent:
 					tax_string = '\t'.join(levels)
-					consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+					consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 				else:
 					consensus.write("\n")
 				combined.write("\n")
@@ -675,7 +688,7 @@ if args.format == "UNITE":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
 				tax_string = '\t'.join(levels)
-				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
+				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 			else:
 				consensus.write("\n")
 			combined.write("\n")
