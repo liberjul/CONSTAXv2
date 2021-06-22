@@ -23,6 +23,7 @@ RDPPATH_USER=false
 CONSTAXPATH_USER=false
 MAKE_PLOT=false
 CHECK=false
+COMBINE_ONLY=false
 PATHFILE=pathfile.txt
 MEM=32000
 ISOLATES=null
@@ -87,6 +88,7 @@ then
   echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
   echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
   echo "--high_level_percent_identity=1                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
+  echo "--combine_only                                      Only combine taxonomy without rerunning classifiers"
   echo "-h, --help                                          Display this help and exit"
   echo "-v, --version                                       Display version and exit"
   exit 1
@@ -127,6 +129,7 @@ while true; do
     --conservative ) CONSERVATIVE=True; shift ;;
     --make_plot ) MAKE_PLOT=true; shift ;;
     --check ) CHECK=true; shift ;;
+    --combine_only ) COMBINE_ONLY=true; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -167,6 +170,7 @@ if $HELP
     echo "--high_level_db                                     FASTA database file of representative sequences for assignment of high level taxonomy"
     echo "--high_level_query_coverage=75                      Threshold of sequence query coverage to report high-level taxonomy matches"
     echo "--high_level_percent_identity=1                     Threshold of aligned sequence percent identity to report high-level taxonomy matches"
+    echo "--combine_only                                      Only combine taxonomy without rerunning classifiers"
     echo "-h, --help                                          Display this help and exit"
     echo "-v, --version                                       Display version and exit"
 		exit 1
@@ -390,157 +394,160 @@ then
   exit 0
 fi
 
-if $TRAIN
+if !$COMBINE_ONLY
 then
-	python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH"
+  if $TRAIN
+  then
+  	python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH"
 
-  echo "__________________________________________________________________________"
-	echo "Training SINTAX Classifier"
-  if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
-  then
-  	"$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
-  else
-    "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
-  fi
-  if $BLAST
-  then
     echo "__________________________________________________________________________"
-  	echo "Training BLAST Classifier"
-    if $MSU_HPCC
+  	echo "Training SINTAX Classifier"
+    if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
     then
-      module load BLAST
+    	"$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+    else
+      "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
     fi
+    if $BLAST
+    then
+      echo "__________________________________________________________________________"
+    	echo "Training BLAST Classifier"
+      if $MSU_HPCC
+      then
+        module load BLAST
+      fi
 
-    makeblastdb -in "${TFILES}/${base}"__RDP_trained.fasta -dbtype nucl -out "${TFILES}/${base}"__BLAST
-  else
-    echo "__________________________________________________________________________"
-    echo "Training UTAX Classifier"
+      makeblastdb -in "${TFILES}/${base}"__RDP_trained.fasta -dbtype nucl -out "${TFILES}/${base}"__BLAST
+    else
+      echo "__________________________________________________________________________"
+      echo "Training UTAX Classifier"
 
-    "$UTAXPATH" -utax_train "${TFILES}/${base}"__UTAX.fasta -report ${TFILES}/utax_db_report.txt -taxconfsout ${TFILES}/utax.tc \
-    -utax_splitlevels NVpcofgs -utax_trainlevels kpcofgs -log ${TFILES}/utax_train.log -report ${TFILES}/utax_report.txt
+      "$UTAXPATH" -utax_train "${TFILES}/${base}"__UTAX.fasta -report ${TFILES}/utax_db_report.txt -taxconfsout ${TFILES}/utax.tc \
+      -utax_splitlevels NVpcofgs -utax_trainlevels kpcofgs -log ${TFILES}/utax_train.log -report ${TFILES}/utax_report.txt
 
-    "$UTAXPATH" -makeudb_utax "${TFILES}/${base}"__UTAX.fasta -taxconfsin ${TFILES}/utax.tc -output ${TFILES}/utax.db \
-     -log ${TFILES}/make_udb.log -report ${TFILES}/utax_report.txt
+      "$UTAXPATH" -makeudb_utax "${TFILES}/${base}"__UTAX.fasta -taxconfsin ${TFILES}/utax.tc -output ${TFILES}/utax.db \
+       -log ${TFILES}/make_udb.log -report ${TFILES}/utax_report.txt
 
-  fi
-	echo "__________________________________________________________________________"
-  echo "Training RDP Classifier"
+    fi
+  	echo "__________________________________________________________________________"
+    echo "Training RDP Classifier"
 
-  if [ $(command -v "$RDPPATH") ]
-  then
-    "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
-  else
-    java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
-  fi
-  cat rdp_train.out
-  if grep -Fq "duplicate taxon name" rdp_train.out
-  then
-    echo "RDP training error, redoing with duplicate taxa"
-    python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH" --dup
     if [ $(command -v "$RDPPATH") ]
     then
       "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
     else
       java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
     fi
-    if [ -s rdp_train.out ]
+    cat rdp_train.out
+    if grep -Fq "duplicate taxon name" rdp_train.out
     then
-      cat rdp_train.out
-      exit 1
-    else
-      echo "RDP training error overcome, continuing with classification after SINTAX is retrained"
-      if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+      echo "RDP training error, redoing with duplicate taxa"
+      python "$CONSTAXPATH"/FormatRefDB.py -d "$DB" -t "$TFILES" -f $FORMAT -p "$CONSTAXPATH" --dup
+      if [ $(command -v "$RDPPATH") ]
       then
-        "$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+        "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
       else
-        "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+        java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
+      fi
+      if [ -s rdp_train.out ]
+      then
+        cat rdp_train.out
+        exit 1
+      else
+        echo "RDP training error overcome, continuing with classification after SINTAX is retrained"
+        if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+        then
+          "$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+        else
+          "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
+        fi
       fi
     fi
+
+    # The rRNAClassifier.properties file should be in one of these two places
+    if [ -f "$CONSTAXPATH"/rRNAClassifier.properties ]
+    then
+      cp "$CONSTAXPATH"/rRNAClassifier.properties "${TFILES}"/
+    elif [ -f "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties ]
+    then
+      cp "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
+    elif [ -f "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties ]
+    then
+      cp "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
+    else
+      echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
+    fi
+    echo "Classifier training complete using BLAST: $BLAST" >> "${TFILES}"/training_check.txt
+    if $BLAST; then echo "BLAST version $(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" >> "${TFILES}"/training_check.txt; fi
+    echo "SINTAX executable ${SINTAXPATH##*/}" >> "${TFILES}"/training_check.txt
+
+  	# -Xmx set to memory in MB you want to use
+
   fi
 
-  # The rRNAClassifier.properties file should be in one of these two places
-  if [ -f "$CONSTAXPATH"/rRNAClassifier.properties ]
+  echo "__________________________________________________________________________"
+  echo "Assigning taxonomy to OTU's representative sequences"
+
+  FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" >&1)
+
+  "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
+  if [[ ${SINTAXPATH##*/} == "vsearch" ]]
   then
-    cp "$CONSTAXPATH"/rRNAClassifier.properties "${TFILES}"/
-  elif [ -f "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties ]
+    sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
+  fi
+  if $BLAST
   then
-    cp "${RDPPATH%dist/classifier.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
-  elif [ -f "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties ]
-  then
-    cp "${RDPPATH%.jar}"/samplefiles/rRNAClassifier.properties "${TFILES}"/
+
+    if $MSU_HPCC && ! $TRAIN
+    then
+      module load BLAST
+    fi
+
+    blastn -query "$FRM_INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
+    python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
   else
-    echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
+    "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+
   fi
-  echo "Classifier training complete using BLAST: $BLAST" >> "${TFILES}"/training_check.txt
-  if $BLAST; then echo "BLAST version $(blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" >> "${TFILES}"/training_check.txt; fi
-  echo "SINTAX executable ${SINTAXPATH##*/}" >> "${TFILES}"/training_check.txt
 
-	# -Xmx set to memory in MB you want to use
-
-fi
-
-echo "__________________________________________________________________________"
-echo "Assigning taxonomy to OTU's representative sequences"
-
-FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" >&1)
-
-"$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
-if [[ ${SINTAXPATH##*/} == "vsearch" ]]
-then
-  sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
-fi
-if $BLAST
-then
-
-  if $MSU_HPCC && ! $TRAIN
+  if [ $(command -v "$RDPPATH") ]
   then
-    module load BLAST
+    "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
+  else
+    java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
   fi
 
-  blastn -query "$FRM_INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
-  python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
-else
-  "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+  echo "__________________________________________________________________________"
 
-fi
-
-if [ $(command -v "$RDPPATH") ]
-then
-  "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
-else
-  java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
-fi
-
-echo "__________________________________________________________________________"
-
-if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
-then
-  echo "Comparing to Isolates"
-  USE_ISOS=True
-
-  if $MSU_HPCC && ! $BLAST
+  if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
   then
-    module load BLAST
+    echo "Comparing to Isolates"
+    USE_ISOS=True
+
+    if $MSU_HPCC && ! $BLAST
+    then
+      module load BLAST
+    fi
+    python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
+    makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST
+    rm "$TAX/"isolates_formatted.fasta
+    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+    rm "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST.n*
   fi
-  python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
-  makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST
-  rm "$TAX/"isolates_formatted.fasta
-  blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
-  rm "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST.n*
-fi
-if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
-then
-  echo "High Level Taxonomy Assignment"
-  HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
-  if $MSU_HPCC && ! $BLAST
+  if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
   then
-    module load BLAST
+    echo "High Level Taxonomy Assignment"
+    HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
+    if $MSU_HPCC && ! $BLAST
+    then
+      module load BLAST
+    fi
+    python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
+    makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST
+    rm "$TAX/"hl_formatted.fasta
+    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+    rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
   fi
-  python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
-  makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST
-  rm "$TAX/"hl_formatted.fasta
-  blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
-  rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
 fi
 
 rm "$FRM_INPUT"

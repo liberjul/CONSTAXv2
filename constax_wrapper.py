@@ -41,6 +41,7 @@ parser.add_argument("--isolates_percent_identity", type=str, default="1",help="T
 parser.add_argument("--high_level_db", type=str, default="False", help="FASTA database file of representative sequences for assignment of high level taxonomy")
 parser.add_argument("--high_level_query_coverage", type=str, default="75", help="Threshold of sequence query coverage to report high-level taxonomy matches")
 parser.add_argument("--high_level_percent_identity", type=str, default="1", help="Threshold of aligned sequence percent identity to report high-level taxonomy matches")
+parser.add_argument("--combine_only", action="store_true", help="Only combine taxonomy without rerunning classifiers")
 parser.add_argument("-v", "--version", action="store_true", help="Display version and exit")
 args = parser.parse_args()
 
@@ -67,6 +68,7 @@ env["RDPPATH_USER"]=str(args.rdp_path).lower()
 env["CONSTAXPATH_USER"]=str(args.constax_path).lower()
 env["MAKE_PLOT"]=str(args.make_plot).lower()
 env["CHECK"]=str(args.check).lower()
+env["COMBINE_ONLY"]=str(args.combine_only).lower()
 env["PATHFILE"]=args.pathfile
 env["MEM"]=args.mem
 env["ISOLATES"]=false_to_null(args.isolates)
