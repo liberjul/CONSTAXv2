@@ -394,7 +394,7 @@ then
   exit 0
 fi
 
-if !$COMBINE_ONLY
+if ! $COMBINE_ONLY
 then
   if $TRAIN
   then
@@ -548,9 +548,9 @@ then
     blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
     rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
   fi
+  rm "$FRM_INPUT"
 fi
 
-rm "$FRM_INPUT"
 echo "Combining Taxonomies"
 if $BLAST
 then
