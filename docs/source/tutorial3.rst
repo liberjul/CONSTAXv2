@@ -14,14 +14,14 @@ with the name ending in ``_SSURef_tax_silva.fasta.gz``.
 
    .. tab:: Linux/WSL
 
-     .. code-block:: default
+     .. code-block:: text
 
          wget https://www.arb-silva.de/fileadmin/silva_databases/release_138/Exports/SILVA_138_SSURef_tax_silva.fasta.gz
          gunzip SILVA_138_SSURef_tax_silva.fasta.gz
 
    .. tab:: OSX
 
-     .. code-block:: default
+     .. code-block:: text
 
          curl -O https://www.arb-silva.de/fileadmin/silva_databases/release_138/Exports/SILVA_138_SSURef_tax_silva.fasta.gz
          gunzip SILVA_138_SSURef_tax_silva.fasta.gz
@@ -39,7 +39,7 @@ This is how the content of the ``.sh`` file should look like
 You can copy and paste this code below as a guideline.
 
 .. code-block:: language
-   
+
    #!/bin/bash
 
    constax \

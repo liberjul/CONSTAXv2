@@ -9,7 +9,7 @@ in a terminal to use it. Windows users can `install WSL <https://docs.microsoft.
 
 CONSTAX comes in a conda package that contains all the dependencies needed to run the software and can be easily installed as showed below.
 
-  .. code-block:: default
+  .. code-block:: text
 
       conda install constax -c bioconda
 
@@ -23,14 +23,14 @@ If conda is not installed (you get an error which might include ``command not fo
 
         .. tab:: Linux / WSL
 
-          .. code-block:: default
+          .. code-block:: text
 
               wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
               bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
 
         .. tab:: OSX
 
-          .. code-block:: default
+          .. code-block:: text
 
               curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
               bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
@@ -56,21 +56,21 @@ If you want to use USEARCH which is a proprietary, instead of VSEARCH, you will 
 
       .. tab:: Linux/WSL
 
-        .. code-block:: default
+        .. code-block:: text
 
             wget https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
             gunzip usearch11.0.667_i86linux32.gz
 
       .. tab:: Windows
 
-        .. code-block:: default
+        .. code-block:: text
 
             curl -O https://www.drive5.com/downloads/usearch11.0.667_win32.gz
             gunzip usearch11.0.667_win32.gz
 
       .. tab:: OSX
 
-        .. code-block:: default
+        .. code-block:: text
 
             curl -O https://www.drive5.com/downloads/usearch11.0.667_i86osx32.gz
             gunzip usearch11.0.667_i86osx32.gz
