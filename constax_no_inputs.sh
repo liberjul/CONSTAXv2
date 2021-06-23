@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.12; BUILD=0; BUILD_STRING=hdfd78af_1
+VERSION=2.0.13; BUILD=0; BUILD_STRING=hdfd78af_1
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
