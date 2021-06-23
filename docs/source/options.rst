@@ -284,5 +284,5 @@ Threshold of aligned sequence percent identity to report high-level taxonomy mat
    --combine_only
 
 If specified, only reruns combine taxonomy without rerunning classifiers. Allows for changing parameters
-including: `-c, --conf`, `-e, --evalue`, `-p, --p_iden`, `-s, --conservative`,  `--isolates_query_coverage`, `--isolates_percent_identity`,
-`--high_level_query_coverage`, and `high_level_percent_identity`.
+including: ``-c, --conf``, ``-e, --evalue``, ``-p, --p_iden``, ``-s, --conservative``,  ``--isolates_query_coverage``, ``--isolates_percent_identity``,
+``--high_level_query_coverage``, and ``high_level_percent_identity``.
