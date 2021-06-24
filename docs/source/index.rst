@@ -12,7 +12,7 @@ taxonomic units at a given taxonomic rank) is realized
 by generating consensus taxonomy of available classifiers
 with CONSTAX.
 
-CONSTAX 2.0.13 improves upon 1.0.0 with the following features:
+CONSTAX 2.0.14 improves upon 1.0.0 with the following features:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * **Updated software requirements, including Python 3 and Java 8**

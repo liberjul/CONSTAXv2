@@ -14,9 +14,8 @@ output_dir <- args[1]
 blast <- as.logical(args[2])
 format <- args[3]
 
-# comb_tax = read.table(paste(output_dir, "combined_taxonomy.txt", sep=""), header=TRUE, row.names=1, sep="\t")
-comb_tax = read.table(paste(output_dir, "constax_taxonomy.txt", sep=""), sep="\t")
-head(comb_tax)
+comb_tax = read.table(paste(output_dir, "combined_taxonomy.txt", sep=""), header=TRUE, row.names=1, sep="\t")
+# head(comb_tax)
 system.time(comb_tax[comb_tax==''|comb_tax==' ']<-NA)
 
 sapply(comb_tax, function(x) sum(is.na(x))) -> unassigned_comb_tax

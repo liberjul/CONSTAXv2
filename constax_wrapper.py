@@ -62,10 +62,6 @@ env["TFILES"]=args.trainfile
 env["INPUT"]=args.input
 env["OUTPUT"]=args.output
 env["TAX"]=args.tax
-env["SINTAXPATH_USER"]=str(args.sintax_path).lower()
-env["UTAXPATH_USER"]=str(args.utax_path).lower()
-env["RDPPATH_USER"]=str(args.rdp_path).lower()
-env["CONSTAXPATH_USER"]=str(args.constax_path).lower()
 env["MAKE_PLOT"]=str(args.make_plot).lower()
 env["CHECK"]=str(args.check).lower()
 env["COMBINE_ONLY"]=str(args.combine_only).lower()
@@ -79,8 +75,17 @@ env["HL_FMT"]="null"
 env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
+env["SINTAXPATH_USER"]=args.sintax_path.lower() if args.sintax_path == "False" else args.sintax_path
+env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else args.utax_path
+env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
+env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
 
 version="2.0.14"; build="0"; prefix="placehold"
+
+if os.path.isfile(args.pathfile):
+    with open(args.pathfile, "r") as pathfile:
+        if "\ " in pathfile.read():
+            raise NameError("Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", args.pathfile)
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -112,7 +117,7 @@ else:
     if not path_found:
         raise FileNotFoundError("Cannot find pathfile.txt at ", pathfiles)
 if constax_path[-1] != "/":
-    constax_path += "/"
+    constax_path = constax_path.strip('"') + "/"
 if os.path.isfile(F"{constax_path}constax_no_inputs.sh"): # First check the path in pathfile
     script_loc = F"{constax_path}constax_no_inputs.sh"
 elif os.path.isfile("./constax_no_inputs.sh"): # Check local and global locations
@@ -134,34 +139,57 @@ else: # If those don't work, change the pathfile to fix it for future runs
     if not path_found:
         raise FileNotFoundError("Cannot find constax_no_inputs.sh in ", constax_paths)
     subprocess.run(F"sed -i'' -e 's|CONSTAXPATH=.*|CONSTAXPATH={new_constax_path}|' {new_constax_path}/pathfile.txt", shell=True)
-if "CONDA_PREFIX" not in env:
+
+### Attempt to run CONSTAX main script
+if "CONDA_PREFIX" not in env: # Must have CONDA installed and on PATH
     raise NameError("CONDA_PREFIX environment variable not found.")
 else:
-    log_file = F"log_constax2_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-    env["CONSTAXPATH_USER"] = script_loc.strip("/constax_no_inputs.sh")
-    env["PATHFILE"] = script_loc.strip("constax_no_inputs.sh") + "pathfile.txt"
-    if "envs" in env["CONDA_PREFIX"]:
+    script_loc = script_loc.replace(" ", "\ ") # Add escape characters to paths in case spaces are present
+    log_file = F"log_constax2_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt" # Set up unique logfile name
+
+    if not os.path.isdir(env["CONSTAXPATH_USER"]): # If there is not a user-specified CONSTAXPATH, assign the one detected
+        if env["CONSTAXPATH_USER"] != "false":
+            raise FileNotFoundError(F"The constax_path you specified at {args.constax_path} does not exist.")
+        env["CONSTAXPATH_USER"] = script_loc.strip("/constax_no_inputs.sh")
+
+    if not os.path.isfile(args.pathfile): # If there is not a user-specified pathfile, assign the one detected
+        if args.pathfile != "pathfile.txt": # If one was specified but doesn't exist
+            raise FileNotFoundError(F"The pathfile you specified at {args.pathfile} does not exist.")
+        new_pathfile = script_loc.strip("constax_no_inputs.sh") + "pathfile.txt"
+        if os.path.isfile(new_pathfile): # Verify that the paths look right
+            with open(new_pathfile, "r") as pathfile:
+                if "\ " in pathfile.read():
+                    raise NameError("Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", new_pathfile)
+                else:
+                    env["PATHFILE"] = new_pathfile
+        else:
+            raise FileNotFoundError("No pathfile found in the CONSTAX directory")
+
+    if "envs" in env["CONDA_PREFIX"]: # If run in a conda environment
         active_env = env["CONDA_PREFIX"].split("/envs/")[-1]
         try:
             with open(log_file, "w") as f:
                 subprocess.run(F"bash -c 'conda activate {active_env}; {script_loc}'", env=env, check=True, shell=True, stderr=f)
         except subprocess.CalledProcessError as e:
+            print(str(e))
             if "exit status 2" in str(e):
                 subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
                 subprocess.run(script_loc, env=env)
-            with open(log_file, "r") as ifile:
-                if "conda activate" in ifile.read():
-                    try:
-                        subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, check=True, shell=True)
-                    except subprocess.CalledProcessError as e:
-                        if "exit status 2" in str(e):
-                            subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
-                            subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, shell=True)
-                        elif "exit status 1" not in str(e):
-                            print(str(e))
-                else:
-                    for line in ifile:
-                        print(line)
+            elif "exit status 1" not in str(e):
+                print(str(e))
+                with open(log_file, "r") as ifile:
+                    if "conda activate" in ifile.read():
+                        try:
+                            subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, check=True, shell=True)
+                        except subprocess.CalledProcessError as e:
+                            if "exit status 2" in str(e):
+                                subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
+                                subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, shell=True)
+                            elif "exit status 1" not in str(e):
+                                print(str(e))
+                    else:
+                        for line in ifile:
+                            print(line)
     else:
         try:
             subprocess.run(F"{script_loc}", env=env, check=True, shell=True)
