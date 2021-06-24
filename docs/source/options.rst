@@ -191,9 +191,15 @@ If specified, use executable paths on Michigan State University HPCC. Overrides 
 
 .. code-block:: text
 
-   --conservative
+   --s, conservative
 
 If specified, use conservative consensus rule (2 null = null winner. For example, if BLAST is the only algorithm that classifies OTU_135 to Family Strophariaceae while SINTAX and RDP give no classification, then no classification is reported at the rank of Family for OTU_135 in the CONSTAX taxonomy). According to our tests, works better for SILVA database to use this option.
+
+.. code-block:: text
+
+   --consistent
+
+If specified, show if the consensus taxonomy is consistent with the real hierarchical taxonomy. In this case, a 1 indicates that all subtaxa are contained within each parent taxa. For example, the genus assigned is within the family assigned.
 
 .. code-block:: text
 
