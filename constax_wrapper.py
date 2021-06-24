@@ -98,7 +98,7 @@ else:
     elif "envs" in env["CONDA_PREFIX"]:
         pathfiles = [F"{env['CONDA_PREFIX']}/opt/constax-{version}-{build}/pathfile.txt"]
     else:
-        pathfiles = [F"{build_string}/opt/constax-{version}/pathfile.txt", F"{build_string}/opt/constax-{version}-{build}/pathfile.txt"]
+        pathfiles = [F"{prefix}/opt/constax-{version}/pathfile.txt", F"{prefix}/opt/constax-{version}-{build}/pathfile.txt"]
     path_found = False
     for pathfile in pathfiles:
         if os.path.isfile(pathfile):
@@ -121,9 +121,9 @@ else: # If those don't work, change the pathfile to fix it for future runs
     if "CONDA_PREFIX" not in env:
         raise NameError("CONDA_PREFIX environment variable not found.")
     elif "envs" in env["CONDA_PREFIX"]:
-        constax_paths = [F"{env['CONDA_PREFIX']}/opt/constax-{version}"]
+        constax_paths = [F"{env['CONDA_PREFIX']}/opt/constax-{version}-{build}"]
     else:
-        constax_paths = [F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build}/opt/constax-{version}", F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build_string}/opt/constax-{version}"]
+        constax_paths = [F"{prefix}/opt/constax-{version}-{build}"]
     path_found = False
     for pos_constax_path in constax_paths:
         if os.path.isfile(F"{pos_constax_path}/constax_no_inputs.sh"):
