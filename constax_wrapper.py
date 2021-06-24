@@ -80,7 +80,7 @@ env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
 
-version="2.0.13"; build="0"; build_string="hdfd78af_1"
+version="2.0.14"; build="0"; prefix="placehold"
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -96,9 +96,9 @@ else:
     if "CONDA_PREFIX" not in env:
         raise NameError("CONDA_PREFIX environment variable not found.")
     elif "envs" in env["CONDA_PREFIX"]:
-        pathfiles = [F"{env['CONDA_PREFIX']}/opt/constax-{version}/pathfile.txt"]
+        pathfiles = [F"{env['CONDA_PREFIX']}/opt/constax-{version}-{build}/pathfile.txt"]
     else:
-        pathfiles = [F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build}/opt/constax-{version}/pathfile.txt", F"{env['CONDA_PREFIX']}/pkgs/constax-{version}-{build_string}/opt/constax-{version}/pathfile.txt"]
+        pathfiles = [F"{build_string}/opt/constax-{version}/pathfile.txt", F"{build_string}/opt/constax-{version}-{build}/pathfile.txt"]
     path_found = False
     for pathfile in pathfiles:
         if os.path.isfile(pathfile):

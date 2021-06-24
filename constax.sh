@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.13; BUILD=0; BUILD_STRING=hdfd78af_1
+VERSION=2.0.14; BUILD=0; PREFIX=placehold
 TRAIN=false
 BLAST=false
 HELP=false
@@ -296,7 +296,11 @@ then
   	fi
   fi
 fi
-if [ -f "$PATHFILE" ] # First try in local directory
+if [ -f "$PATHFILE" ] # First try user-suppplied pathfile
+then
+  echo "Using the user-supplied pathfile at $PATHFILE"
+  source "$PATHFILE"
+elif [ -f "pathfile.txt" ] # Next try in local directory
 then
   echo "Using local pathfile $PATHFILE"
   source "$PATHFILE"
