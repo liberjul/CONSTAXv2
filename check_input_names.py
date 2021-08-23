@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Script to convert invalid input names to compliant ASCII names. Uses a random
 hex string for file name.

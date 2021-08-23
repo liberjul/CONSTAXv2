@@ -157,7 +157,7 @@ def reformat_UTAX(utax_file, output_dir, confidence, ranks):
 
 ################################################################################
 def reformat_SINTAX(sintax_file, output_dir, confidence, ranks):
-	input = open (sintax_file)
+	input = open(sintax_file)
 	all_lines = input.readlines()
 	input.close()
 
@@ -612,6 +612,7 @@ if args.format == "UNITE":
 		print("\tDone\n")
 	if args.hl != "null":
 		print("\nReformatting high level tax result file\n")
+		print(F"User set query coverage minimum: {args.hl_qc} User set percent identity minimum: {args.hl_id}")
 		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl, hl_qc=args.hl_qc, hl_id=args.hl_id)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")
@@ -629,41 +630,42 @@ if args.format == "UNITE":
 		consensus.write("\n")
 
 	if args.blast:
-			combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
-			combined.write("OTU_ID\tKingdom_RDP\tKingdom_BLAST\tKingdom_SINTAX\tKingdom_Consensus\tPhylum_RDP\tPhylum_BLAST\tPhylum_SINTAX")
-			combined.write("\tPhylum_Consensus\tClass_RDP\tClass_BLAST\tClass_SINTAX\tClass_Consensus\tOrder_RDP\tOrder_BLAST\tOrder_SINTAX")
-			combined.write("\tOrder_Consensus\tFamily_RDP\tFamily_BLAST\tFamily_SINTAX\tFamily_Consensus\tGenus_RDP\tGenus_BLAST\tGenus_SINTAX")
-			combined.write("\tGenus_Consensus\tSpecies_RDP\tSpecies_BLAST\tSpecies_SINTAX\tSpecies_Consensus\n")
+		print(hl_dict)
+		combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
+		combined.write("OTU_ID\tKingdom_RDP\tKingdom_BLAST\tKingdom_SINTAX\tKingdom_Consensus\tPhylum_RDP\tPhylum_BLAST\tPhylum_SINTAX")
+		combined.write("\tPhylum_Consensus\tClass_RDP\tClass_BLAST\tClass_SINTAX\tClass_Consensus\tOrder_RDP\tOrder_BLAST\tOrder_SINTAX")
+		combined.write("\tOrder_Consensus\tFamily_RDP\tFamily_BLAST\tFamily_SINTAX\tFamily_Consensus\tGenus_RDP\tGenus_BLAST\tGenus_SINTAX")
+		combined.write("\tGenus_Consensus\tSpecies_RDP\tSpecies_BLAST\tSpecies_SINTAX\tSpecies_Consensus\n")
 
-			for otu in rdp_dict.keys():
-				consensus.write(otu+"\t")
-				combined.write(otu)
-				levels = []
-				for m in range(0,len(ranks)*2,2):
-					level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
-					combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
-					if level != "":
-						levels.append(level)
-					combined.write(level)
-				consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
-				if args.isolates == "True":
-					consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
-				if args.hl != "null":
-					consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
-				if args.consistent:
-					tax_string = '\t'.join(levels)
-					consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
-				else:
-					consensus.write("\n")
-				combined.write("\n")
-			print("\tDone\n")
+		for otu in rdp_dict.keys():
+			consensus.write(otu+"\t")
+			combined.write(otu)
+			levels = []
+			for m in range(0,len(ranks)*2,2):
+				level = vote(rdp_dict[otu][m:m+2], blast_dict[otu][m:m+2], sin_dict[otu][m:m+2], args.conservative)
+				combined.write("\t"+rdp_dict[otu][m]+"\t"+blast_dict[otu][m]+"\t"+sin_dict[otu][m]+"\t")
+				if level != "":
+					levels.append(level)
+				combined.write(level)
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
+			if args.isolates == "True":
+				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
+			if args.hl != "null":
+				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
+			if args.consistent:
+				tax_string = '\t'.join(levels)
+				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
+			else:
+				consensus.write("\n")
+			combined.write("\n")
+		print("\tDone\n")
 
-			consensus.close()
-			combined.close()
+		consensus.close()
+		combined.close()
 
 
-			print("\nGenerating classification counts & summary table\n")
-			count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir, "UNITE", len(ranks), use_blast=True)
+		print("\nGenerating classification counts & summary table\n")
+		count_classifications([rdp_file, sin_file, blast_file, consensus_file], args.output_dir, "UNITE", len(ranks), use_blast=True)
 	else:
 		combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
 		combined.write("OTU_ID\tKingdom_RDP\tKingdom_SINTAX\tKingdom_UTAX\tKingdom_Consensus\tPhylum_RDP\tPhylum_SINTAX\tPhylum_UTAX")
@@ -761,6 +763,7 @@ else:
 		print("\tDone\n")
 	if args.hl != "null":
 		print("\nReformatting high level tax result file\n")
+		print(F"User set query coverage minimum: {args.hl_qc} User set percent identity minimum: {args.hl_id}")
 		hl_dict = build_iso_hl_dict(F"{args.tax}/hl_blast.out", hl=True, hl_fmt=args.hl, hl_qc=args.hl_qc, hl_id=args.hl_id)
 		print("\tDone\n")
 	print("\nGenerating consensus taxonomy & combined taxonomy table\n")

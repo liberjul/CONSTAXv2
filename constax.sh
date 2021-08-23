@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.14; BUILD=0; PREFIX=placehold
+VERSION=2.0.15; BUILD=0; PREFIX=placehold
 TRAIN=false
 BLAST=false
 HELP=false
@@ -507,7 +507,15 @@ then
       module load BLAST
     fi
 
-    blastn -query "$FRM_INPUT" -db "${TFILES}/${base}"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS > "$TAX"/blast.out
+    # workaround code for blast getting stuck
+    python "$CONSTAXPATH"/split_inputs.py -i "$FRM_INPUT"
+    echo > "$TAX"/blast.out
+    for i in ${FRM_INPUT%.fasta}_*".fasta"
+    do
+      blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
+      rm $i
+    done
+
     python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
   else
     "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS

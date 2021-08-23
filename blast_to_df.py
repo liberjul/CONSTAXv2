@@ -44,7 +44,7 @@ with open(args.in_file, "r") as ifile:
                 line = ifile.readline()
                 if line == "# 0 hits found\n": # If no hits found
                     buffer = F"{buffer}{quer},{'__'},{1},{0},{0.0},{0},{','.join(['unidentified']*len(ranks))}\n" # Add dummy row to be cut out later
-            elif line[0] != "#": # BLAST hit lines
+            elif line[0] != "#" and line != "\n": # BLAST hit lines
                 spl = line.strip().split("\t")
                 sub = spl[1]
                 eval, bitscore, id, qcov = spl[2:]
