@@ -209,7 +209,7 @@ else
   if [ -d "$CONSTAXPATH" ] ; then echo "CONSTAX directory not found" ; fi
   exit 1
 fi
-if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
+if ! $BLAST  && [ $(echo "$UTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -gt 9 ]
 then
   echo "USEARCH executable must be version 9.X or lower to use UTAX"
   exit 1
@@ -249,7 +249,7 @@ then
 
     echo "__________________________________________________________________________"
   	echo "Training SINTAX Classifier"
-    if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+    if [ $(echo "$SINTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -lt 11 2> /dev/null ]
     then
     	"$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
     else
@@ -302,7 +302,7 @@ then
         exit 1
       else
         echo "RDP training error overcome, continuing with classification after SINTAX is retrained"
-        if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+        if [ $(echo "$SINTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -lt 11 2> /dev/null ]
         then
           "$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
         else
