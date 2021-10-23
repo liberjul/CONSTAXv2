@@ -174,7 +174,7 @@ else:
             print(str(e))
             if "exit status 2" in str(e):
                 subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
-                subprocess.run(script_loc, env=env)
+                subprocess.run(script_loc, env=env, shell=True)
             elif "exit status 1" not in str(e):
                 print(str(e))
                 with open(log_file, "r") as ifile:
@@ -196,6 +196,6 @@ else:
         except subprocess.CalledProcessError as e:
             if "exit status 2" in str(e):
                 subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
-                subprocess.run(script_loc, env=env)
+                subprocess.run(script_loc, env=env, shell=True)
             elif "exit status 1" not in str(e):
                 print(str(e))

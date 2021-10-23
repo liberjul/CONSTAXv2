@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 For this type of blast command:
 blastn -query <query> -db Unite_04_02_2020 -num_threads 16 -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 20 > <output>
