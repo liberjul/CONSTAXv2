@@ -79,6 +79,7 @@ env["SINTAXPATH_USER"]=args.sintax_path.lower() if args.sintax_path == "False" e
 env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else args.utax_path
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
+env["PYTHONPATH"] = ':'.join(sys.path[1:])
 
 version="2.0.15"; build="0"; prefix="placehold"
 
