@@ -43,7 +43,7 @@ def reformat_RDP(rdp_file, output_dir, confidence, ranks):
 		j=0
 		new_taxon = []
 		while j<len(taxon):
-			if	taxon[j].endswith("Incertae_sedis"):
+			if	"Incertae_sedis" in taxon[j] or "incertae_sedis" in taxon[j]:
 				taxon[j] = "Incertae_sedis"
 			if  "unidentified" in taxon[j] or float(confi[j])<confidence:
 				del confi[j:]
@@ -52,7 +52,7 @@ def reformat_RDP(rdp_file, output_dir, confidence, ranks):
 			j+=1
 
 		# remove "_sp" species classifications
-		if ranks[0] == "Kingdom" and len(new_taxon)>0 and " sp" in new_taxon[-1]:
+		if ranks[0] == "Kingdom" and len(new_taxon)>0 and (" sp" in new_taxon[-1] or "_sp" in new_taxon[-1]):
 			del new_taxon[-1]
 			del confi[-1]
 		# remove terminal Incertae_sedis
