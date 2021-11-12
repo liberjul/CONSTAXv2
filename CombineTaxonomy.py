@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Written by Natalie Vande Pol
 # November 15, 2017
 # Revised by Julian Liber
@@ -43,7 +44,7 @@ def reformat_RDP(rdp_file, output_dir, confidence, ranks):
 		j=0
 		new_taxon = []
 		while j<len(taxon):
-			if	"Incertae_sedis" in taxon[j] or "incertae_sedis" in taxon[j]:
+			if	"ncertae_sedis" in taxon[j]:
 				taxon[j] = "Incertae_sedis"
 			if  "unidentified" in taxon[j] or float(confi[j])<confidence:
 				del confi[j:]
@@ -56,7 +57,7 @@ def reformat_RDP(rdp_file, output_dir, confidence, ranks):
 			del new_taxon[-1]
 			del confi[-1]
 		# remove terminal Incertae_sedis
-		while len(new_taxon)>0 and "Incertae_sedis" in new_taxon[-1]:
+		while len(new_taxon)>0 and "ncertae_sedis" in new_taxon[-1]:
 			del new_taxon[-1]
 			del confi[-1]
 
@@ -132,7 +133,7 @@ def reformat_UTAX(utax_file, output_dir, confidence, ranks):
 			del confid[-1]
 
 		# remove terminal Incertae_sedis
-		while len(temp4)>0 and temp4[-1]=="Incertae_sedis":
+		while len(temp4)>0 and "ncertae_sedis" in temp4[-1]:
 			del temp4[-1]
 			del confid[-1]
 
@@ -293,7 +294,7 @@ def reformat_BLAST(blast_file, output_dir, confidence, max_hits, ethresh, p_iden
 				if len(vcs) == 0 or "unidentified" in vcs.index[0] or vcs[0] < confidence or (t == ranks[-1] and vcs.index[0].endswith("_sp")): # If unidentified, under conf thresh, or a species with "_sp", break
 				    break
 				else:
-					if vcs.index[0].endswith("Incertae_sedis"):
+					if "ncertae_sedis" in vcs.index[0]:
 					    q_list.extend(["Incertae_sedis", str(vcs[0])])
 					else:
 						q_list.extend([vcs.index[0], str(vcs[0])])
@@ -376,9 +377,9 @@ def real_hier(filename):
 			entry = "\t".join(trim_line)
 			if "_sp." in entry or "_sp_" in entry:
 				entry = entry.split("_sp")[0] + "_sp"
-			if "Incertae_sedis" in entry:
+			if "ncertae_sedis" in entry:
 				spl = entry.split("\t")
-				spl = ["Incertae_sedis" if "Incertae_sedis" in x else x for x in spl]
+				spl = ["Incertae_sedis" if "ncertae_sedis" in x else x for x in spl]
 				entry = "\t".join(spl)
 			while entry not in taxa_set:
 				taxa_set.add(entry)
@@ -386,9 +387,9 @@ def real_hier(filename):
 				entry = "\t".join(trim_line)
 				if "_sp." in entry or "_sp_" in entry:
 					entry = entry.split("_sp")[0] + "_sp"
-				if "Incertae_sedis" in entry:
+				if "ncertae_sedis" in entry:
 					spl = entry.split("\t")
-					spl = ["Incertae_sedis" if "Incertae_sedis" in x else x for x in spl]
+					spl = ["Incertae_sedis" if "ncertae_sedis" in x else x for x in spl]
 					entry = "\t".join(spl)
 			line = ifile.readline()
 	return taxa_set
@@ -418,7 +419,7 @@ def vote(cla1, cla2, cla3, conservative):
 				winner = taxa[scores.index(max([scores[x] for x in unique]))]
 		else:
 			winner = taxa[j]
-	return winner
+	return winner.replace("Incertae_sedis", "")
 
 ################################################################################
 def count_classifications(filenames, output_dir, format, rank_count, use_blast=False):
@@ -628,9 +629,7 @@ if args.format == "UNITE":
 		consensus.write("\tConsistent_hierarchy\n")
 	else:
 		consensus.write("\n")
-
 	if args.blast:
-		print(hl_dict)
 		combined = open(F"{args.output_dir}combined_taxonomy.txt", "w")
 		combined.write("OTU_ID\tKingdom_RDP\tKingdom_BLAST\tKingdom_SINTAX\tKingdom_Consensus\tPhylum_RDP\tPhylum_BLAST\tPhylum_SINTAX")
 		combined.write("\tPhylum_Consensus\tClass_RDP\tClass_BLAST\tClass_SINTAX\tClass_Consensus\tOrder_RDP\tOrder_BLAST\tOrder_SINTAX")
