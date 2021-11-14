@@ -419,7 +419,7 @@ def vote(cla1, cla2, cla3, conservative):
 				winner = taxa[scores.index(max([scores[x] for x in unique]))]
 		else:
 			winner = taxa[j]
-	return winner.replace("Incertae_sedis", "")
+	return winner
 
 ################################################################################
 def count_classifications(filenames, output_dir, format, rank_count, use_blast=False):
@@ -646,6 +646,7 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			levels = [x.replace("Incertae_sedis", "") for x in levels]
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
@@ -682,6 +683,7 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			levels = [x.replace("Incertae_sedis", "") for x in levels]
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
@@ -796,6 +798,7 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			levels = [x.replace("Incertae_sedis", "") for x in levels]
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
@@ -847,6 +850,7 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
+			levels = [x.replace("Incertae_sedis", "") for x in levels]
 			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
