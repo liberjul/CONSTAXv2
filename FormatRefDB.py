@@ -173,6 +173,6 @@ os.system(F"rm {filename_base}__RDP_taxonomy_trained.txt 2> /dev/null")
 os.system(F"rm {filename_base}__RDP_taxonomy_headers.txt 2> /dev/null")
 
 subscript_lineage2taxonomyTrain.lin2tax(filename_base, args.format, args.dup)
-subscript_fasta_addFullLineage.addFullLineage(filename_base, args.format)
+subscript_fasta_addFullLineage.addFullLineage(filename_base)
 
 print("Database formatting complete\n____________________________________________________________________\n\n")

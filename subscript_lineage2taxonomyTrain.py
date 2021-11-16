@@ -5,6 +5,8 @@ import os
 
 def lin2tax(file_base, format, dup=False):
 	print("\n\tTraining Taxonomy")
+	if dup:
+		print("\n\tDuplicate taxa being handled with numerical suffices")
 	with open(file_base+"__RDP_taxonomy.txt", 'r') as f:
 		line = f.readline()
 		cols = line.strip().split('\t')[1:] # Split the first line into columns

@@ -646,14 +646,19 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels = [x.replace("Incertae_sedis", "") for x in levels]
-			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
+			levels_clean = []
+			for x in levels:
+				if "ncertae_sedis" in x:
+					levels_clean.append("")
+				else:
+					levels_clean.append(x)
+			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels)
+				tax_string = '\t'.join(levels_clean)
 				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -683,14 +688,19 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels = [x.replace("Incertae_sedis", "") for x in levels]
-			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
+			levels_clean = []
+			for x in levels:
+				if "ncertae_sedis" in x:
+					levels_clean.append("")
+				else:
+					levels_clean.append(x)
+			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels)
+				tax_string = '\t'.join(levels_clean)
 				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -798,14 +808,19 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels = [x.replace("Incertae_sedis", "") for x in levels]
-			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
+			levels_clean = []
+			for x in levels:
+				if "ncertae_sedis" in x:
+					levels_clean.append("")
+				else:
+					levels_clean.append(x)
+			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels)
+				tax_string = '\t'.join(levels_clean)
 				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -850,14 +865,19 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels = [x.replace("Incertae_sedis", "") for x in levels]
-			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
+			levels_clean = []
+			for x in levels:
+				if "ncertae_sedis" in x:
+					levels_clean.append("")
+				else:
+					levels_clean.append(x)
+			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels)
+				tax_string = '\t'.join(levels_clean)
 				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
 			else:
 				consensus.write("\n")
