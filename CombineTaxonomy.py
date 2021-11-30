@@ -203,7 +203,7 @@ def reformat_SINTAX(sintax_file, output_dir, confidence, ranks):
 			temp1 = temp_line.split(",")
 			# temp1 =>  'd:Fungi' 'p:Ascomycota' 'c:Leotiomycetes' 'o:Helotiales' 's:Helotiales_sp'
 			if ranks[0] == "Kingdom":
-				levels = ["d:", "p:", "c:", "o:", "f:", "g:", "s:"]
+				levels = ["d:", "k:", "p:", "c:", "o:", "f:", "g:", "s:"]
 				if len(temp1)<len(levels) and len(temp1) > 1:
 					if "g:" in temp1[-2]:
 						for k, level in enumerate(temp1):
