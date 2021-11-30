@@ -58,7 +58,7 @@ taxon = open(taxon_fn,"w")
 print(F"{args.format} format detected\n")
 if args.format == "UNITE":
 	#UTAX output file
-	fastatax = open(filename_base+"__UTAX.fasta","w")
+	# fastatax = open(filename_base+"__UTAX.fasta","w")
 
 	taxon.write("Seq_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
 
@@ -71,17 +71,17 @@ if args.format == "UNITE":
 				temp = ascii_line.decode()[1:].split("|")
 
 				#UTAX file
-				utax_name = temp[1]+"|"+temp[2]
-				utax_taxa = temp[4][1:].strip().replace("__",":").replace(";",",")
-				temp_utax = utax_taxa.strip().split(",")
-				# if temp_utax[0].endswith("Fungi"):
-				temp_utax2 = [x for x in temp_utax if "unidentified" not in x]
-				temp_utax3 = [y for y in temp_utax2 if "Incertae_sedis" not in y]
-				temp_utax4 = [z for z in temp_utax3 if "unknown" not in z]
-				if len(temp_utax4) == 0:
-					continue
-				new_utax_taxa = ",".join(temp_utax4)
-				fastatax.write(">"+utax_name+";tax=d"+new_utax_taxa+";\n")
+				# utax_name = temp[1]+"|"+temp[2]
+				# utax_taxa = temp[4][1:].strip().replace("__",":").replace(";",",")
+				# temp_utax = utax_taxa.strip().split(",")
+				# # if temp_utax[0].endswith("Fungi"):
+				# temp_utax2 = [x if "unidentified" not in x else "-" for x in temp_utax]# [x for x in temp_utax if "unidentified" not in x]
+				# temp_utax3 = [y if "Incertae_sedis" not in y else "-" for y in temp_utax2]
+				# temp_utax4 = [z if "unknown" not in z else "-" for z in temp_utax3]
+				# if len(temp_utax4) == 0:
+				# 	continue
+				# new_utax_taxa = ",".join(temp_utax4)
+				# # fastatax.write(">"+utax_name+";tax=d"+new_utax_taxa+";\n")
 
 				#RDP files
 				name = str(temp[1])
@@ -111,12 +111,11 @@ if args.format == "UNITE":
 						species+= "_"+str(num)
 						num += 1
 
-				taxonomy = name+"\t"+"\t".join(to_genus)+"\t"+species+"\n"
-				fasta.write(">"+name+"\n")
-				taxon.write(taxonomy)
-				seq = next(database)
-				fastatax.write(seq)
-				fasta.write(seq)
+					taxonomy = name+"\t"+"\t".join(to_genus)+"\t"+species+"\n"
+					fasta.write(">"+name+"\n")
+					taxon.write(taxonomy)
+					seq = next(database)
+					fasta.write(seq)
 	fasta.close()
 	taxon.close()
 
@@ -173,6 +172,6 @@ os.system(F"rm {filename_base}__RDP_taxonomy_trained.txt 2> /dev/null")
 os.system(F"rm {filename_base}__RDP_taxonomy_headers.txt 2> /dev/null")
 
 subscript_lineage2taxonomyTrain.lin2tax(filename_base, args.format, args.dup)
-subscript_fasta_addFullLineage.addFullLineage(filename_base)
+subscript_fasta_addFullLineage.addFullLineage(filename_base, args.format)
 
 print("Database formatting complete\n____________________________________________________________________\n\n")
