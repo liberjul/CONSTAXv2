@@ -25,15 +25,15 @@ If conda is not installed (you get an error which might include ``command not fo
 
           .. code-block:: text
 
-              wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
-              bash Miniconda3-py39_4.9.2-Linux-x86_64.sh
+              wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+              bash Miniconda3-py39_4.10.3-Linux-x86_64.sh
 
         .. tab:: OSX
 
           .. code-block:: text
 
-              curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
-              bash Miniconda3-py39_4.9.2-MacOSX-x86_64.sh
+              curl -O https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-MacOSX-x86_64.sh
+              bash Miniconda3-py39_4.10.3-MacOSX-x86_64.sh
 
 2. Follow the prompts.
 

@@ -12,7 +12,7 @@ taxonomic units at a given taxonomic rank) is realized
 by generating consensus taxonomy of available classifiers
 with CONSTAX.
 
-CONSTAX 2.0.14 improves upon 1.0.0 with the following features:
+CONSTAX 2.0.16 improves upon 1.0.0 with the following features:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * **Updated software requirements, including Python 3 and Java 8**
@@ -56,7 +56,7 @@ CONSTAX 1.0.0 was authored by
 Reference
 ^^^^^^^^^
 
-`Liber JA, Bonito G, Benucci GMN (2021) CONSTAX2: improved taxonomic classification of environmental DNA markers. Bioinformatics doi: 10.1093/bioinformatics/btab347 <https://doi.org/10.1093/bioinformatics/btab347>`_
+`Liber JA, Bonito G, Benucci GMN (2021) CONSTAX2: improved taxonomic classification of environmental DNA markers. Bioinformatics doi: 10.1093/bioinformatics/btab347 <https://academic.oup.com/bioinformatics/article/37/21/3941/6271412>`_
 
 `Gdanetz K, Benucci GMN, Vande Pol N, Bonito G (2017) CONSTAX: a tool for improved taxonomic resolution of environmental fungal ITS sequences. BMC Bioinformatics 18:538 doi 10.1186/s12859-017-1952-x <https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/s12859-017-1952-x>`_
 

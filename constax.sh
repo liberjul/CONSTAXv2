@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.15; BUILD=0; PREFIX=placehold
+VERSION=2.0.16; BUILD=0; PREFIX=placehold
 TRAIN=false
 BLAST=false
 HELP=false
@@ -45,7 +45,7 @@ echo ""
 echo "Please cite us as:"
 echo "CONSTAX2: Improved taxonomic classification of environmental DNA markers"
 echo "Julian Aaron Liber, Gregory Bonito, Gian Maria Niccolò Benucci"
-echo "bioRxiv 2021.02.15.430803; doi: https://doi.org/10.1101/2021.02.15.430803"
+echo "Bioinformatics, Volume 37, Issue 21, 1 November 2021, Pages 3941–3943; doi: https://doi.org/10.1093/bioinformatics/btab347"
 
 ### Parse variable inputs
 TEMP=`getopt -o c:n:m:e:p:d:i:o:x:tbhvf: --long conf:,num_threads:,max_hits:,evalue:,p_iden:,db:,input:,output:,tax:,train,blast,select_by_keyword:,msu_hpcc,help,version,conservative,make_plot,check,trainfile:,mem:,sintax_path:,utax_path:,rdp_path:,constax_path:,pathfile:,isolates:,isolates_query_coverage:,isolates_percent_identity:,high_level_db:,high_level_query_coverage:,high_level_percent_identity: \
@@ -180,6 +180,10 @@ then
   echo "CONSTAX version $VERSION build $BUILD"
   exit 1
 fi
+#Check Python version
+python -V > ver_python.txt 2>&1
+if grep -Fq "Python 2" ver_python.txt; then exit 2; fi
+
 if [ $MAX_HITS -eq 0 ]
 then
   echo "Set -m/--max_hits to an integer greater than zero."
@@ -302,20 +306,17 @@ then
   source "$PATHFILE"
 elif [ -f "pathfile.txt" ] # Next try in local directory
 then
-  echo "Using local pathfile $PATHFILE"
-  source "$PATHFILE"
+  echo "Using local pathfile.txt"
+  source pathfile.txt
 else # Then try in package directory.
   echo "Pathfile input not found in local directory ..."
   DIR=$(conda list | head -n 1 | rev | cut -d' ' -f1 | rev | cut -d: -f1)
   PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD/opt/constax-$VERSION/pathfile.txt"
-  if [ -f "$PATHFILE" ]
-  then
-    sed -i'' -e "s|=.*/opt/constax|=$DIR/pkgs/constax-$VERSION-$BUILD/opt/constax|g" "$PATHFILE" > "$PATHFILE".tmp
-    source "$PATHFILE".tmp
-    rm "$PATHFILE".tmp
-  else
-    echo "Pathfile input not found at $PATHFILE ..."
-  fi
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
+  PATHFILE=$DIR"/pkgs/constax-$VERSION-$BUILD_STRING/opt/constax-$VERSION/pathfile.txt"
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
+  PATHFILE=$DIR"/opt/constax-$VERSION/pathfile.txt"
+  if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
 fi
 # Check for user input paths
 if [ $(command -v "$SINTAXPATH_USER") ] && [[ "$SINTAXPATH_USER" != false ]]
@@ -363,13 +364,13 @@ else
   echo "RDP: $RDPPATH"
   if ! [ $(command -v java -jar "$RDPPATH") ] && ! [ $(command -v "$RDPPATH") ] ; then echo "RDP not executable alone or by java -jar" ; fi
   echo "UTAX: $UTAXPATH"
-  if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable" ; fi
+  if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable. Did you mean to use -b/--blast flag?" ; fi
   if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
   if [ -d "$CONSTAXPATH" ] ; then echo "CONSTAX directory not found" ; fi
   exit 1
 fi
-if ! $BLAST  && [ $(echo "$UTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -gt 9 ]
+if ! $BLAST  && [ $(echo "$UTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -gt 9 ]
 then
   echo "USEARCH executable must be version 9.X or lower to use UTAX"
   exit 1
@@ -384,7 +385,11 @@ fi
 base=$(basename -- ${DB%.fasta})
 
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
-
+if [[ $FORMAT == "INVALID" ]]
+then
+  echo "Database file $DB must be in UNITE or SILVA format, exiting..."
+  exit 1
+fi
 echo "Memory size: "$MEM"mb"
 
 if [[ "$FORMAT" == "null" ]]
@@ -397,7 +402,6 @@ then
   echo "All checks passed, rerun without --check flag."
   exit 0
 fi
-
 if ! $COMBINE_ONLY
 then
   if $TRAIN
@@ -406,7 +410,7 @@ then
 
     echo "__________________________________________________________________________"
   	echo "Training SINTAX Classifier"
-    if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+    if [ $(echo "$SINTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -lt 11 2> /dev/null ]
     then
     	"$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
     else
@@ -459,15 +463,18 @@ then
         exit 1
       else
         echo "RDP training error overcome, continuing with classification after SINTAX is retrained"
-        if [ $(echo "$SINTAXPATH" | grep -oP "(?<=usearch).*?(?=\.)") -lt 11 2> /dev/null ]
+        if [ $(echo "$SINTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -lt 11 2> /dev/null ]
         then
           "$SINTAXPATH" -makeudb_sintax "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
         else
           "$SINTAXPATH" -makeudb_usearch "${TFILES}/${base}"__UTAX.fasta -output ${TFILES}/sintax.db
         fi
       fi
+      if [ -f rdp_train.out ]
+      then
+        rm rdp_train.out
+      fi
     fi
-
     # The rRNAClassifier.properties file should be in one of these two places
     if [ -f "$CONSTAXPATH"/rRNAClassifier.properties ]
     then
@@ -506,7 +513,6 @@ then
     then
       module load BLAST
     fi
-
     # workaround code for blast getting stuck
     python "$CONSTAXPATH"/split_inputs.py -i "$FRM_INPUT"
     echo > "$TAX"/blast.out
@@ -550,6 +556,11 @@ then
   then
     echo "High Level Taxonomy Assignment"
     HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
+    if [[ $HL_FMT == "INVALID" ]]
+    then
+      echo "High-level taxonomy database file $HL_DB must be in UNITE or SILVA format, exiting..."
+      exit 1
+    fi
     if $MSU_HPCC && ! $BLAST
     then
       module load BLAST
@@ -559,6 +570,8 @@ then
     rm "$TAX/"hl_formatted.fasta
     blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
     rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
+  else
+    echo ""
   fi
   rm "$FRM_INPUT"
 fi

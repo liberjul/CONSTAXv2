@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.15; BUILD=0; PREFIX=placehold
+VERSION=2.0.16; BUILD=0; PREFIX=placehold
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
@@ -12,7 +12,7 @@ echo ""
 echo "Please cite us as:"
 echo "CONSTAX2: Improved taxonomic classification of environmental DNA markers"
 echo "Julian Aaron Liber, Gregory Bonito, Gian Maria Niccolò Benucci"
-echo "bioRxiv 2021.02.15.430803; doi: https://doi.org/10.1101/2021.02.15.430803"
+echo "Bioinformatics, Volume 37, Issue 21, 1 November 2021, Pages 3941–3943; doi: https://doi.org/10.1093/bioinformatics/btab347"
 
 if $SHOW_VERSION
 then

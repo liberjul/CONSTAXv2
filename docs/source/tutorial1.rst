@@ -60,7 +60,7 @@ where you will add the absolute PATHs for the required software. VSEARCH, BLAST,
    :align: center
 
 .. warning::
-    Remember to navigate through your anaconda installation and find the ``constax-2.0.14/`` folder.
+    Remember to navigate through your anaconda installation and find the ``constax-2.0.16/`` folder.
     This is the only way to make CONSTAX locate the needed python scripts.
 
 Before you can run CONSTAX you need to activate your anaconda environment (alternatively,
