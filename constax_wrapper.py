@@ -173,6 +173,8 @@ else:
                 subprocess.run(F"bash -c 'conda activate {active_env}; {script_loc}'", env=env, check=True, shell=True, stderr=f)
         except subprocess.CalledProcessError as e:
             print(str(e))
+            with open(log_file, "r") as f:
+                print(f.read())
             if "exit status 2" in str(e):
                 subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
                 subprocess.run(script_loc, env=env, shell=True)

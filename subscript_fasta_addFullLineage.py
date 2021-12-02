@@ -4,6 +4,8 @@ import sys, os
 def RDP_head_to_UTAX(lineage, format):
 	taxa = lineage.split(";")[1:]
 	out = ""
+	if format != "UNITE" and len(taxa) > 8: # Account for SILVA taxa which have too many ranks to be classified with SINTAX
+		taxa = taxa[:8]
 	for r in range(len(taxa)):
 		if format == "UNITE":
 			out = F"{out}{'dkpcofg'[r]}:{taxa[r]},"
