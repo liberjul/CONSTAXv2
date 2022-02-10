@@ -8,7 +8,9 @@ Before we start, we need to create a folder called ``tutorial``. This CONSTAX te
 inside this folder so you first need to copy all the files you we will use before running the
 software. We need the OTU representative sequence fasta file (e.g. ``otus.fasta``),
 the representative sequence fasta file of your culture isolates if you have any and you want to
-try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the :ref:`referenceDB` page for details).
+try to match with the OTUs (e.g. ``isolates.fasta``), and the sequence reference database you want
+ to use, for Fungi (e.g. ``sh_general_release_eukaryotes_91074_RepS_04.02.2020.fasta``, see the
+  :ref:`referenceDB` page for details). These files must end in the extensions ``.fasta``, ``.fa``, or ``.fna``.
 
 You tutorial folder should look like this:
 
@@ -60,7 +62,7 @@ where you will add the absolute PATHs for the required software. VSEARCH, BLAST,
    :align: center
 
 .. warning::
-    Remember to navigate through your anaconda installation and find the ``constax-2.0.16/`` folder.
+    Remember to navigate through your anaconda installation and find the ``constax-2.0.17/`` folder.
     This is the only way to make CONSTAX locate the needed python scripts.
 
 Before you can run CONSTAX you need to activate your anaconda environment (alternatively,

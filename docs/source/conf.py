@@ -22,7 +22,7 @@ copyright = '2021, Julian A. Liber and Gian M. N. Benucci'
 author = 'Julian A. Liber and Gian M. N. Benucci'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.16'
+release = '2.0.17'
 
 
 # -- General configuration ---------------------------------------------------

@@ -81,7 +81,7 @@ env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
 env["PYTHONPATH"] = ':'.join(sys.path[1:])
 
-version="2.0.15"; build="0"; prefix="placehold"
+version="2.0.17"; build="0"; prefix="placehold"
 
 if os.path.isfile(args.pathfile):
     with open(args.pathfile, "r") as pathfile:

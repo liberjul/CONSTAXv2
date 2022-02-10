@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.16; BUILD=0; PREFIX=placehold
+VERSION=2.0.17; BUILD=0; PREFIX=placehold
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
@@ -65,9 +65,9 @@ elif ! [ -s "$INPUT" ]
 then
 	echo "Input file $INPUT is empty, exiting..."
 	exit 1
-elif [[ "$INPUT" != *.fasta ]]
+elif [[ "$INPUT" != *.fasta ]] && [[ "$INPUT" != *.fa ]] && [[ "$INPUT" != *.fna ]]
 then
-  echo "Input file $INPUT must end with .fasta, exiting..."
+  echo "Input file $INPUT must end with .fasta, .fa, or .fna; exiting..."
   exit 1
 fi
 if [[ "$KEYWORD" == "null" ]]
@@ -76,9 +76,9 @@ then
   then
   	echo "Database file $DB is non-existent or empty, exiting..."
     exit 1
-  elif [[ "$DB" != *.fasta ]]
+  elif [[ "$DB" != *.fasta ]] && [[ "$DB" != *.fa ]] && [[ "$DB" != *.fna ]]
   then
-    echo "Database file $DB must end with .fasta, exiting..."
+    echo "Database file $DB must end with .fasta, .fa, or .fna; exiting..."
     exit 1
   fi
   if [ -d "$OUTPUT" ]  && ! [ -z "$(ls -A $OUTPUT)" ]
@@ -221,7 +221,7 @@ then
   exit 1
 fi
 
-base=$(basename -- ${DB%.fasta})
+base=$(basename -- ${DB%.*})
 
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
 if [[ $FORMAT == "INVALID" ]]
@@ -386,10 +386,10 @@ then
       module load BLAST
     fi
     python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
-    makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST
+    makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
     rm "$TAX/"isolates_formatted.fasta
-    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
-    rm "$TAX/$(basename -- ${ISOLATES%.fasta})"__BLAST.n*
+    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+    rm "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST.n*
   fi
   if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
   then
@@ -405,10 +405,10 @@ then
       module load BLAST
     fi
     python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
-    makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST
+    makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
     rm "$TAX/"hl_formatted.fasta
-    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
-    rm "$TAX/$(basename -- ${HL_DB%.fasta})"__BLAST.n*
+    blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+    rm "$TAX/$(basename -- ${HL_DB%.*})"__BLAST.n*
   else
     echo ""
   fi
