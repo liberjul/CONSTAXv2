@@ -182,13 +182,22 @@ then
   UTAXPATH=/mnt/research/rdp/public/thirdParty/usearch8.1.1831_i86linux64
   RDPPATH=/mnt/research/rdp/public/RDPTools/classifier.jar
   CONSTAXPATH=/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020
-elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ] && [ -d "$CONSTAXPATH" ]
+elif ! [ -d "$CONSTAXPATH" ]
+then
+  echo "CONSTAX directory not found"
+  exit 1
+elif [[ "$KEYWORD" != "null" ]]
+then
+  python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o "$OUTPUT" -k $KEYWORD
+  echo "Filtered file output to $OUTPUT"
+  exit 1
+elif $BLAST && [ $(command -v blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
   echo "RDP: $RDPPATH"
   echo "CONSTAX: $CONSTAXPATH"
-elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ] && [ -d "$CONSTAXPATH" ] && [ $(command -v "$UTAXPATH") ]
+elif ! $BLAST && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ] && [ $(command -v "$UTAXPATH") ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
@@ -206,18 +215,10 @@ else
   if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable. Did you mean to use -b/--blast flag?" ; fi
   if $BLAST &&  ! [ $(command -v blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
-  if [ -d "$CONSTAXPATH" ] ; then echo "CONSTAX directory not found" ; fi
-  exit 1
 fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -gt 9 ]
 then
   echo "USEARCH executable must be version 9.X or lower to use UTAX"
-  exit 1
-fi
-if [[ "$KEYWORD" != "null" ]]
-then
-  python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o "$OUTPUT" -k $KEYWORD
-  echo "Filtered file output to $OUTPUT"
   exit 1
 fi
 
