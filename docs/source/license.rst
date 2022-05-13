@@ -3,7 +3,7 @@ License
 
 MIT License
 
-Copyright (c) 2021 JAL&GMNB&GMB
+Copyright (c) 2022 JAL&GMNB&GMB
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

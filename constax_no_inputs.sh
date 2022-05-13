@@ -223,7 +223,6 @@ then
 fi
 
 base=$(basename -- ${DB%.*})
-python -c "print('Hello')"
 echo "python $CONSTAXPATH/detect_format.py -d $DB 2>&1"
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
 echo $FORMAT
@@ -474,10 +473,12 @@ fi
 # plot R
 if $MAKE_PLOT && $BLAST
 then
-  echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ TRUE $FORMAT"
-  Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
+  echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the sumary statistics."
+  # echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ TRUE $FORMAT"
+  # Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
 elif $MAKE_PLOT
 then
-  echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ FALSE $FORMAT"
-  Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
+  echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the sumary statistics."
+  # echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ FALSE $FORMAT"
+  # Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
 fi
