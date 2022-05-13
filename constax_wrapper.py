@@ -79,7 +79,6 @@ env["SINTAXPATH_USER"]=args.sintax_path.lower() if args.sintax_path == "False" e
 env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else args.utax_path
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
-env["PYTHONPATH"] = ':'.join(sys.path[1:])
 
 version="2.0.17"; build="0"; prefix="placehold"
 
@@ -170,7 +169,7 @@ else:
         active_env = env["CONDA_PREFIX"].split("/envs/")[-1]
         try:
             with open(log_file, "w") as f:
-                subprocess.run(F"bash -c 'conda activate {active_env}; {script_loc}'", env=env, check=True, shell=True, stderr=f)
+                subprocess.run(F"bash -c '{script_loc}'", env=env, check=True, shell=True, stderr=f)
         except subprocess.CalledProcessError as e:
             print(str(e))
             with open(log_file, "r") as f:
@@ -183,11 +182,11 @@ else:
                 with open(log_file, "r") as ifile:
                     if "conda activate" in ifile.read():
                         try:
-                            subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, check=True, shell=True)
+                            subprocess.run(F"bash -c '{script_loc}'", env=env, check=True, shell=True)
                         except subprocess.CalledProcessError as e:
                             if "exit status 2" in str(e):
                                 subprocess.run(F"sed -i'' -e 's|python |python3 |' {script_loc}", shell=True) # fix python version
-                                subprocess.run(F"bash -c 'source activate {active_env}; {script_loc}'", env=env, shell=True)
+                                subprocess.run(F"bash -c '{script_loc}'", env=env, shell=True)
                             elif "exit status 1" not in str(e):
                                 print(str(e))
                     else:

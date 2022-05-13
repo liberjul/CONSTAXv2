@@ -223,9 +223,11 @@ then
 fi
 
 base=$(basename -- ${DB%.*})
+python -c "print('Hello')"
 echo "python $CONSTAXPATH/detect_format.py -d $DB 2>&1"
 FORMAT=$(python "$CONSTAXPATH"/detect_format.py -d "$DB" 2>&1)
-if [[ $FORMAT == "INVALID" ]]
+echo $FORMAT
+if [[ $FORMAT != "SILVA" ]] && [[ $FORMAT != "UNITE" ]]
 then
   echo "Database file $DB must be in UNITE or SILVA format, exiting..."
   exit 1
