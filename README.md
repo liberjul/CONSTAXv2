@@ -116,7 +116,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -c CONF, --conf CONF  Classification confidence threshold (default: 0.8)
   -n NUM_THREADS, --num_threads NUM_THREADS
-                        directory to for output files (default: 1)
+                        Number of threads to use for parallel computing steps (default: 1)
   -m MHITS, --mhits MHITS
                         Maximum number of BLAST hits to use, for use with -b option (default: 10)
   -e EVALUE, --evalue EVALUE
