@@ -107,7 +107,7 @@ constax --help
 ```
 ```
 usage: constax [-h] [-c CONF] [-n NUM_THREADS] [-m MHITS] [-e EVALUE] [-p P_IDEN] [-d DB] [-f TRAINFILE] [-i INPUT] [-o OUTPUT] [-x TAX] [-t] [-b]
-               [--select_by_keyword SELECT_BY_KEYWORD] [--msu_hpcc] [-s] [--make_plot] [--check] [--mem MEM] [--sintax_path SINTAX_PATH] [--utax_path UTAX_PATH]
+               [--select_by_keyword SELECT_BY_KEYWORD] [-s] [--make_plot] [--check] [--mem MEM] [--sintax_path SINTAX_PATH] [--utax_path UTAX_PATH]
                [--rdp_path RDP_PATH] [--constax_path CONSTAX_PATH] [--pathfile PATHFILE] [--isolates ISOLATES] [--isolates_query_coverage ISOLATES_QUERY_COVERAGE]
                [--isolates_percent_identity ISOLATES_PERCENT_IDENTITY] [--high_level_db HIGH_LEVEL_DB] [--high_level_query_coverage HIGH_LEVEL_QUERY_COVERAGE]
                [--high_level_percent_identity HIGH_LEVEL_PERCENT_IDENTITY] [-v]
@@ -136,7 +136,6 @@ optional arguments:
   --select_by_keyword SELECT_BY_KEYWORD
                         Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output (default:
                         False)
-  --msu_hpcc            If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments (default: False)
   -s, --conservative    If specified, use conservative consensus rule (2 False = False winner) (default: False)
   --consistent          If specified, show if the consensus taxonomy is consistent with the real hierarchical taxonomy (default: False)
   --make_plot           If specified, run R script to make plot of classified taxa (default: False)
@@ -233,10 +232,6 @@ Use BLAST instead of UTAX if specified. If installed with conda, this in the opt
 --select_by_keyword
 ```
 Takes a keyword argument and `--input` FASTA file to produce a filtered database with headers containing the keyword with name `--output`. Helpful for limiting search database to Bacteria, Archaea, Fungi, or other group.
-```
---msu_hpcc
-```
-If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments.
 ```
 --conservative
 ```

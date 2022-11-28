@@ -2,8 +2,8 @@ Run CONSTAX on HPCC
 ===================
 
 To run CONSTAX on the high performance cluster computer or `HPCC <https://icer.msu.edu/>`_
-available at Michigan State University, you can set the paths just using ``--msu_hpcc``
-flag to your ``constax.sh`` file
+available at Michigan State University, you can conda install the package, and set --sintax_path to
+use the licensed USEARCH executable at /mnt/research/rdp/public/thirdParty/usearch10.0.240_i86linux64
 
 The code will look like as below
 
@@ -42,7 +42,7 @@ The code will look like as below
     --output /mnt/home/benucci/CONSTAX_v2/tutorial/taxonomy_assignments_fungi07/ \
     --conf 0.7 \
     --blast \
-    --msu_hpcc \
+    --sintax_path /mnt/research/rdp/public/thirdParty/usearch10.0.240_i86linux64 \
     --make_plot
 
     conda deactivate
@@ -59,7 +59,7 @@ will be less. The resources you need to compute just the classification are much
 less that those needed for training. You can then set the ``num_threads`` option
 to a lower number as well as the amount of RAM ``--mem``.
 
-Additionally no ``--isolates`` is provided in this run of CONSTAX and the ``--hpcc_msu``
+Additionally no ``--isolates`` is provided in this run of CONSTAX and the ``--sintax_path``
 is specified at the end of the script.
 
 To access some other representative OTU sequences files please follow `THIS <https://github.com/liberjul/CONSTAXv2/tree/master/otu_files>`_ link. These are the available files.

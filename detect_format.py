@@ -1,22 +1,12 @@
+#!/usr/bin/env python
 import sys, os, unicodedata, argparse, glob
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--db", type=str, help="database file")
 args = parser.parse_args()
 
-silva = "null"
-filename = args.db
-
-## Check if file exists
-try:
-	open(filename,"r")
-except IOError:
-	valid = 0
-	sys.exit()
-
-
-with open(filename,"r") as input_file:
-	line = input_file.readline()
+with open(args.db,"r") as ifile:
+	line = ifile.readline()
 	line_bar_split = line.split("|")
 	if line[0]!=">": # or len(temp0)!= 5:
 		format = "INVALID"

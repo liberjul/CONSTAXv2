@@ -12,7 +12,7 @@ env = os.environ.copy()
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 parser.add_argument("-c", "--conf", type=str, default="0.8", help="Classification confidence threshold")
-parser.add_argument("-n", "--num_threads", type=str, default="1", help="directory to for output files")
+parser.add_argument("-n", "--num_threads", type=str, default="1", help="Number of threads to use for parallel computing steps")
 parser.add_argument("-m", "--mhits", type=str, default="10", help="Maximum number of BLAST hits to use, for use with -b option")
 parser.add_argument("-e", "--evalue", type=str, default="1.0", help="Maximum expect value of BLAST hits to use, for use with -b option")
 parser.add_argument("-p", "--p_iden", type=str, default="0.0", help="Minimum proportion identity of BLAST hits to use, for use with -b option")
@@ -24,7 +24,7 @@ parser.add_argument("-x", "--tax", type=str, default="./taxonomy_assignments", h
 parser.add_argument("-t", "--train", action="store_true", help="Complete training if specified")
 parser.add_argument("-b", "--blast", action="store_true", help="Use BLAST instead of UTAX if specified")
 parser.add_argument("--select_by_keyword", type=str, default="False", help="Takes a keyword argument and --input FASTA file to produce a filtered database with headers containing the keyword with name --output")
-parser.add_argument("--msu_hpcc", action="store_true", help="If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments")
+parser.add_argument("--msu_hpcc", action="store_true", help="**THIS ARGUMENT HAS BEEN DEPRECATED IN VERSION 2.0.19** If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments")
 parser.add_argument("-s", "--conservative", action="store_true", help="If specified, use conservative consensus rule (2 False = False winner)")
 parser.add_argument("--consistent", action="store_true", help="If specified, show if the consensus taxonomy is consistent with the real hierarchical taxonomy")
 parser.add_argument("--make_plot", action="store_true", help="If specified, run R script to make plot of classified taxa")
@@ -49,7 +49,7 @@ env["TRAIN"]=str(args.train).lower()
 env["BLAST"]=str(args.blast).lower()
 env["SHOW_VERSION"]=str(args.version).lower()
 env["KEYWORD"]=false_to_null(args.select_by_keyword)
-env["MSU_HPCC"]=str(args.msu_hpcc).lower()
+env["MSU_HPCC"]="false" #str(args.msu_hpcc).lower()
 env["CONSERVATIVE"]=str(args.conservative).lower()
 env["CONSISTENT"]=str(args.consistent).lower()
 env["CONF"]=args.conf
@@ -80,7 +80,7 @@ env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else ar
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
 
-version="2.0.18"; build="0"; prefix="placehold"
+version="2.0.19"; build="0"; prefix="placehold"
 
 if os.path.isfile(args.pathfile):
     with open(args.pathfile, "r") as pathfile:
@@ -90,7 +90,8 @@ if os.path.isfile(args.pathfile):
 if args.constax_path != "False":
     constax_path = args.constax_path
 elif args.msu_hpcc:
-    constax_path = "/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020"
+    print("The --msu_hpcc argument has been deprecated in version 2.0.19. If you wish to set custom paths to executables,\nplease modify pathfile.txt in your CONSTAX directory or specify the path to pathfile.txt using the argument --pathfile")
+    # constax_path = "/mnt/ufs18/rs-022/bonito_lab/CONSTAX_May2020"
 elif os.path.isfile(args.pathfile):
     with open(args.pathfile, "r") as pathfile:
         line = pathfile.readline()

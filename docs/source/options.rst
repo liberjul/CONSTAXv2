@@ -15,7 +15,7 @@ This is what CONSTAX will display on the terminal
     usage: constax [-h] [-c CONF] [-n NUM_THREADS] [-m MHITS]
                    [-e EVALUE] [-p P_IDEN] [-d DB] [-f TRAINFILE]
                    [-i INPUT] [-o OUTPUT] [-x TAX] [-t] [-b]
-                   [--select_by_keyword SELECT_BY_KEYWORD] [--msu_hpcc]
+                   [--select_by_keyword SELECT_BY_KEYWORD]
                    [-s] [--consistent] [--make_plot] [--check]
                    [--mem MEM] [--sintax_path SINTAX_PATH]
                    [--utax_path UTAX_PATH] [--rdp_path RDP_PATH]
@@ -62,9 +62,6 @@ This is what CONSTAX will display on the terminal
                           Takes a keyword argument and --input FASTA file to
                           produce a filtered database with headers containing
                           the keyword with name --output (default: False)
-    --msu_hpcc            If specified, use executable paths on Michigan State
-                          University HPCC. Overrides other path arguments
-                          (default: False)
     -s, --conservative    If specified, use conservative consensus rule (2 False
                           = False winner) (default: False)
     --consistent          If specified, show if the consensus taxonomy is
@@ -183,12 +180,6 @@ Complete training if specified. Cannot run classification without training files
    -b, --blast
 
 Use BLAST instead of UTAX if specified. If installed with conda, this in the option that will work by default. UTAX is available from `USEARCH <https://www.drive5.com/usearch/download.html>`_. BLAST classification generally performs better with faster training, similar classification speed, and greater accuracy.
-
-.. code-block:: text
-
-   --msu_hpcc
-
-If specified, use executable paths on Michigan State University HPCC. Overrides other path arguments.
 
 .. code-block:: text
 

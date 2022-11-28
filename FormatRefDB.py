@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 # Written by Natalie Vande Pol
 # November 15, 2017
-#
+# Modified by Julian Liber
+# May 2020-2022
 # Command line: python MasterScript1.py
 # Script will locate, import, and validate the database file specified
 # Requires subscript_lineage2taxonomyTrain.py and subscript_fasta_addFullLineage.py
@@ -57,9 +59,6 @@ taxon_fn = filename_base+"__RDP_taxonomy.txt"
 taxon = open(taxon_fn,"w")
 print(F"{args.format} format detected\n")
 if args.format == "UNITE":
-	#UTAX output file
-	# fastatax = open(filename_base+"__UTAX.fasta","w")
-
 	taxon.write("Seq_ID\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\n")
 
 	num = 0
@@ -69,19 +68,6 @@ if args.format == "UNITE":
 				#correct umlauts or special letters
 				ascii_line = unicodedata.normalize('NFKD', line).encode('ASCII', 'ignore')
 				temp = ascii_line.decode()[1:].split("|")
-
-				#UTAX file
-				# utax_name = temp[1]+"|"+temp[2]
-				# utax_taxa = temp[4][1:].strip().replace("__",":").replace(";",",")
-				# temp_utax = utax_taxa.strip().split(",")
-				# # if temp_utax[0].endswith("Fungi"):
-				# temp_utax2 = [x if "unidentified" not in x else "-" for x in temp_utax]# [x for x in temp_utax if "unidentified" not in x]
-				# temp_utax3 = [y if "Incertae_sedis" not in y else "-" for y in temp_utax2]
-				# temp_utax4 = [z if "unknown" not in z else "-" for z in temp_utax3]
-				# if len(temp_utax4) == 0:
-				# 	continue
-				# new_utax_taxa = ",".join(temp_utax4)
-				# # fastatax.write(">"+utax_name+";tax=d"+new_utax_taxa+";\n")
 
 				#RDP files
 				name = str(temp[1])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-Splits the formatted input/query FASTA into 100 sequence file to
+Splits the formatted input/query FASTA into 100 sequence files to
 work around BLAST getting stuck on 0 hit queries, where the
 0 hit query is proceeded by >100 seqs.
 '''
