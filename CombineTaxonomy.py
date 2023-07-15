@@ -398,12 +398,13 @@ def real_hier(filename):
 def vote(cla1, cla2, cla3, conservative):
 	winner = ""
 	taxa = [cla1[0].replace("NA", ""), cla2[0].replace("NA", ""), cla3[0].replace("NA", "")]
+	taxa = ["" if "ncertae_sedis" in x else x for x in taxa]
 	scores = [cla1[1], cla2[1], cla3[1]]
 	tally = ["0","0","0"]
-	duplicates_notempty = [i for i, x in enumerate(taxa) if x!= "" and taxa.count(x) > 1]
-	unique_2empty = [i for i, x in enumerate(taxa) if x!="" and taxa.count("") > 1]
-	unique = [i for i, x in enumerate(taxa) if x!="" and taxa.count("") == 1]
-	for j in range(0,3):
+	duplicates_notempty = [i for i, x in enumerate(taxa) if x!= "" and taxa.count(x) > 1] # 2 of the same assignment
+	unique_2empty = [i for i, x in enumerate(taxa) if x!="" and taxa.count("") > 1] # 2 no assignments
+	unique = [i for i, x in enumerate(taxa) if x!="" and taxa.count("") == 1] # Each unique
+	for j in range(3):
 		if taxa[j]!="":
 			if j in duplicates_notempty:
 				winner = taxa[j]
@@ -636,7 +637,7 @@ if args.format == "UNITE":
 		combined.write("\tOrder_Consensus\tFamily_RDP\tFamily_BLAST\tFamily_SINTAX\tFamily_Consensus\tGenus_RDP\tGenus_BLAST\tGenus_SINTAX")
 		combined.write("\tGenus_Consensus\tSpecies_RDP\tSpecies_BLAST\tSpecies_SINTAX\tSpecies_Consensus\n")
 
-		for otu in rdp_dict.keys():
+		for otu in rdp_dict:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
@@ -646,19 +647,13 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels_clean = []
-			for x in levels:
-				if "ncertae_sedis" in x:
-					levels_clean.append("")
-				else:
-					levels_clean.append(x)
-			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels_clean)
+				tax_string = '\t'.join(levels)
 				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -678,7 +673,7 @@ if args.format == "UNITE":
 		combined.write("\tOrder_Consensus\tFamily_RDP\tFamily_SINTAX\tFamily_UTAX\tFamily_Consensus\tGenus_RDP\tGenus_SINTAX\tGenus_UTAX")
 		combined.write("\tGenus_Consensus\tSpecies_RDP\tSpecies_SINTAX\tSpecies_UTAX\tSpecies_Consensus\n")
 
-		for otu in rdp_dict.keys():
+		for otu in rdp_dict:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
@@ -688,19 +683,13 @@ if args.format == "UNITE":
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels_clean = []
-			for x in levels:
-				if "ncertae_sedis" in x:
-					levels_clean.append("")
-				else:
-					levels_clean.append(x)
-			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels_clean)
+				tax_string = '\t'.join(levels)
 				consensus.write(F"\t{int(tax_string.replace(' ', '_').strip('_') in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -798,7 +787,7 @@ else:
 		consensus.write("\n")
 		combined.write("\n")
 
-		for otu in rdp_dict.keys():
+		for otu in rdp_dict:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
@@ -808,19 +797,13 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels_clean = []
-			for x in levels:
-				if "ncertae_sedis" in x:
-					levels_clean.append("")
-				else:
-					levels_clean.append(x)
-			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels_clean)
+				tax_string = '\t'.join(levels)
 				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
 			else:
 				consensus.write("\n")
@@ -855,7 +838,7 @@ else:
 		combined.write("\n")
 		consensus.write("\n")
 
-		for otu in rdp_dict.keys():
+		for otu in rdp_dict:
 			consensus.write(otu+"\t")
 			combined.write(otu)
 			levels = []
@@ -865,19 +848,13 @@ else:
 				if level != "":
 					levels.append(level)
 				combined.write(level)
-			levels_clean = []
-			for x in levels:
-				if "ncertae_sedis" in x:
-					levels_clean.append("")
-				else:
-					levels_clean.append(x)
-			consensus.write('\t'.join(levels_clean+[""]*(len(ranks)-len(levels_clean))))
+			consensus.write('\t'.join(levels+[""]*(len(ranks)-len(levels))))
 			if args.isolates == "True":
 				consensus.write(F"\t{iso_dict[otu][0]}\t{iso_dict[otu][1]}\t{iso_dict[otu][2]}")
 			if args.hl != "null":
 				consensus.write(F"\t{hl_dict[otu][0]}\t{hl_dict[otu][1]}\t{hl_dict[otu][2]}")
 			if args.consistent:
-				tax_string = '\t'.join(levels_clean)
+				tax_string = '\t'.join(levels)
 				consensus.write(F"\t{int(tax_string in taxa_set)}\n")
 			else:
 				consensus.write("\n")
