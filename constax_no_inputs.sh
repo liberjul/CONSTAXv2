@@ -1,6 +1,6 @@
 #!/bin/bash -login
 
-VERSION=2.0.18; BUILD=0; PREFIX=placehold
+VERSION=2.0.20; BUILD=0; PREFIX=placehold
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
@@ -124,7 +124,7 @@ then
     if grep -Fxq "Classifier training complete using BLAST: $BLAST" "${TFILES}"/training_check.txt # If trainfile path doesn't exist or is empty
     then
       echo "Classifying without training..."
-      if [[ "$($BLASTPATH/blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" != "$(grep -o 'BLAST version 2[.].*' ${TFILES}/training_check.txt | tail -n1 | cut -d' ' -f3)" ]]
+      if [[ "$("$BLASTPATH"blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" != "$(grep -o 'BLAST version 2[.].*' ${TFILES}/training_check.txt | tail -n1 | cut -d' ' -f3)" ]]
       then
         echo "BLAST executable version does not match the version used to generate the training files, "
         echo "if BLAST Database error occurs, change your executable or use -t flag."
@@ -158,9 +158,12 @@ else # Then try in package directory.
   if [ -f "$PATHFILE" ]; then source $PATHFILE; echo "Pathfile input found at $PATHFILE ..."; else echo "Pathfile input not found at $PATHFILE ..."; fi
 fi
 # Check for user input paths
-if [ $(command -v "$BLASTPATH_USER") ] && [[ "$BLASTPATH_USER" != false ]]
+if [ $(command -v "$BLASTPATH_USER"blastn) ] && [[ "$BLASTPATH_USER" != false ]]
 then
   BLASTPATH="$BLASTPATH_USER"
+elif [ $(command -v blastn) ] && [[ "$BLASTPATH_USER" == false ]]
+then
+  BLASTPATH=""
 fi
 if [ $(command -v "$SINTAXPATH_USER") ] && [[ "$SINTAXPATH_USER" != false ]]
 then
@@ -195,7 +198,7 @@ then
   python "$CONSTAXPATH"/fasta_select_by_keyword.py -i "$INPUT" -o "$OUTPUT" -k $KEYWORD
   echo "Filtered file output to $OUTPUT"
   exit 1
-elif $BLAST && [ $(command -v $BLASTPATH/blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ]
+elif $BLAST && [ $(command -v "$BLASTPATH"blastn) ] && [ $(command -v "$SINTAXPATH") ] && [ [ $(command java -jar "$RDPPATH" > /dev/null 2>&1) ] || [ $(command -v "$RDPPATH") ] ]
 then
   echo "All needed executables exist."
   echo "SINTAX: $SINTAXPATH"
@@ -217,7 +220,7 @@ else
   if ! [ $(command -v java -jar "$RDPPATH") ] && ! [ $(command -v "$RDPPATH") ] ; then echo "RDP not executable alone or by java -jar" ; fi
   echo "UTAX: $UTAXPATH"
   if ! $BLAST &&  ! [ $(command -v "$UTAXPATH") ] ; then echo "UTAX not executable. Did you mean to use -b/--blast flag?" ; fi
-  if $BLAST &&  ! [ $(command -v $BLASTPATH/blastn) ] ; then echo "BLAST not executable" ; fi
+  if $BLAST &&  ! [ $(command -v "$BLASTPATH"blastn) ] ; then echo "BLAST not executable" ; fi
   echo "CONSTAX: $CONSTAXPATH"
 fi
 if ! $BLAST  && [ $(echo "$UTAXPATH" | sed -e 's/.*usearch\([0-9]*\).*/\1/') -gt 9 ]
@@ -272,8 +275,8 @@ then
       then
         module load BLAST
       fi
-      echo "$BLASTPATH/makeblastdb -in ${TFILES}/${base}__RDP_trained.fasta -dbtype nucl -out ${TFILES}/${base}__BLAST"
-      $BLASTPATH/makeblastdb -in "${TFILES}/${base}"__RDP_trained.fasta -dbtype nucl -out "${TFILES}/${base}"__BLAST
+      echo ""$BLASTPATH"makeblastdb -in ${TFILES}/${base}__RDP_trained.fasta -dbtype nucl -out ${TFILES}/${base}__BLAST"
+      "$BLASTPATH"makeblastdb -in "${TFILES}/${base}"__RDP_trained.fasta -dbtype nucl -out "${TFILES}/${base}"__BLAST
     else
       echo "__________________________________________________________________________"
       echo "Training UTAX Classifier"
@@ -348,7 +351,7 @@ then
       echo "Cannot locate rRNAClassifier.properties file, please place in $CONSTAXPATH or RDPTools/classifier/samplefiles"
     fi
     echo "Classifier training complete using BLAST: $BLAST" >> "${TFILES}"/training_check.txt
-    if $BLAST; then echo "BLAST version $($BLASTPATH/blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" >> "${TFILES}"/training_check.txt; fi
+    if $BLAST; then echo "BLAST version $("$BLASTPATH"blastn -version | grep -o "blastn: 2[.].*" | head -n1 | cut -d' ' -f2)" >> "${TFILES}"/training_check.txt; fi
     echo "SINTAX executable ${SINTAXPATH##*/}" >> "${TFILES}"/training_check.txt
 
   	# -Xmx set to memory in MB you want to use
@@ -383,8 +386,8 @@ then
     echo > "$TAX"/blast.out
     for i in ${FRM_INPUT%.fasta}_*".fasta"
     do
-      echo "$BLASTPATH/blastn -query $i -db $TFILES/$base__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs $MAX_HITS >> $TAX/blast.out"
-      $BLASTPATH/blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
+      echo ""$BLASTPATH"blastn -query $i -db $TFILES/$base__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs $MAX_HITS >> $TAX/blast.out"
+      "$BLASTPATH"blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
       rm $i
     done
 
@@ -420,12 +423,12 @@ then
     echo "python $CONSTAXPATH/check_input_names.py -i $ISOLATES -n $TAX/isolates_formatted.fasta"
     python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
 
-    echo "$BLASTPATH/makeblastdb -in $TAX/isolates_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${ISOLATES%.*})__BLAST"
-    $BLASTPATH/makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
+    echo ""$BLASTPATH"makeblastdb -in $TAX/isolates_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${ISOLATES%.*})__BLAST"
+    "$BLASTPATH"makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
     rm "$TAX/"isolates_formatted.fasta
 
-    echo "$BLASTPATH/blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
-    $BLASTPATH/blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
+    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
     rm "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST.n*
   fi
   if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
@@ -445,11 +448,11 @@ then
     echo "python $CONSTAXPATH/check_input_names.py -i $HL_DB -n $TAX/hl_formatted.fasta --filter"
     python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
 
-    echo "$BLASTPATH/makeblastdb -in $TAX/hl_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${HL_DB%.*})__BLAST"
-    $BLASTPATH/makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
+    echo ""$BLASTPATH"makeblastdb -in $TAX/hl_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${HL_DB%.*})__BLAST"
+    "$BLASTPATH"makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
     rm "$TAX/"hl_formatted.fasta
-    echo "$BLASTPATH/blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
-    $BLASTPATH/blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
+    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
     rm "$TAX/$(basename -- ${HL_DB%.*})"__BLAST.n*
   else
     echo ""
