@@ -76,7 +76,7 @@ env["HL_FMT"]="null"
 env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
-env["BLASTPATH_USER"]=args.blast_path.lower() if args.blast_path == "False" else args.blast_path
+env["BLASTPATH_USER"]=args.blast_path.lower() if args.blast_path == "False" else args.blast_path.strip("/")+"/"
 env["SINTAXPATH_USER"]=args.sintax_path.lower() if args.sintax_path == "False" else args.sintax_path
 env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else args.utax_path
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
