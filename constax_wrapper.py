@@ -30,6 +30,7 @@ parser.add_argument("--consistent", action="store_true", help="If specified, sho
 parser.add_argument("--make_plot", action="store_true", help="If specified, run R script to make plot of classified taxa")
 parser.add_argument("--check", action="store_true", help="If specified, runs checks but stops before training or classifying")
 parser.add_argument("--mem", type=str, default="32000", help="Memory available to use for RDP, in MB. 32000MB recommended for UNITE, 128000MB for SILVA")
+parser.add_argument("--blast_path", type=str, default="False", help="Path to folder of blast executables")
 parser.add_argument("--sintax_path", type=str, default="False", help="Path to USEARCH/VSEARCH executable for SINTAX classification")
 parser.add_argument("--utax_path", type=str, default="False", help="Path to USEARCH executable for UTAX classification")
 parser.add_argument("--rdp_path", type=str, default="False", help="Path to RDP classifier.jar file")
@@ -75,12 +76,13 @@ env["HL_FMT"]="null"
 env["HL_QC"]=args.high_level_query_coverage
 env["HL_ID"]=args.high_level_percent_identity
 env["USE_ISOS"]="False"
+env["BLASTPATH_USER"]=args.blast_path.lower() if args.blast_path == "False" else args.blast_path
 env["SINTAXPATH_USER"]=args.sintax_path.lower() if args.sintax_path == "False" else args.sintax_path
 env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else args.utax_path
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
 
-version="2.0.19"; build="0"; prefix="placehold"
+version="2.0.20"; build="0"; prefix="placehold"
 
 if os.path.isfile(args.pathfile):
     with open(args.pathfile, "r") as pathfile:
