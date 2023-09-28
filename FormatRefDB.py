@@ -71,7 +71,7 @@ if args.format == "UNITE":
 
 				#RDP files
 				name = str(temp[1])
-				temp2 = temp[4].strip().split("__")
+				temp2 = temp[-1].strip().split("__") # take last element from the "|" split
 				to_genus = [ item[:-2] for item in temp2[1:-1] ]
 
 				if "Incertae_sedis" in to_genus:
