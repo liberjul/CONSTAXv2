@@ -1,10 +1,10 @@
 #!/bin/bash -login
 
-VERSION=2.0.20; BUILD=0; PREFIX=placehold
+VERSION=2.0.21; BUILD=0; PREFIX=placehold
 
 echo "Welcome to CONSTAX version $VERSION build $BUILD - The CONSensus TAXonomy classifier"
 echo "This software is distributed under MIT License"
-echo "© Copyright 2022, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
+echo "© Copyright 2024, Julian A. Liber, Gian M. N. Benucci & Gregory M. Bonito"
 echo "https://github.com/liberjul/CONSTAXv2"
 echo "https://constax.readthedocs.io/"
 echo ""
@@ -469,23 +469,8 @@ else
   echo "python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o $OUTPUT/ -x $TAX/ -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT"
   python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT
 fi
-if $MSU_HPCC
-then
-  echo "module load GCC/8.3.0  OpenMPI/3.1.4"
-  module load GCC/8.3.0  OpenMPI/3.1.4
-  echo "module load R"
-  module load R
-fi
-
 # plot R
-if $MAKE_PLOT && $BLAST
+if $MAKE_PLOT
 then
   echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the sumary statistics."
-  # echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ TRUE $FORMAT"
-  # Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" TRUE $FORMAT
-elif $MAKE_PLOT
-then
-  echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the sumary statistics."
-  # echo "Rscript $CONSTAXPATH/ComparisonBars.R $OUTPUT/ FALSE $FORMAT"
-  # Rscript "$CONSTAXPATH"/ComparisonBars.R "$OUTPUT/" FALSE $FORMAT
 fi
