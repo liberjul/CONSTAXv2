@@ -387,7 +387,7 @@ then
 	    echo > "$TAX"/blast.out
 	    for i in ${FRM_INPUT%.fasta}_*".fasta"
 	    do
-	      echo ""$BLASTPATH"blastn -query $i -db $TFILES/$base__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs $MAX_HITS >> $TAX/blast.out"
+	      echo ""$BLASTPATH"blastn -query $i -db $TFILES/"$base"__BLAST -num_threads $NTHREADS -outfmt \"7 qacc sacc evalue bitscore pident qcovs\" -max_target_seqs $MAX_HITS >> $TAX/blast.out"
 	      "$BLASTPATH"blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
 	      rm $i
 	    done
@@ -428,7 +428,7 @@ then
 	    "$BLASTPATH"makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
 	    rm "$TAX/"isolates_formatted.fasta
 	
-	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
+	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt \"7 qacc sacc evalue bitscore pident qcovs\" -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
 	    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
 	    rm "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST.n*
 	  fi
@@ -452,7 +452,7 @@ then
 	    echo ""$BLASTPATH"makeblastdb -in $TAX/hl_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${HL_DB%.*})__BLAST"
 	    "$BLASTPATH"makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
 	    rm "$TAX/"hl_formatted.fasta
-	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
+	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt \"7 qacc sacc evalue bitscore pident qcovs\" -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
 	    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
 	    rm "$TAX/$(basename -- ${HL_DB%.*})"__BLAST.n*
 	  else
