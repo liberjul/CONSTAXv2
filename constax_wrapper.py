@@ -43,6 +43,7 @@ parser.add_argument("--high_level_db", type=str, default="False", help="FASTA da
 parser.add_argument("--high_level_query_coverage", type=str, default="75", help="Threshold of sequence query coverage to report high-level taxonomy matches")
 parser.add_argument("--high_level_percent_identity", type=str, default="1", help="Threshold of aligned sequence percent identity to report high-level taxonomy matches")
 parser.add_argument("--combine_only", action="store_true", help="Only combine taxonomy without rerunning classifiers")
+parser.add_argument("--train_only", action="store_true", help="Only perform training without classification")
 parser.add_argument("-v", "--version", action="store_true", help="Display version and exit")
 args = parser.parse_args()
 
@@ -66,6 +67,7 @@ env["TAX"]=args.tax
 env["MAKE_PLOT"]=str(args.make_plot).lower()
 env["CHECK"]=str(args.check).lower()
 env["COMBINE_ONLY"]=str(args.combine_only).lower()
+env["TRAIN_ONLY"]=str(args.train_only).lower()
 env["PATHFILE"]=args.pathfile
 env["MEM"]=args.mem
 env["ISOLATES"]=false_to_null(args.isolates)
