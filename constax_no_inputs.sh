@@ -57,15 +57,15 @@ then
   exit 1
 fi
 
-if ! [ -f "$INPUT" ]
+if ! [ -f "$INPUT" ] && ! $TRAIN_ONLY
 then
 	echo "Input file $INPUT does not exist, exiting..."
 	exit 1
-elif ! [ -s "$INPUT" ]
+elif ! [ -s "$INPUT" ] && ! $TRAIN_ONLY
 then
 	echo "Input file $INPUT is empty, exiting..."
 	exit 1
-elif [[ "$INPUT" != *.fasta ]] && [[ "$INPUT" != *.fa ]] && [[ "$INPUT" != *.fna ]]
+elif [[ "$INPUT" != *.fasta ]] && [[ "$INPUT" != *.fa ]] && [[ "$INPUT" != *.fna ]] && ! $TRAIN_ONLY
 then
   echo "Input file $INPUT must end with .fasta, .fa, or .fna; exiting..."
   exit 1
@@ -81,19 +81,19 @@ then
     echo "Database file $DB must end with .fasta, .fa, or .fna; exiting..."
     exit 1
   fi
-  if [ -d "$OUTPUT" ]  && ! [ -z "$(ls -A $OUTPUT)" ]
+  if [ -d "$OUTPUT" ]  && ! [ -z "$(ls -A $OUTPUT)" ] && ! $TRAIN_ONLY
   then
   	echo "Overwriting previous classification..."
   fi
-  if [ -d "$TAX" ]  && ! [ -z "$(ls -A $TAX)" ]
+  if [ -d "$TAX" ]  && ! [ -z "$(ls -A $TAX)" ] && ! $TRAIN_ONLY
   then
   	echo "Overwriting previous taxonomy assignments..."
   fi
-  if ! [ -d "$OUTPUT" ] # Output directory doesn't exist
+  if ! [ -d "$OUTPUT" ] && ! $TRAIN_ONLY # Output directory doesn't exist
   then
   	mkdir "$OUTPUT"
   fi
-  if ! [ -d "$TAX" ] # Taxonomic assignments directory does not exist
+  if ! [ -d "$TAX" ]  && ! $TRAIN_ONLY # Taxonomic assignments directory does not exist
   then
   	mkdir "$TAX"
   fi
@@ -357,120 +357,123 @@ then
   	# -Xmx set to memory in MB you want to use
 
   fi
-
-  echo "__________________________________________________________________________"
-  echo "Assigning taxonomy to OTU's representative sequences"
-  echo "python $CONSTAXPATH/check_input_names.py -i $INPUT"
-  FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" >&1)
-
-  echo "$SINTAXPATH -sintax $FRM_INPUT -db ${TFILES}/sintax.db -tabbedout $TAX/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS"
-  "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
-  if [[ ${SINTAXPATH##*/} == "vsearch" ]]
-  then
-    echo "sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' $TAX/otu_taxonomy.sintax"
-    sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
-  fi
-  if $BLAST
-  then
-
-    if $MSU_HPCC && ! $TRAIN
-    then
-      echo "module load BLAST"
-      module load BLAST
-    fi
-    # workaround code for blast getting stuck
-    echo "python $CONSTAXPATH/split_inputs.py -i $FRM_INPUT"
-    python "$CONSTAXPATH"/split_inputs.py -i "$FRM_INPUT"
-
-    echo "> $TAX/blast.out"
-    echo > "$TAX"/blast.out
-    for i in ${FRM_INPUT%.fasta}_*".fasta"
-    do
-      echo ""$BLASTPATH"blastn -query $i -db $TFILES/$base__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs $MAX_HITS >> $TAX/blast.out"
-      "$BLASTPATH"blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
-      rm $i
-    done
-
-    echo "python $CONSTAXPATH/blast_to_df.py -i $TAX/blast.out -o $TAX/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT"
-    python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
-  else
-    echo "$UTAXPATH -utax $FRM_INPUT -db ${TFILES}/utax.db -strand both -utaxout $TAX/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS"
-    "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
-
-  fi
-
-  if [ $(command -v "$RDPPATH") ]
-  then
-    echo "$RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT -Xmx$MEMm"
-    "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
-  else
-    echo "java -Xmx$MEMm -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT"
-    java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
-  fi
-
-  echo "__________________________________________________________________________"
-
-  if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
-  then
-    echo "Comparing to Isolates"
-    USE_ISOS=True
-
-    if $MSU_HPCC && ! $BLAST
-    then
-      echo "module load BLAST"
-      module load BLAST
-    fi
-    echo "python $CONSTAXPATH/check_input_names.py -i $ISOLATES -n $TAX/isolates_formatted.fasta"
-    python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
-
-    echo ""$BLASTPATH"makeblastdb -in $TAX/isolates_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${ISOLATES%.*})__BLAST"
-    "$BLASTPATH"makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
-    rm "$TAX/"isolates_formatted.fasta
-
-    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
-    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
-    rm "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST.n*
-  fi
-  if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
-  then
-    echo "High Level Taxonomy Assignment"
-    echo "python $CONSTAXPATH/detect_format.py -d $HL_DB 2>&1"
-    HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
-    if [[ $HL_FMT == "INVALID" ]]
-    then
-      echo "High-level taxonomy database file $HL_DB must be in UNITE or SILVA format, exiting..."
-      exit 1
-    fi
-    if $MSU_HPCC && ! $BLAST
-    then
-      module load BLAST
-    fi
-    echo "python $CONSTAXPATH/check_input_names.py -i $HL_DB -n $TAX/hl_formatted.fasta --filter"
-    python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
-
-    echo ""$BLASTPATH"makeblastdb -in $TAX/hl_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${HL_DB%.*})__BLAST"
-    "$BLASTPATH"makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
-    rm "$TAX/"hl_formatted.fasta
-    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
-    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
-    rm "$TAX/$(basename -- ${HL_DB%.*})"__BLAST.n*
-  else
-    echo ""
-  fi
-  rm "$FRM_INPUT"
+  if ! $TRAIN_ONLY
+	then
+	  echo "__________________________________________________________________________"
+	  echo "Assigning taxonomy to OTU's representative sequences"
+	  echo "python $CONSTAXPATH/check_input_names.py -i $INPUT"
+	  FRM_INPUT=$(python "$CONSTAXPATH"/check_input_names.py -i "$INPUT" >&1)
+	
+	  echo "$SINTAXPATH -sintax $FRM_INPUT -db ${TFILES}/sintax.db -tabbedout $TAX/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS"
+	  "$SINTAXPATH" -sintax "$FRM_INPUT" -db "${TFILES}"/sintax.db -tabbedout "$TAX"/otu_taxonomy.sintax -strand both -sintax_cutoff $CONF -threads $NTHREADS
+	  if [[ ${SINTAXPATH##*/} == "vsearch" ]]
+	  then
+	    echo "sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' $TAX/otu_taxonomy.sintax"
+	    sed -i'' -e 's|([0-1][.][0-9]\{2\}|&00|g' "$TAX"/otu_taxonomy.sintax
+	  fi
+	  if $BLAST
+	  then
+	
+	    if $MSU_HPCC && ! $TRAIN
+	    then
+	      echo "module load BLAST"
+	      module load BLAST
+	    fi
+	    # workaround code for blast getting stuck
+	    echo "python $CONSTAXPATH/split_inputs.py -i $FRM_INPUT"
+	    python "$CONSTAXPATH"/split_inputs.py -i "$FRM_INPUT"
+	
+	    echo "> $TAX/blast.out"
+	    echo > "$TAX"/blast.out
+	    for i in ${FRM_INPUT%.fasta}_*".fasta"
+	    do
+	      echo ""$BLASTPATH"blastn -query $i -db $TFILES/$base__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs $MAX_HITS >> $TAX/blast.out"
+	      "$BLASTPATH"blastn -query $i -db "$TFILES"/"$base"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs $MAX_HITS >> "$TAX"/blast.out
+	      rm $i
+	    done
+	
+	    echo "python $CONSTAXPATH/blast_to_df.py -i $TAX/blast.out -o $TAX/otu_taxonomy.blast -d $DB -t $TFILES -f $FORMAT"
+	    python "$CONSTAXPATH"/blast_to_df.py -i "$TAX"/blast.out -o "$TAX"/otu_taxonomy.blast -d "$DB" -t "$TFILES" -f $FORMAT
+	  else
+	    echo "$UTAXPATH -utax $FRM_INPUT -db ${TFILES}/utax.db -strand both -utaxout $TAX/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS"
+	    "$UTAXPATH" -utax "$FRM_INPUT" -db "${TFILES}"/utax.db -strand both -utaxout "$TAX"/otu_taxonomy.utax -utax_cutoff $CONF -threads $NTHREADS
+	
+	  fi
+	
+	  if [ $(command -v "$RDPPATH") ]
+	  then
+	    echo "$RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT -Xmx$MEMm"
+	    "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
+	  else
+	    echo "java -Xmx$MEMm -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT"
+	    java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
+	  fi
+	
+	  echo "__________________________________________________________________________"
+	
+	  if [ -f "$ISOLATES" ] && [ -s "$ISOLATES" ]
+	  then
+	    echo "Comparing to Isolates"
+	    USE_ISOS=True
+	
+	    if $MSU_HPCC && ! $BLAST
+	    then
+	      echo "module load BLAST"
+	      module load BLAST
+	    fi
+	    echo "python $CONSTAXPATH/check_input_names.py -i $ISOLATES -n $TAX/isolates_formatted.fasta"
+	    python "$CONSTAXPATH"/check_input_names.py -i "$ISOLATES" -n "$TAX/"isolates_formatted.fasta
+	
+	    echo ""$BLASTPATH"makeblastdb -in $TAX/isolates_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${ISOLATES%.*})__BLAST"
+	    "$BLASTPATH"makeblastdb -in "$TAX/"isolates_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST
+	    rm "$TAX/"isolates_formatted.fasta
+	
+	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${ISOLATES%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.00001 > $TAX/isolates_blast.out"
+	    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.00001 > "$TAX"/isolates_blast.out
+	    rm "$TAX/$(basename -- ${ISOLATES%.*})"__BLAST.n*
+	  fi
+	  if [ -f "$HL_DB" ] && [ -s "$HL_DB" ]
+	  then
+	    echo "High Level Taxonomy Assignment"
+	    echo "python $CONSTAXPATH/detect_format.py -d $HL_DB 2>&1"
+	    HL_FMT=$(python "$CONSTAXPATH"/detect_format.py -d "$HL_DB" 2>&1)
+	    if [[ $HL_FMT == "INVALID" ]]
+	    then
+	      echo "High-level taxonomy database file $HL_DB must be in UNITE or SILVA format, exiting..."
+	      exit 1
+	    fi
+	    if $MSU_HPCC && ! $BLAST
+	    then
+	      module load BLAST
+	    fi
+	    echo "python $CONSTAXPATH/check_input_names.py -i $HL_DB -n $TAX/hl_formatted.fasta --filter"
+	    python "$CONSTAXPATH"/check_input_names.py -i "$HL_DB" -n "$TAX/"hl_formatted.fasta --filter
+	
+	    echo ""$BLASTPATH"makeblastdb -in $TAX/hl_formatted.fasta -dbtype nucl -out $TAX/$(basename -- ${HL_DB%.*})__BLAST"
+	    "$BLASTPATH"makeblastdb -in "$TAX/"hl_formatted.fasta -dbtype nucl -out "$TAX/$(basename -- ${HL_DB%.*})"__BLAST
+	    rm "$TAX/"hl_formatted.fasta
+	    echo ""$BLASTPATH"blastn -query $FRM_INPUT -db $TAX/$(basename -- ${HL_DB%.*})__BLAST -num_threads $NTHREADS -outfmt 7 qacc sacc evalue bitscore pident qcovs -max_target_seqs 1 -evalue 0.001 > $TAX/hl_blast.out"
+	    "$BLASTPATH"blastn -query "$FRM_INPUT" -db "$TAX/$(basename -- ${HL_DB%.*})"__BLAST -num_threads $NTHREADS -outfmt "7 qacc sacc evalue bitscore pident qcovs" -max_target_seqs 1 -evalue 0.001 > "$TAX"/hl_blast.out
+	    rm "$TAX/$(basename -- ${HL_DB%.*})"__BLAST.n*
+	  else
+	    echo ""
+	  fi
+	  rm "$FRM_INPUT"
+	fi
 fi
 
 echo "Combining Taxonomies"
-if $BLAST
+if $BLAST && ! $TRAIN_ONLY
 then
   echo "python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o $OUTPUT/ -x $TAX/ -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT"
   python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -b -e $EVALUE -m $MAX_HITS -p $P_IDEN -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT
-else
+elif ! $TRAIN_ONLY
+then
   echo "python $CONSTAXPATH/CombineTaxonomy.py -c $CONF -o $OUTPUT/ -x $TAX/ -f $FORMAT -d $DB -t $TFILES -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT"
   python "$CONSTAXPATH"/CombineTaxonomy.py -c $CONF -o "$OUTPUT/" -x "$TAX/" -f $FORMAT -d "$DB" -t "$TFILES" -i $USE_ISOS --hl $HL_FMT --iso_qc $ISO_QC --iso_id $ISO_ID --hl_qc $HL_QC --hl_id $HL_ID -s $CONSERVATIVE -n $CONSISTENT
 fi
 # plot R
 if $MAKE_PLOT
 then
-  echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the sumary statistics."
+  echo "--make_plot has been deprecated in v2.0.18. The script ComparisonBars.R is available if you wish to plot the summary statistics."
 fi
