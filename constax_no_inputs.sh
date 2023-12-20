@@ -297,7 +297,7 @@ then
       echo "$RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt -Xmx$MEMm > rdp_train.out 2>&1"
       "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
     else
-      echo "java -Xmx$MEMm -jar $RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt > rdp_train.out 2>&1"
+      echo "java -Xmx"$MEM"m -jar $RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt > rdp_train.out 2>&1"
       java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
     fi
     cat rdp_train.out
@@ -311,7 +311,7 @@ then
         echo "$RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt -Xmx$MEMm > rdp_train.out 2>&1"
         "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt -Xmx"$MEM"m > rdp_train.out 2>&1
       else
-        echo "java -Xmx$MEMm -jar $RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt > rdp_train.out 2>&1"
+        echo "java -Xmx"$MEM"m -jar $RDPPATH train -o ${TFILES}/. -s ${TFILES}/${base}__RDP_trained.fasta -t ${TFILES}/${base}__RDP_taxonomy_trained.txt > rdp_train.out 2>&1"
         java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
       fi
       if [ -s rdp_train.out ]
@@ -402,10 +402,10 @@ then
 	
 	  if [ $(command -v "$RDPPATH") ]
 	  then
-	    echo "$RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT -Xmx$MEMm"
+	    echo "$RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT -Xmx"$MEM"m"
 	    "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT" -Xmx"$MEM"m
 	  else
-	    echo "java -Xmx$MEMm -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT"
+	    echo "java -Xmx"$MEM"m -jar $RDPPATH classify --conf $CONF --format allrank --train_propfile ${TFILES}/rRNAClassifier.properties -o $TAX/otu_taxonomy.rdp $FRM_INPUT"
 	    java -Xmx"$MEM"m -jar "$RDPPATH" classify --conf $CONF --format allrank --train_propfile "${TFILES}"/rRNAClassifier.properties -o "$TAX"/otu_taxonomy.rdp "$FRM_INPUT"
 	  fi
 	
