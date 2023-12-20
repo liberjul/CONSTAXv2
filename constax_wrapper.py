@@ -82,12 +82,12 @@ env["UTAXPATH_USER"]=args.utax_path.lower() if args.utax_path == "False" else ar
 env["RDPPATH_USER"]=args.rdp_path.lower() if args.rdp_path == "False" else args.rdp_path
 env["CONSTAXPATH_USER"]=args.constax_path.lower() if args.constax_path == "False" else args.constax_path
 
-version="2.0.20"; build="0"; prefix="placehold"
+version="2.0.21"; build="0"; prefix="placehold"
 
 if os.path.isfile(args.pathfile):
     with open(args.pathfile, "r") as pathfile:
-        if "\ " in pathfile.read():
-            raise NameError("Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", args.pathfile)
+        if r"\ " in pathfile.read():
+            raise NameError(r"Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", args.pathfile)
 
 if args.constax_path != "False":
     constax_path = args.constax_path
@@ -147,7 +147,7 @@ else: # If those don't work, change the pathfile to fix it for future runs
 if "CONDA_PREFIX" not in env: # Must have CONDA installed and on PATH
     raise NameError("CONDA_PREFIX environment variable not found.")
 else:
-    script_loc = script_loc.replace(" ", "\ ") # Add escape characters to paths in case spaces are present
+    script_loc = script_loc.replace(" ", r"\ ") # Add escape characters to paths in case spaces are present
     log_file = F"log_constax2_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt" # Set up unique logfile name
 
     if not os.path.isdir(env["CONSTAXPATH_USER"]): # If there is not a user-specified CONSTAXPATH, assign the one detected
@@ -161,8 +161,8 @@ else:
         new_pathfile = script_loc.strip("constax_no_inputs.sh") + "pathfile.txt"
         if os.path.isfile(new_pathfile): # Verify that the paths look right
             with open(new_pathfile, "r") as pathfile:
-                if "\ " in pathfile.read():
-                    raise NameError("Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", new_pathfile)
+                if r"\ " in pathfile.read():
+                    raise NameError(r"Remove any backslashes (\) from CONSTAXPATH in the pathfile located at: ", new_pathfile)
                 else:
                     env["PATHFILE"] = new_pathfile
         else:
