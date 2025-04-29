@@ -301,7 +301,7 @@ then
       java -Xmx"$MEM"m -jar "$RDPPATH" train -o "${TFILES}/." -s "${TFILES}/${base}"__RDP_trained.fasta -t "${TFILES}/${base}"__RDP_taxonomy_trained.txt > rdp_train.out 2>&1
     fi
     cat rdp_train.out
-    if grep -Fq "duplicate taxon name" rdp_train.out
+    if grep -Fq "duplicate tax" rdp_train.out
     then
       echo "RDP training error, redoing with duplicate taxa"
       echo "python $CONSTAXPATH/FormatRefDB.py -d $DB -t $TFILES -f $FORMAT -p $CONSTAXPATH --dup"
